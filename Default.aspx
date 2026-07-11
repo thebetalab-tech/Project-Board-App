@@ -1,44 +1,164 @@
-﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Project_Board._Default" %>
+﻿<%@ Page Title="Project Board - Login"
+ Language="C#" 
+ MasterPageFile="~/Site.Master" 
+ AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Project_Board._Default" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <main>
-        <section class="row" aria-labelledby="aspnetTitle">
-            <h1 id="aspnetTitle">ASP.NET</h1>
-            <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-            <p><a href="http://www.asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-        </section>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Project Board - Login to your project management dashboard. Organize, track, and collaborate on your projects seamlessly.">
+    <link rel="icon" href="../logo.png" type="image/png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+        <link rel="stylesheet" href="styles/login-signup.css">
+</head>
 
-        <div class="row">
-            <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-                <h2 id="gettingStartedTitle">Getting started</h2>
-                <p>
-                    ASP.NET Web Forms lets you build dynamic websites using a familiar drag-and-drop, event-driven model.
-                A design surface and hundreds of controls and components let you rapidly build sophisticated, powerful UI-driven sites with data access.
-                </p>
-                <p>
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301948">Learn more &raquo;</a>
-                </p>
-            </section>
-            <section class="col-md-4" aria-labelledby="librariesTitle">
-                <h2 id="librariesTitle">Get more libraries</h2>
-                <p>
-                    NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.
-                </p>
-                <p>
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301949">Learn more &raquo;</a>
-                </p>
-            </section>
-            <section class="col-md-4" aria-labelledby="hostingTitle">
-                <h2 id="hostingTitle">Web Hosting</h2>
-                <p>
-                    You can easily find a web hosting company that offers the right mix of features and price for your applications.
-                </p>
-                <p>
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301950">Learn more &raquo;</a>
-                </p>
-            </section>
+<body>
+
+    <!-- 3D Animated Background -->
+    <div class="bg-scene" id="bgScene">
+        <div class="bg-layer bg-layer--deep">
+            <video id="bg-video-1" class="bg-video" autoplay loop muted playsinline poster="bg.webp">
+                <source src="assets/background video.mp4" type="video/mp4">
+            </video>
         </div>
-    </main>
+        <div class="bg-layer bg-layer--mid">
+            <div class="texture-overlay"></div>
+        </div>
+        <div class="bg-layer bg-layer--front">
+            <div class="particle-field" id="particleField"></div>
+        </div>
+        <!-- Dark gradient overlay for readability -->
+        <div class="bg-gradient-overlay"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="login-container">
+
+        <!-- Left Side — Spacer (transparent to show background video) -->
+        <div class="branding-side"></div>
+
+        <!-- Right Side — Login Form Panel (Full Height, Blurred Glass) -->
+        <div class="form-side">
+            <div class="form-side-content">
+                <!-- Branding Header inside the right panel -->
+                <div class="branding-content">
+
+                    <div class="brand-text-group">
+                        <h1 class="brand-title">
+                            <span class="brand-word brand-word--project">Project </span>
+                            <span class="brand-word brand-word--board">Board</span>
+                        </h1>
+                        <p class="brand-tagline">Organize. Track. Collaborate.</p>
+                    </div>
+                </div>
+
+                <!-- Form Header -->
+                <div class="form-header">
+                    <h2 class="form-title">Welcome Back</h2>
+                    <p class="form-subtitle">Sign in to continue to your dashboard</p>
+                </div>
+
+                <div class="login-form" id="loginForm" autocomplete="off">
+                    <!-- Login ID Field -->
+                    <div class="input-group" id="emailGroup">
+                        <label for="loginId" class="input-label">Login ID</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <input type="text" id="loginId" name="loginId"
+                                placeholder="Enter your email or username" required>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="input-group" id="passwordGroup">
+                        <label for="password" class="input-label">Password</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            <input type="password" id="password" name="password" placeholder="Enter your password"
+                                required>
+                            <button type="button" class="password-toggle" id="passwordToggle"
+                                aria-label="Toggle password visibility">
+                                <!-- Eye open icon -->
+                                <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                                <!-- Eye closed icon -->
+                                <svg class="eye-icon eye-closed" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.5" style="display:none;">
+                                    <path
+                                        d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                                    <line x1="1" y1="1" x2="23" y2="23" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Forgot Password -->
+                    <div class="form-options">
+                        <a href="#" class="forgot-link" id="forgotPassword">Forgot Password?</a>
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <span class="btn-text">Login</span>
+                        <span class="btn-loader" id="btnLoader">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10" />
+                            </svg>
+                        </span>
+                        <span class="btn-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                                <polyline points="12 5 19 12 12 19" />
+                            </svg>
+                        </span>
+                        <div class="btn-ripple"></div>
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span class="divider-line"></span>
+                    <span class="divider-text">or</span>
+                    <span class="divider-line"></span>
+                </div>
+
+                <!-- Sign Up / Register -->
+                <div class="form-footer">
+                    <p class="footer-text">Don't have an account?</p>
+                    <a href="signup.html" class="register-btn" id="registerBtn">
+                        <span>Register Now</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                            height="16">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="Scripts/main/login-signup.js"></script>
+</body>
+
+</html>
+</main>
 
 </asp:Content>
