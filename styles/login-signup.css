@@ -54,7 +54,7 @@ body {
     background: var(--black);
     color: var(--text-primary);
     overflow: hidden;
-    height: 100vh;
+    min-height: 100vh;
     width: 100vw;
 }
 
@@ -209,16 +209,17 @@ body {
 /* --- Left Side: Branding Spacer --- */
 .branding-side {
     flex: 1;
+    position: relative;
     pointer-events: none;
 }
 
-.branding-content {
-    text-align: center;
+.brand-corner {
+    position: absolute;
+    top: 28px;
+    left: 28px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 18px;
-    margin-bottom: 32px;
+    gap: 14px;
     animation: brandFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: 0.3s;
 }
@@ -237,42 +238,6 @@ body {
 }
 
 /* Logo */
-.logo-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 0;
-    flex-shrink: 0;
-}
-
-.logo-img {
-    width: 52px;
-    height: 52px;
-    object-fit: contain;
-    position: relative;
-    z-index: 2;
-    filter: drop-shadow(0 4px 15px rgba(163, 11, 11, 0.3));
-    transition: transform var(--transition-spring);
-}
-
-.logo-wrapper:hover .logo-img {
-    transform: scale(1.08);
-}
-
-.logo-glow {
-    position: absolute;
-    inset: -20px;
-    background: radial-gradient(circle, var(--red-glow) 0%, transparent 70%);
-    filter: blur(25px);
-    opacity: 0.5;
-    animation: glowPulse 3s ease-in-out infinite;
-    z-index: 1;
-}
-
-@keyframes glowPulse {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.15); }
-}
-
 /* Brand Title + Tagline container */
 .brand-text-group {
     display: flex;
@@ -281,7 +246,7 @@ body {
 
 .brand-title {
     font-family: var(--font-serif);
-    font-size: 2rem;
+    font-size: 1.55rem;
     font-weight: 800;
     letter-spacing: -0.5px;
     line-height: 1.1;
@@ -321,7 +286,7 @@ body {
 
 .brand-tagline {
     font-family: var(--font-secondary);
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     font-weight: 400;
     color: var(--text-secondary);
     letter-spacing: 2.5px;
@@ -386,8 +351,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 60px 48px;
+    justify-content: flex-start;
+    padding: 28px 40px;
     position: relative;
     background: rgba(15, 23, 42, 0.25); /* Lighter dark for better video visibility */
     backdrop-filter: blur(16px) saturate(1.2);
@@ -395,7 +360,7 @@ body {
     border-left: 1px solid var(--glass-border);
     box-shadow: -10px 0 50px rgba(0, 0, 0, 0.4);
     z-index: 10;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 /* Vertical glowing line on the left border of form-side */
@@ -423,6 +388,7 @@ body {
     max-width: 400px;
     display: flex;
     flex-direction: column;
+    margin-top: 54px;
     animation: cardSlideIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: 0.2s;
 }
@@ -444,7 +410,7 @@ body {
 /* --- Form Header --- */
 .form-header {
     text-align: center;
-    margin-bottom: 36px;
+    margin-bottom: 18px;
 }
 
 .form-title {
@@ -463,10 +429,39 @@ body {
     font-weight: 400;
 }
 
+.form-message {
+    display: block;
+    margin: 0 0 16px;
+    min-height: 22px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    text-align: center;
+    font-family: var(--font-secondary);
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.form-message--success {
+    background: rgba(74, 222, 128, 0.12);
+    border-color: rgba(74, 222, 128, 0.35);
+    color: #bbf7d0;
+}
+
+.form-message--error {
+    background: rgba(248, 113, 113, 0.12);
+    border-color: rgba(248, 113, 113, 0.35);
+    color: #fecaca;
+}
+
 
 /* --- Input Groups --- */
 .input-group {
-    margin-bottom: 22px;
+    margin-bottom: 16px;
 }
 
 .input-label {
@@ -581,7 +576,7 @@ body {
 .form-options {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 28px;
+    margin-bottom: 14px;
 }
 
 .forgot-link {
@@ -726,7 +721,7 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
-    margin: 28px 0;
+    margin: 16px 0;
 }
 
 .divider-line {
@@ -753,7 +748,7 @@ body {
     font-family: var(--font-secondary);
     font-size: 0.875rem;
     color: var(--text-secondary);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .register-btn {
@@ -814,16 +809,25 @@ body {
 @media (max-width: 1024px) {
     .login-container {
         flex-direction: column;
+        height: 100vh;
     }
 
     .branding-side {
-        display: none;
+        min-height: 130px;
+    }
+
+    .brand-corner {
+        top: 18px;
+        left: 18px;
     }
 
     .form-side {
         flex: 1;
         width: 100%;
-        padding: 40px 24px;
+        height: auto;
+        min-height: calc(100vh - 130px);
+        padding: 18px 24px 24px;
+        justify-content: flex-start;
         border-left: none;
         box-shadow: none;
         background: rgba(0, 0, 0, 0.55); /* slightly darker background on mobile for better legibility */
@@ -831,25 +835,51 @@ body {
 
     .form-side-content {
         max-width: 100%;
+        margin-top: 20px;
     }
 }
 
 @media (max-width: 480px) {
+    .branding-side {
+        min-height: 116px;
+    }
+
+    .brand-corner {
+        top: 14px;
+        left: 14px;
+        gap: 12px;
+    }
+
+    .logo-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+    }
+
+    .logo-mark {
+        font-size: 1.15rem;
+    }
+
+    .brand-title {
+        font-size: 1.2rem;
+    }
+
+    .brand-tagline {
+        font-size: 0.55rem;
+        letter-spacing: 1.8px;
+    }
+
     .form-side {
-        padding: 32px 20px;
+        min-height: calc(100vh - 116px);
+        padding: 16px 18px 20px;
+    }
+
+    .form-side-content {
+        margin-top: 12px;
     }
 
     .form-title {
         font-size: 1.5rem;
-    }
-
-    .logo-img {
-        width: 44px;
-        height: 44px;
-    }
-
-    .brand-title {
-        font-size: 1.4rem;
     }
 }
 
