@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -106,12 +106,21 @@ namespace Project_Board
 
                         command.ExecuteNonQuery();
                     }
+
+                    // Fetch the new user's ID
+                    using (SqlCommand idCommand = new SqlCommand("SELECT UserId FROM Users WHERE Email = @Email", connection))
+                    {
+                        idCommand.Parameters.Add("@Email", SqlDbType.NVarChar, 100).Value = emailValue;
+                        object userIdObj = idCommand.ExecuteScalar();
+                        if (userIdObj != null)
+                        {
+                            Session["UserId"] = userIdObj.ToString();
+                        }
+                    }
                 }
 
                 ShowMessage("Account created successfully. You can log in now.", true);
 
-                // Optional: You can save the user's email or name in a Session variable here 
-                // so you can welcome them by name on the OnBoarding page!
                 Session["UserEmail"] = emailValue;
                 Session["EnrollmentNo"] = enrollmentNoValue;
                 Session["Role"] = "Student";

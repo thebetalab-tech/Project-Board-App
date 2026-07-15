@@ -11,7 +11,7 @@ namespace Project_Board
 {
 
 
-    public partial class OnBoarding
+    public partial class CreateGroup
     {
 
         /// <summary>
@@ -23,8 +23,18 @@ namespace Project_Board
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
-        protected global::System.Web.UI.WebControls.LinkButton btnStartGroup;
-
-        protected global::System.Web.UI.WebControls.LinkButton btnJoinGroup;
+        protected global::System.Web.UI.ScriptManager ScriptManager1;
+        
+        protected global::System.Web.UI.WebControls.Label lblMessage;
+        
+        protected global::System.Web.UI.UpdatePanel upGroupName;
+        
+        protected global::System.Web.UI.WebControls.TextBox txtGroupName;
+        
+        protected global::System.Web.UI.WebControls.Label lblNameStatus;
+        
+        protected global::System.Web.UI.WebControls.DropDownList ddlTechDomain;
+        
+        protected global::System.Web.UI.WebControls.LinkButton btnCreateGroup;
     }
 }
