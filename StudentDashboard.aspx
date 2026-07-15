@@ -1,17 +1,128 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="StudentDashboard.aspx.cs" Inherits="Project_Board.StudentDashboard" %>
-
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Student Dashboard</title>
-    <link rel="stylesheet" href="styles/login-signup.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Forming Team</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/login-signup.css?v=5">
 </head>
-<body>
+<body class="theme-light">
     <form id="form1" runat="server">
-        <div>
-        </div>
+    <!-- Index Theme Background -->
+    <div class="theme-bg">
+        <div class="theme-bg__image"></div>
+        <div class="theme-bg__blur"></div>
+        <div class="theme-bg__gradient"></div>
+    </div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dash-sidebar">
+            <div class="sidebar-brand">
+                <h1 class="brand-title" style="font-size: 1.5rem;">
+                    <span class="brand-word brand-word--project">Project</span>
+                    <br><span class="brand-word brand-word--board">Board</span>
+                </h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                    Team Building
+                </a>
+                <a href="dashboard-mentor.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>
+                    Mentor Selection
+                </a>
+                <a href="#" class="nav-item disabled">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" /></svg>
+                    Project Proposal
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                    Log Out
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dash-main">
+            <header class="dash-header">
+                <div>
+                    <h2 class="dash-title">Beta Lab Core Team</h2>
+                    <p class="dash-subtitle">Technology Domain: Web Development (Full Stack)</p>
+                </div>
+                <div class="status-badge status-badge--forming">
+                    <span class="status-dot"></span> Forming
+                </div>
+            </header>
+
+            <div class="dash-content">
+                <!-- Roster Section -->
+                <div class="glass-card">
+                    <div class="card-header-flex">
+                        <h3 class="card-title">Team Roster (1/5)</h3>
+                        <a href="dashboard-mentor.html" class="btn-primary-small">Lock Team & Select Mentor</a>
+                    </div>
+                    
+                    <ul class="roster-list">
+                        <li class="roster-item leader-item">
+                            <div class="roster-info">
+                                <div class="avatar">TL</div>
+                                <div>
+                                    <h4>Tirth Leader</h4>
+                                    <p>Enrollment: 123456789</p>
+                                </div>
+                            </div>
+                            <span class="badge badge-leader">Leader</span>
+                        </li>
+                        <li class="roster-item empty-item">Empty Slot</li>
+                        <li class="roster-item empty-item">Empty Slot</li>
+                        <li class="roster-item empty-item">Empty Slot</li>
+                        <li class="roster-item empty-item">Empty Slot</li>
+                    </ul>
+                </div>
+
+                <!-- Invite Section -->
+                <div class="glass-card mt-24">
+                    <h3 class="card-title">Find & Invite Members</h3>
+                    <div class="search-bar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" placeholder="Search by name or enrollment number..." class="glass-input">
+                    </div>
+
+                    <!-- Mock Search Results -->
+                    <div class="search-results">
+                        <div class="roster-item">
+                            <div class="roster-info">
+                                <div class="avatar bg-gray">JD</div>
+                                <div>
+                                    <h4>John Doe</h4>
+                                    <p>Enrollment: 987654321</p>
+                                </div>
+                            </div>
+                            <button class="btn-secondary-small">Invite</button>
+                        </div>
+                        <div class="roster-item">
+                            <div class="roster-info">
+                                <div class="avatar bg-gray">AS</div>
+                                <div>
+                                    <h4>Alice Smith</h4>
+                                    <p>Enrollment: 456123789</p>
+                                </div>
+                            </div>
+                            <button class="btn-secondary-small">Invite</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
     </form>
-    <script src="Scripts/main/login-signup.js"></script>
 </body>
 </html>
+
+

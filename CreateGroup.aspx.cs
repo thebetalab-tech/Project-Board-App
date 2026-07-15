@@ -125,7 +125,7 @@ namespace Project_Board
             }
 
             // Redirect on success
-            Response.Redirect("StudentDashboard.aspx", false);
+            Response.Redirect("MentorSelection.aspx", false);
             Context.ApplicationInstance.CompleteRequest();
         }
     }

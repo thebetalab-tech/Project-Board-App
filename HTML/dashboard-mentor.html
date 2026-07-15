@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Mentor Selection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-light">
+    <!-- Index Theme Background -->
+    <div class="theme-bg">
+        <div class="theme-bg__image"></div>
+        <div class="theme-bg__blur"></div>
+        <div class="theme-bg__gradient"></div>
+    </div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dash-sidebar">
+            <div class="sidebar-brand">
+                <h1 class="brand-title" style="font-size: 1.5rem;">
+                    <span class="brand-word brand-word--project">Project</span>
+                    <br><span class="brand-word brand-word--board">Board</span>
+                </h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard-forming.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                    Team Building
+                </a>
+                <a href="#" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>
+                    Mentor Selection
+                </a>
+                <a href="#" class="nav-item disabled">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" /></svg>
+                    Project Proposal
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                    Log Out
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dash-main">
+            <header class="dash-header">
+                <div>
+                    <h2 class="dash-title">Beta Lab Core Team</h2>
+                    <p class="dash-subtitle">Technology Domain: Web Development (Full Stack)</p>
+                </div>
+                <div class="status-badge status-badge--forming">
+                    <span class="status-dot"></span> Mentor Selection
+                </div>
+            </header>
+
+            <div class="dash-content">
+                <!-- Mentor Selection Form -->
+                <div class="glass-card">
+                    <h3 class="card-title">Select Faculty Mentor</h3>
+                    <p class="card-text">Your team roster is now locked. Select a mentor from the available faculty matching your chosen technology domain.</p>
+                    
+                    <form class="login-form mt-24" action="dashboard-waiting.html">
+                        <div class="input-group">
+                            <label for="mentorSelect" class="input-label">Available Faculty</label>
+                            <div class="input-wrapper input-wrapper--select">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                <select id="mentorSelect" name="mentorSelect" required class="glass-select">
+                                    <option value="" disabled selected>Select a Professor</option>
+                                    <option value="1">Prof. Jane Smith (Web Tech)</option>
+                                    <option value="2">Prof. Alan Turing (AI & Web)</option>
+                                    <option value="3">Dr. Sarah Connor (Full Stack)</option>
+                                </select>
+                                <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="login-btn mt-24">
+                            <span class="btn-text">Submit for Approval</span>
+                            <span class="btn-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                    <polyline points="12 5 19 12 12 19" />
+                                </svg>
+                            </span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Roster Section (Locked) -->
+                <div class="glass-card mt-24 opacity-70">
+                    <div class="card-header-flex">
+                        <h3 class="card-title">Team Roster (Locked)</h3>
+                    </div>
+                    <ul class="roster-list">
+                        <li class="roster-item leader-item">
+                            <div class="roster-info">
+                                <div class="avatar">TL</div>
+                                <div>
+                                    <h4>Tirth Leader</h4>
+                                    <p>Enrollment: 123456789</p>
+                                </div>
+                            </div>
+                            <span class="badge badge-leader">Leader</span>
+                        </li>
+                        <li class="roster-item">
+                            <div class="roster-info">
+                                <div class="avatar bg-gray">JD</div>
+                                <div>
+                                    <h4>John Doe</h4>
+                                    <p>Enrollment: 987654321</p>
+                                </div>
+                            </div>
+                            <span class="badge badge-member">Member</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

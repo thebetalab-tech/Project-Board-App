@@ -1,0 +1,291 @@
+/* ============================================
+   PROJECT BOARD — LOGIN PAGE SCRIPTS
+   3D Background, Particles, Form Interactions
+   ============================================ */
+
+document.addEventListener('DOMContentLoaded', () => {
+    initParticles();
+    initPasswordToggle();
+    initFormValidation();
+    initRippleEffect();
+    initInputAnimations();
+    initSeamlessVideoLoop();
+});
+
+
+/* ============================================
+   FLOATING PARTICLES
+   ============================================ */
+function initParticles() {
+    const field = document.getElementById('particleField');
+    if (!field) return;
+
+    const particleCount = 30;
+
+    for (let i = 0; i < particleCount; i++) {
+        createParticle(field, i);
+    }
+}
+
+function createParticle(container, index) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+
+    // Randomize properties
+    const size = Math.random() * 3 + 1;
+    const left = Math.random() * 100;
+    const duration = Math.random() * 12 + 10;
+    const delay = Math.random() * 15;
+    const opacity = Math.random() * 0.4 + 0.1;
+
+    // Some particles are red-tinted
+    const isRed = Math.random() > 0.7;
+
+    particle.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        left: ${left}%;
+        animation-duration: ${duration}s;
+        animation-delay: ${delay}s;
+        opacity: 0;
+        background: ${isRed ? 'rgba(163, 11, 11, 0.6)' : 'rgba(255, 255, 255, 0.5)'};
+        box-shadow: 0 0 ${size * 2}px ${isRed ? 'rgba(163, 11, 11, 0.3)' : 'rgba(255, 255, 255, 0.2)'};
+    `;
+
+    container.appendChild(particle);
+}
+
+
+/* ============================================
+   PASSWORD SHOW/HIDE TOGGLE
+   ============================================ */
+function initPasswordToggle() {
+    const toggle = document.getElementById('passwordToggle');
+    const passwordInput = document.getElementById('password');
+    const eyeOpen = toggle.querySelector('.eye-open');
+    const eyeClosed = toggle.querySelector('.eye-closed');
+
+    let isVisible = false;
+
+    toggle.addEventListener('click', () => {
+        isVisible = !isVisible;
+
+        if (isVisible) {
+            passwordInput.type = 'text';
+            eyeOpen.style.display = 'none';
+            eyeClosed.style.display = 'block';
+        } else {
+            passwordInput.type = 'password';
+            eyeOpen.style.display = 'block';
+            eyeClosed.style.display = 'none';
+        }
+
+        // Micro animation on toggle
+        toggle.style.transform = 'scale(0.8)';
+        setTimeout(() => {
+            toggle.style.transform = 'scale(1)';
+        }, 150);
+    });
+}
+
+
+/* ============================================
+   FORM VALIDATION & SUBMIT
+   ============================================ */
+function initFormValidation() {
+    const form = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginIdInput = document.getElementById('loginId');
+    const passwordInput = document.getElementById('password');
+    const emailGroup = document.getElementById('emailGroup');
+    const passwordGroup = document.getElementById('passwordGroup');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        let isValid = true;
+
+        // Validate Login ID
+        if (!loginIdInput.value.trim()) {
+            emailGroup.classList.add('error');
+            emailGroup.classList.remove('success');
+            isValid = false;
+        } else {
+            emailGroup.classList.remove('error');
+            emailGroup.classList.add('success');
+        }
+
+        // Validate Password
+        if (!passwordInput.value.trim()) {
+            passwordGroup.classList.add('error');
+            passwordGroup.classList.remove('success');
+            isValid = false;
+        } else {
+            passwordGroup.classList.remove('error');
+            passwordGroup.classList.add('success');
+        }
+
+        if (isValid) {
+            // Show loading state
+            loginBtn.classList.add('loading');
+
+            // Simulate login (replace with actual API call)
+            setTimeout(() => {
+                loginBtn.classList.remove('loading');
+                // Success feedback
+                showSuccessPulse();
+            }, 2000);
+        }
+    });
+
+    // Clear error on input
+    loginIdInput.addEventListener('input', () => {
+        emailGroup.classList.remove('error');
+    });
+
+    passwordInput.addEventListener('input', () => {
+        passwordGroup.classList.remove('error');
+    });
+}
+
+function showSuccessPulse() {
+    const card = document.querySelector('.form-side-content');
+    if (!card) return;
+    card.style.filter = 'drop-shadow(0 0 20px rgba(46, 204, 113, 0.35))';
+    setTimeout(() => {
+        card.style.filter = '';
+    }, 1500);
+}
+
+
+/* ============================================
+   BUTTON RIPPLE EFFECT
+   ============================================ */
+function initRippleEffect() {
+    const loginBtn = document.getElementById('loginBtn');
+
+    loginBtn.addEventListener('click', (e) => {
+        const ripple = loginBtn.querySelector('.btn-ripple');
+        const rect = loginBtn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+
+        ripple.classList.remove('active');
+        // Force reflow
+        void ripple.offsetWidth;
+        ripple.classList.add('active');
+
+        setTimeout(() => {
+            ripple.classList.remove('active');
+        }, 600);
+    });
+}
+
+
+/* ============================================
+   INPUT FOCUS ANIMATIONS
+   ============================================ */
+function initInputAnimations() {
+    const inputs = document.querySelectorAll('.input-wrapper input');
+
+    inputs.forEach(input => {
+        // Floating label effect on focus/blur
+        input.addEventListener('focus', () => {
+            input.closest('.input-group').classList.add('focused');
+        });
+
+        input.addEventListener('blur', () => {
+            input.closest('.input-group').classList.remove('focused');
+            if (input.value.trim()) {
+                input.closest('.input-group').classList.add('has-value');
+            } else {
+                input.closest('.input-group').classList.remove('has-value');
+            }
+        });
+    });
+
+    // Links hover sound (visual feedback only)
+    const links = document.querySelectorAll('.forgot-link, .register-btn');
+    links.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            link.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        });
+    });
+}
+
+/* ============================================
+   SEAMLESS VIDEO LOOP CROSSFADE
+   ============================================ */
+function initSeamlessVideoLoop() {
+    const v1 = document.getElementById('bg-video-1');
+    const v2 = document.getElementById('bg-video-2');
+    if (!v1 || !v2) return;
+
+    let activeVideo = v1;
+    let inactiveVideo = v2;
+    let crossfading = false;
+    const crossfadeTime = 1.2; // matching CSS opacity transition
+
+    function checkTime() {
+        if (crossfading) return;
+
+        const duration = activeVideo.duration;
+        if (!duration || isNaN(duration)) return;
+
+        // Trigger crossfade 1.5 seconds before the active video ends
+        if (activeVideo.currentTime >= duration - 1.5) {
+            crossfading = true;
+
+            inactiveVideo.currentTime = 0;
+            inactiveVideo.play().then(() => {
+                // Crossfade: fade inactive video in, active video out
+                inactiveVideo.style.opacity = '1';
+                activeVideo.style.opacity = '0';
+
+                setTimeout(() => {
+                    activeVideo.pause();
+                    activeVideo.currentTime = 0;
+
+                    // Swap references
+                    const temp = activeVideo;
+                    activeVideo = inactiveVideo;
+                    inactiveVideo = temp;
+                    crossfading = false;
+                }, crossfadeTime * 1000);
+            }).catch(err => {
+                console.warn("Seamless video loop play failed:", err);
+                crossfading = false;
+            });
+        }
+    }
+
+    // Check progress on timeupdate
+    v1.addEventListener('timeupdate', checkTime);
+    v2.addEventListener('timeupdate', checkTime);
+
+    // Fallbacks
+    v1.addEventListener('ended', () => {
+        if (activeVideo === v1) {
+            v2.currentTime = 0;
+            v2.play();
+            v2.style.opacity = '1';
+            v1.style.opacity = '0';
+            activeVideo = v2;
+            inactiveVideo = v1;
+        }
+    });
+
+    v2.addEventListener('ended', () => {
+        if (activeVideo === v2) {
+            v1.currentTime = 0;
+            v1.play();
+            v1.style.opacity = '1';
+            v2.style.opacity = '0';
+            activeVideo = v1;
+            inactiveVideo = v2;
+        }
+    });
+}

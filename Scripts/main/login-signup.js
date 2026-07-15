@@ -62,12 +62,8 @@ function createParticle(container, index) {
 function initPasswordToggle() {
     const toggle = document.getElementById('passwordToggle');
     const passwordInput = document.getElementById('password');
-    if (!toggle || !passwordInput) return;
-
     const eyeOpen = toggle.querySelector('.eye-open');
     const eyeClosed = toggle.querySelector('.eye-closed');
-
-    if (!eyeOpen || !eyeClosed) return;
 
     let isVisible = false;
 
@@ -97,84 +93,58 @@ function initPasswordToggle() {
    FORM VALIDATION & SUBMIT
    ============================================ */
 function initFormValidation() {
-    const submitButton = document.getElementById('loginBtn') || document.getElementById('btnLogin');
-    if (!submitButton) return;
+    const form = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginIdInput = document.getElementById('loginId');
+    const passwordInput = document.getElementById('password');
+    const emailGroup = document.getElementById('emailGroup');
+    const passwordGroup = document.getElementById('passwordGroup');
 
-    const pageInputs = {
-        fullName: document.getElementById('fullName'),
-        loginId: document.getElementById('loginId') || document.getElementById('txtLoginID'),
-        enrollment: document.getElementById('enrollment'),
-        password: document.getElementById('password') || document.getElementById('txtPassword'),
-        confirmPassword: document.getElementById('confirmPassword')
-    };
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-    const groups = {
-        fullName: document.getElementById('nameGroup'),
-        loginId: document.getElementById('emailGroup'),
-        enrollment: document.getElementById('enrollmentGroup'),
-        password: document.getElementById('passwordGroup'),
-        confirmPassword: document.getElementById('confirmPasswordGroup')
-    };
-
-    const applyState = (group, state) => {
-        if (!group) return;
-        group.classList.remove('error', 'success');
-        if (state) {
-            group.classList.add(state);
-        }
-    };
-
-    const markInput = (input, group, valid) => {
-        if (!input) return true;
-        const isValid = valid(input.value.trim());
-        applyState(group, isValid ? 'success' : 'error');
-        return isValid;
-    };
-
-    const validate = () => {
         let isValid = true;
 
-        if (pageInputs.fullName) {
-            isValid = markInput(pageInputs.fullName, groups.fullName, value => value.length > 0) && isValid;
+        // Validate Login ID
+        if (!loginIdInput.value.trim()) {
+            emailGroup.classList.add('error');
+            emailGroup.classList.remove('success');
+            isValid = false;
+        } else {
+            emailGroup.classList.remove('error');
+            emailGroup.classList.add('success');
         }
 
-        if (pageInputs.loginId) {
-            isValid = markInput(pageInputs.loginId, groups.loginId, value => value.length > 0) && isValid;
+        // Validate Password
+        if (!passwordInput.value.trim()) {
+            passwordGroup.classList.add('error');
+            passwordGroup.classList.remove('success');
+            isValid = false;
+        } else {
+            passwordGroup.classList.remove('error');
+            passwordGroup.classList.add('success');
         }
 
-        if (pageInputs.enrollment) {
-            isValid = markInput(pageInputs.enrollment, groups.enrollment, value => value.length > 0) && isValid;
+        if (isValid) {
+            // Show loading state
+            loginBtn.classList.add('loading');
+
+            // Simulate login (replace with actual API call)
+            setTimeout(() => {
+                loginBtn.classList.remove('loading');
+                // Success feedback
+                showSuccessPulse();
+            }, 2000);
         }
-
-        if (pageInputs.password) {
-            isValid = markInput(pageInputs.password, groups.password, value => value.length > 0) && isValid;
-        }
-
-        if (pageInputs.confirmPassword) {
-            const passwordValue = pageInputs.password ? pageInputs.password.value.trim() : '';
-            isValid = markInput(pageInputs.confirmPassword, groups.confirmPassword, value => value.length > 0 && value === passwordValue) && isValid;
-        }
-
-        return isValid;
-    };
-
-    submitButton.addEventListener('click', (e) => {
-        if (!validate()) {
-            e.preventDefault();
-            return;
-        }
-
-        submitButton.classList.add('loading');
     });
 
-    Object.values(pageInputs).forEach(input => {
-        if (!input) return;
-        input.addEventListener('input', () => {
-            const group = input.closest('.input-group');
-            if (group) {
-                group.classList.remove('error');
-            }
-        });
+    // Clear error on input
+    loginIdInput.addEventListener('input', () => {
+        emailGroup.classList.remove('error');
+    });
+
+    passwordInput.addEventListener('input', () => {
+        passwordGroup.classList.remove('error');
     });
 }
 
@@ -192,13 +162,10 @@ function showSuccessPulse() {
    BUTTON RIPPLE EFFECT
    ============================================ */
 function initRippleEffect() {
-    const loginBtn = document.getElementById('loginBtn') || document.getElementById('btnLogin');
-    if (!loginBtn) return;
+    const loginBtn = document.getElementById('loginBtn');
 
     loginBtn.addEventListener('click', (e) => {
         const ripple = loginBtn.querySelector('.btn-ripple');
-        if (!ripple) return;
-
         const rect = loginBtn.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);
 
@@ -223,7 +190,6 @@ function initRippleEffect() {
    ============================================ */
 function initInputAnimations() {
     const inputs = document.querySelectorAll('.input-wrapper input');
-    if (!inputs.length) return;
 
     inputs.forEach(input => {
         // Floating label effect on focus/blur
