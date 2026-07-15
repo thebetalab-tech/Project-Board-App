@@ -1,15 +1,215 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Admin_UserManagement.aspx.cs" Inherits="Project_Board.Admin.Admin_UserManagement" %>
-
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Admin_UserManagement.aspx.cs" Inherits="Project_Board.Admin.Admin_UserManagement" %>
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Users</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">P</div>
+            <h2>Project Board</h2>
         </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Main Menu</div>
+                <a href="Admin_Dashboard.aspx" class="nav-link">
+                    <i class="fa-solid fa-chart-pie"></i> Overview
+                </a>
+                <a href="Admin_UserManagement.aspx" class="nav-link active">
+                    <i class="fa-solid fa-users"></i> Users Management
+                </a>
+                <a href="Admin_GroupsManagement.aspx" class="nav-link">
+                    <i class="fa-solid fa-user-group"></i> Groups
+                </a>
+                <a href="Admin_ProjectsManagement.aspx" class="nav-link">
+                    <i class="fa-solid fa-folder-open"></i> Projects
+                </a>
+                <a href="Admin_TechManagement.aspx" class="nav-link">
+                    <i class="fa-solid fa-microchip"></i> Technologies
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Preferences</div>
+                <a href="#settings" class="nav-link">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </a>
+                <a href="../Logout.aspx" class="nav-link">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="avatar">AD</div>
+                <div class="user-info">
+                    <h4>System Admin</h4>
+                    <p>admin@university.edu</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="search-bar">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" placeholder="Search users...">
+            </div>
+            
+            <div class="topbar-actions">
+                <button class="action-btn">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-badge"></span>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <div class="view-section active">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Users Management</h1>
+                        <p>Manage all students, faculty, and administrators.</p>
+                    </div>
+                    <button class="btn-primary" onclick="openModal('userModal')">
+                        <i class="fa-solid fa-user-plus"></i> Add User
+                    </button>
+                </div>
+
+                <div class="data-section">
+                    <div class="section-header">
+                        <h2>All Users</h2>
+                        <div class="search-bar" style="width: 250px;">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" placeholder="Filter users...">
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Enrollment/ID</th>
+                                <th>Role</th>
+                                <th>Leader Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-cell-avatar">JS</div>
+                                        <div class="user-cell-info">
+                                            <h4>John Smith</h4>
+                                            <p>john.smith@student.edu</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>ENR2023001</td>
+                                <td><span class="badge student">Student</span></td>
+                                <td><i class="fa-solid fa-crown" style="color: var(--c-yellow);" title="Group Leader"></i> Yes</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="icon-btn"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-cell-avatar" style="background:var(--c-blue-bg);color:var(--c-blue)">DR</div>
+                                        <div class="user-cell-info">
+                                            <h4>Dr. Robert Chen</h4>
+                                            <p>r.chen@faculty.edu</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>FAC1042</td>
+                                <td><span class="badge faculty">Faculty</span></td>
+                                <td>-</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="icon-btn"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-cell-avatar" style="background:var(--c-accent-bg);color:var(--c-accent)">AD</div>
+                                        <div class="user-cell-info">
+                                            <h4>System Admin</h4>
+                                            <p>admin@university.edu</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>ADM001</td>
+                                <td><span class="badge admin">Admin</span></td>
+                                <td>-</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="icon-btn"><i class="fa-solid fa-pen"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem; font-family: var(--f-display);">Add New User</h2>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" class="form-control" placeholder="Enter full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" placeholder="user@university.edu" required>
+                </div>
+                <div style="display:flex; gap:1rem;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Enrollment / Faculty ID</label>
+                        <input type="text" class="form-control" placeholder="e.g. ENR2023...">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Role</label>
+                        <select class="form-control">
+                            <option value="Student">Student</option>
+                            <option value="Faculty">Faculty</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('userModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
     </form>
 </body>
 </html>
+

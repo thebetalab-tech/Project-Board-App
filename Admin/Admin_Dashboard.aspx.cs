@@ -15,7 +15,7 @@ namespace Project_Board.Admin
             {
                 if(Session["role"]==null || Session["role"].ToString() != "Admin")
                 {
-                    Response.Redirect("~/Login.aspx");
+                    Response.Redirect("~/Default.aspx");
                 }
             }
         }

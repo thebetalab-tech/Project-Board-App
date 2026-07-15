@@ -102,6 +102,10 @@
     <Content Include="Admin\admin.css" />
     <Content Include="Admin\admin.js" />
     <Content Include="Admin\Admin_Dashboard.aspx" />
+    <Content Include="Admin\Admin_GroupsManagement.aspx" />
+    <Content Include="Admin\Admin_ProjectsManagement.aspx" />
+    <Content Include="Admin\Admin_TechManagement.aspx" />
+    <Content Include="Admin\Admin_UserManagement.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -200,6 +204,34 @@
     </Compile>
     <Compile Include="Admin\Admin_Dashboard.aspx.designer.cs">
       <DependentUpon>Admin_Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Admin_GroupsManagement.aspx.cs">
+      <DependentUpon>Admin_GroupsManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Admin_GroupsManagement.aspx.designer.cs">
+      <DependentUpon>Admin_GroupsManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Admin_ProjectsManagement.aspx.cs">
+      <DependentUpon>Admin_ProjectsManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Admin_ProjectsManagement.aspx.designer.cs">
+      <DependentUpon>Admin_ProjectsManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Admin_TechManagement.aspx.cs">
+      <DependentUpon>Admin_TechManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Admin_TechManagement.aspx.designer.cs">
+      <DependentUpon>Admin_TechManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Admin_UserManagement.aspx.cs">
+      <DependentUpon>Admin_UserManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Admin_UserManagement.aspx.designer.cs">
+      <DependentUpon>Admin_UserManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
