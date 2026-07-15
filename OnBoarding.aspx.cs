@@ -16,7 +16,7 @@ namespace Project_Board
                 // Check if the user is already logged in
                 if (Session["Role"] == null || Session["Role"].ToString() != "Student")
                 {
-                    Response.Redirect("Login.aspx");
+                    Response.Redirect("Default.aspx");
                 }
             }
         }

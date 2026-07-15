@@ -93,59 +93,33 @@ function initPasswordToggle() {
    FORM VALIDATION & SUBMIT
    ============================================ */
 function initFormValidation() {
-    const form = document.getElementById('loginForm');
+    const form = document.getElementById('loginForm') || document.getElementById('signupForm');
     const loginBtn = document.getElementById('loginBtn');
-    const loginIdInput = document.getElementById('loginId');
-    const passwordInput = document.getElementById('password');
+    
+    // Support both Default.aspx (txtLoginID, txtPassword) and SignUp.aspx (loginId, password)
+    const loginIdInput = document.getElementById('loginId') || document.getElementById('txtLoginID');
+    const passwordInput = document.getElementById('password') || document.getElementById('txtPassword');
     const emailGroup = document.getElementById('emailGroup');
     const passwordGroup = document.getElementById('passwordGroup');
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            // Let ASP.NET handle the submit if it's an asp:LinkButton
+            // e.preventDefault(); 
+        });
+    }
 
-        let isValid = true;
-
-        // Validate Login ID
-        if (!loginIdInput.value.trim()) {
-            emailGroup.classList.add('error');
-            emailGroup.classList.remove('success');
-            isValid = false;
-        } else {
+    if (loginIdInput && emailGroup) {
+        loginIdInput.addEventListener('input', () => {
             emailGroup.classList.remove('error');
-            emailGroup.classList.add('success');
-        }
+        });
+    }
 
-        // Validate Password
-        if (!passwordInput.value.trim()) {
-            passwordGroup.classList.add('error');
-            passwordGroup.classList.remove('success');
-            isValid = false;
-        } else {
+    if (passwordInput && passwordGroup) {
+        passwordInput.addEventListener('input', () => {
             passwordGroup.classList.remove('error');
-            passwordGroup.classList.add('success');
-        }
-
-        if (isValid) {
-            // Show loading state
-            loginBtn.classList.add('loading');
-
-            // Simulate login (replace with actual API call)
-            setTimeout(() => {
-                loginBtn.classList.remove('loading');
-                // Success feedback
-                showSuccessPulse();
-            }, 2000);
-        }
-    });
-
-    // Clear error on input
-    loginIdInput.addEventListener('input', () => {
-        emailGroup.classList.remove('error');
-    });
-
-    passwordInput.addEventListener('input', () => {
-        passwordGroup.classList.remove('error');
-    });
+        });
+    }
 }
 
 function showSuccessPulse() {

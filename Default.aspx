@@ -48,7 +48,7 @@
                         <h2 class="form-title">Welcome Back</h2>
                         <p class="form-subtitle">Sign in to continue to your dashboard</p>
                     </div>
-
+                    <asp:Label ID="lblError" runat="server" ForeColor="#ff4d4d" CssClass="error-message" EnableViewState="false"></asp:Label>
                     <div class="login-form" id="loginForm">
 
                         <div class="input-group" id="emailGroup">
@@ -60,7 +60,7 @@
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
                                 <asp:TextBox ID="txtLoginID" runat="server" ClientIDMode="Static" CssClass="form-input"
-                                    placeholder="Enter your email or username"></asp:TextBox>
+                                    placeholder="Enter your Email Or Enrollment Or UID"></asp:TextBox>
                             </div>
                         </div>
 

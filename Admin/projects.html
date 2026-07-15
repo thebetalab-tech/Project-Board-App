@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Projects</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">P</div>
+            <h2>Project Board</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Main Menu</div>
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-chart-pie"></i> Overview
+                </a>
+                <a href="users.html" class="nav-link">
+                    <i class="fa-solid fa-users"></i> Users Management
+                </a>
+                <a href="groups.html" class="nav-link">
+                    <i class="fa-solid fa-user-group"></i> Groups
+                </a>
+                <a href="projects.html" class="nav-link active">
+                    <i class="fa-solid fa-folder-open"></i> Projects
+                </a>
+                <a href="technologies.html" class="nav-link">
+                    <i class="fa-solid fa-microchip"></i> Technologies
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Preferences</div>
+                <a href="#settings" class="nav-link">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </a>
+                <a href="../index.html" class="nav-link">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="avatar">AD</div>
+                <div class="user-info">
+                    <h4>System Admin</h4>
+                    <p>admin@university.edu</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="search-bar">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" placeholder="Search projects...">
+            </div>
+            
+            <div class="topbar-actions">
+                <button class="action-btn">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-badge"></span>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <div class="view-section active">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Projects Directory</h1>
+                        <p>Track all UDP/IDP projects and their approval status.</p>
+                    </div>
+                </div>
+
+                <div class="data-section">
+                    <div class="section-header">
+                        <h2>All Projects</h2>
+                        <div class="section-actions">
+                            <select class="form-control" style="width:auto; padding: 0.5rem;">
+                                <option>All Status</option>
+                                <option>Pending</option>
+                                <option>Approved</option>
+                                <option>Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title & Functionality</th>
+                                <th>Group</th>
+                                <th>Keywords</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="max-width: 300px;">
+                                        <strong>AI Health Assistant</strong>
+                                        <p style="font-size:0.75rem; color:var(--c-text-muted); margin-top:0.25rem;">
+                                            A chatbot diagnosing minor symptoms using NLP and ML algorithms.
+                                        </p>
+                                    </div>
+                                </td>
+                                <td>Group Alpha</td>
+                                <td>
+                                    <span class="tech-tag">AI</span>
+                                    <span class="tech-tag">NLP</span>
+                                </td>
+                                <td><span class="badge status-pending">Pending</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="icon-btn" title="Approve" style="color:var(--c-green)"><i class="fa-solid fa-check"></i></button>
+                                        <button class="icon-btn" title="Reject" style="color:var(--c-red)"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>
