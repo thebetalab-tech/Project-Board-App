@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard — Project Board</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           PROJECT BOARD — STUDENT DASHBOARD INTEGRATED CSS
+           ============================================ */
+
+        /* --- CSS Theme Variables --- */
+        :root {
+            /* Dark Theme Variables (Default) */
+            --body-bg: #050505;
+            --white: #FFFFFF;
+            --black: #000000;
+            --red-primary: #A30B0B;
+            --red-light: #D41414;
+            --red-dark: #7A0808;
+            --red-glow: rgba(163, 11, 11, 0.5);
+            --red-subtle: rgba(163, 11, 11, 0.15);
+
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.65);
+            --text-muted: rgba(255, 255, 255, 0.4);
+
+            --glass-bg: rgba(15, 23, 42, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.05);
+
+            --input-bg: rgba(255, 255, 255, 0.06);
+            --input-border: rgba(255, 255, 255, 0.1);
+            --input-focus: rgba(163, 11, 11, 0.6);
+
+            --layout-bg: rgba(0, 0, 0, 0.2);
+            --sidebar-bg: rgba(15, 23, 42, 0.4);
+            --card-bg: rgba(15, 23, 42, 0.4);
+            --card-shadow: rgba(0, 0, 0, 0.4);
+            --item-bg: rgba(255, 255, 255, 0.03);
+            --item-border: rgba(255, 255, 255, 0.05);
+            --item-hover-bg: rgba(255, 255, 255, 0.05);
+
+            --kanban-column-bg: rgba(255, 255, 255, 0.02);
+            --task-card-bg: rgba(15, 23, 42, 0.5);
+            --task-card-hover-bg: rgba(15, 23, 42, 0.75);
+
+            --bg-image-opacity: 0.3;
+            --bg-decor-display: block;
+
+            --font-primary: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-secondary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-serif: 'Playfair Display', serif;
+
+            --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-smooth: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-spring: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        body.theme-light {
+            /* Light Theme Variable Overrides */
+            --body-bg: #f8fafc;
+            --white: #111827;
+            --black: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+
+            --glass-bg: #ffffff;
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --glass-highlight: transparent;
+
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --input-focus: rgba(163, 11, 11, 0.2);
+
+            --layout-bg: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --card-shadow: rgba(0, 0, 0, 0.02);
+            --item-bg: #f8fafc;
+            --item-border: rgba(0, 0, 0, 0.05);
+            --item-hover-bg: #f1f5f9;
+
+            --kanban-column-bg: #ffffff;
+            --task-card-bg: #ffffff;
+            --task-card-hover-bg: #f8fafc;
+
+            --bg-image-opacity: 0;
+            --bg-decor-display: none;
+        }
+
+        /* --- Reset & Base --- */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--body-bg);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            transition: background-color var(--transition-smooth), color var(--transition-smooth);
+        }
+
+        /* --- Background --- */
+        .theme-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-color: var(--body-bg);
+        }
+        .theme-bg__image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('bg.webp');
+            background-size: cover;
+            background-position: center bottom;
+            z-index: 0;
+            opacity: var(--bg-image-opacity);
+            display: var(--bg-decor-display);
+        }
+        .theme-bg__blur {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: var(--bg-decor-display);
+        }
+        .theme-bg__gradient {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.2) 0%, rgba(5,5,5,0.6) 60%, rgba(5,5,5,0.95) 100%);
+            display: var(--bg-decor-display);
+        }
+
+        .particle-field {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            display: var(--bg-decor-display);
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--white);
+            opacity: 0;
+            animation: particleFloat linear infinite;
+        }
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+        }
+
+        /* --- Main Layout --- */
+        .dashboard-layout {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            height: 100vh;
+            background: var(--layout-bg);
+        }
+
+        /* Sidebar */
+        .dash-sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(24px) saturate(1.2);
+            -webkit-backdrop-filter: blur(24px) saturate(1.2);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: background-color var(--transition-smooth), border-color var(--transition-smooth);
+        }
+
+        .sidebar-brand {
+            padding: 32px 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .brand-title {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .brand-word--project {
+            color: var(--white);
+        }
+
+        .brand-word--board {
+            color: var(--red-primary);
+        }
+
+        .sidebar-nav {
+            padding: 24px 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: var(--font-secondary);
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            stroke-width: 2;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+        }
+        body.theme-light .nav-item:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-item.active {
+            background: rgba(163, 11, 11, 0.2);
+            color: var(--red-light);
+            border: 1px solid rgba(163, 11, 11, 0.3);
+        }
+        body.theme-light .nav-item.active {
+            background: rgba(163, 11, 11, 0.08);
+            border-color: rgba(163, 11, 11, 0.15);
+            color: var(--red-primary);
+        }
+
+        .sidebar-footer {
+            padding: 20px 16px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        /* --- Main Content --- */
+        .dash-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 40px;
+            position: relative;
+        }
+
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 20px;
+            gap: 20px;
+        }
+
+        .dash-title {
+            font-size: 2rem;
+            font-family: var(--font-primary);
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .dash-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-family: var(--font-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: var(--font-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34D399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #34D399;
+            box-shadow: 0 0 8px #34D399;
+        }
+
+        /* Tiny Circular Theme Toggle Button */
+        .theme-toggle-circular {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--item-bg);
+            border: 1px solid var(--item-border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .theme-toggle-circular:hover {
+            background: var(--item-hover-bg);
+            color: var(--white);
+        }
+        .theme-toggle-circular svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Cards Layout */
+        .dash-content {
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px) saturate(1.2);
+            -webkit-backdrop-filter: blur(16px) saturate(1.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 20px var(--card-shadow);
+            transition: background-color var(--transition-smooth), border-color var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: var(--white);
+            margin-bottom: 12px;
+            font-family: var(--font-primary);
+            font-weight: 600;
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 16px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 8px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+        }
+        body.theme-light .stat-card {
+            background: #f1f5f9;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--red-light);
+            margin-bottom: 4px;
+        }
+        body.theme-light .stat-number {
+            color: var(--red-primary);
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- Roster List --- */
+        .roster-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .roster-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--item-bg);
+            border: 1px solid var(--item-border);
+            border-radius: 12px;
+            transition: all var(--transition-fast);
+        }
+        .roster-item:hover {
+            background: var(--item-hover-bg);
+        }
+
+        .roster-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(163, 11, 11, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #ffffff;
+            font-family: var(--font-primary);
+        }
+
+        .roster-info h4 {
+            color: var(--white);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .roster-info p {
+            color: var(--text-secondary);
+            font-family: var(--font-secondary);
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+        }
+        body.theme-light .badge {
+            background: #e2e8f0;
+            color: #4b5563;
+            border-color: rgba(0,0,0,0.05);
+        }
+
+        /* --- Buttons --- */
+        .btn-primary-small {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+            color: #ffffff;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: var(--font-primary);
+            transition: all var(--transition-fast);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(163, 11, 11, 0.4);
+        }
+
+        /* --- Forms Layout --- */
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        .input-label {
+            display: block;
+            font-family: var(--font-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            font-family: var(--font-secondary);
+            font-size: 0.925rem;
+            color: var(--white);
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 14px;
+            outline: none;
+            transition: all var(--transition-smooth);
+        }
+
+        .input-wrapper input:focus {
+            background: var(--input-bg);
+            border-color: var(--red-light);
+            box-shadow: 0 0 0 3px var(--input-focus);
+        }
+
+        .input-wrapper--select {
+            position: relative;
+        }
+
+        .glass-select {
+            width: 100%;
+            padding: 14px 48px 14px 48px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 14px;
+            color: var(--white);
+            font-family: var(--font-secondary);
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .glass-select option {
+            background: #0f172a;
+            color: #ffffff;
+        }
+        body.theme-light .glass-select option {
+            background: #ffffff;
+            color: #111827;
+        }
+
+        .select-chevron {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .glass-textarea {
+            width: 100%;
+            padding: 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 14px;
+            color: var(--white);
+            font-family: var(--font-secondary);
+            resize: vertical;
+            outline: none;
+            transition: all var(--transition-fast);
+        }
+        .glass-textarea:focus {
+            background: var(--input-bg);
+            border-color: var(--red-light);
+            box-shadow: 0 0 0 3px var(--input-focus);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px 32px;
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(163, 11, 11, 0.35);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(163, 11, 11, 0.5);
+        }
+
+        .btn-arrow {
+            display: flex;
+            align-items: center;
+            width: 20px;
+            height: 20px;
+            transition: transform var(--transition-smooth);
+        }
+
+        .btn-arrow svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
+        }
+
+        .login-btn:hover .btn-arrow {
+            transform: translateX(4px);
+        }
+
+        /* ============================================
+           KANBAN TASK BOARD CSS (TWO COLUMN SKELETON)
+           ============================================ */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .kanban-column {
+            background: var(--kanban-column-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: 450px;
+            transition: all var(--transition-smooth);
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .column-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--white);
+            font-family: var(--font-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .column-count {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        body.theme-light .column-count {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .tasks-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 100px;
+            transition: background-color 0.2s ease;
+            border-radius: 8px;
+        }
+
+        .tasks-list.drag-over {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        body.theme-light .tasks-list.drag-over {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .task-card {
+            background: var(--task-card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px;
+            cursor: grab;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        .task-card:active {
+            cursor: grabbing;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: var(--task-card-hover-bg);
+        }
+        body.theme-light .task-card:hover {
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .task-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--white);
+            margin-bottom: 10px;
+            font-family: var(--font-secondary);
+            line-height: 1.4;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .task-assignee {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .task-assignee-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--red-glow);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body.theme-light .task-assignee-avatar {
+            background: #fee2e2;
+            color: var(--red-primary);
+        }
+
+        .task-priority {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-high {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+        .priority-medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+        .priority-low {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+        body.theme-light .priority-high { color: #dc2626; border-color: rgba(239, 68, 68, 0.1); }
+        body.theme-light .priority-medium { color: #d97706; border-color: rgba(245, 158, 11, 0.1); }
+        body.theme-light .priority-low { color: #2563eb; border-color: rgba(59, 130, 246, 0.1); }
+
+        .task-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        body.theme-light .task-controls {
+            border-top-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .task-move-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .task-move-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        body.theme-light .task-move-btn {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+            color: #4b5563;
+        }
+
+        .task-move-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--white);
+        }
+        body.theme-light .task-move-btn:hover {
+            background: #e2e8f0;
+            color: #111827;
+        }
+
+        .task-delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: color var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .task-delete-btn:hover {
+            color: #f87171;
+        }
+
+        /* Notification Feed */
+        .notif-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .notif-item {
+            font-family: var(--font-secondary);
+            font-size: 0.85rem;
+            padding: 10px 14px;
+            background: var(--item-bg);
+            border: 1px solid var(--item-border);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+        }
+        .notif-time {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        /* --- Utilities --- */
+        .mt-16 { margin-top: 16px; }
+        .mt-24 { margin-top: 24px; }
+        .d-none { display: none !important; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body class="theme-light">
+    <!-- Theme Background elements -->
+    <div class="theme-bg">
+        <div class="theme-bg__image"></div>
+        <div class="theme-bg__blur"></div>
+        <div class="theme-bg__gradient"></div>
+    </div>
+    
+    <!-- Floating Particle Container -->
+    <div class="particle-field" id="particleField"></div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dash-sidebar">
+            <div class="sidebar-brand">
+                <h1 class="brand-title">
+                    <span class="brand-word brand-word--project">Project</span>
+                    <br><span class="brand-word brand-word--board">Board</span>
+                </h1>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a onclick="switchTab('overview')" id="nav-overview" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                    Overview
+                </a>
+                
+                <a onclick="switchTab('roster')" id="nav-roster" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                    Team Roster
+                </a>
+                
+                <a onclick="switchTab('proposal')" id="nav-proposal" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" /></svg>
+                    Project Proposal
+                </a>
+                
+                <a onclick="switchTab('kanban')" id="nav-kanban" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+                    Task Board
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="login.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                    Log Out
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="dash-main">
+            <!-- Header -->
+            <header class="dash-header">
+                <div>
+                    <h2 class="dash-title" id="display-group-name">Beta Lab Core Team</h2>
+                    <p class="dash-subtitle" id="display-subtitle">Technology Domain: Web Development (Full Stack)</p>
+                </div>
+                <div class="header-actions">
+                    <div class="status-badge">
+                        <span class="status-dot"></span> Active Group
+                    </div>
+                    <!-- Tiny Circular Theme Switch Toggle Button -->
+                    <button onclick="toggleTheme()" class="theme-toggle-circular" id="theme-btn" title="Toggle Theme">
+                        <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Views Content -->
+            <div class="dash-content">
+                
+                <!-- VIEW 1: OVERVIEW -->
+                <div id="view-overview" class="spa-view">
+                    <!-- Quick Stats (In progress and Completed cards removed) -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="stat-members">3</div>
+                            <div class="stat-label">Team Members</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="stat-todo">3</div>
+                            <div class="stat-label">Project Tasks</div>
+                        </div>
+                    </div>
+
+                    <!-- Welcome Card -->
+                    <div class="glass-card mt-24">
+                        <h3 class="card-title">Welcome to your Project Board</h3>
+                        <p class="card-text">Your group has been successfully initialized and registered. Use the navigation panel on the left to review your roster, submit your project proposal details, or add and track development tasks on the Kanban board.</p>
+                    </div>
+
+                    <!-- Recent Activity Logs -->
+                    <div class="glass-card mt-24">
+                        <h3 class="card-title">Activity Feed & Logs</h3>
+                        <ul class="notif-list" id="notif-container">
+                            <!-- Activities -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: TEAM ROSTER -->
+                <div id="view-roster" class="spa-view d-none">
+                    <div class="glass-card">
+                        <div class="card-header-flex">
+                            <h3 class="card-title">Team Roster</h3>
+                        </div>
+                        <p class="card-text">Roster is finalized. You cannot edit members anymore. If any edits are required, please contact the Lab Coordinator.</p>
+                        
+                        <ul class="roster-list" id="roster-list-container">
+                            <!-- Members List -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: PROJECT PROPOSAL -->
+                <div id="view-proposal" class="spa-view d-none">
+                    <!-- Proposal Form -->
+                    <div id="proposal-form-card" class="glass-card">
+                        <h3 class="card-title">Submit Project Proposal</h3>
+                        <p class="card-text">Enter your web development project title and functional details to submit for scope review.</p>
+                        
+                        <form id="proposal-form" onsubmit="submitProposalForm(event)" class="login-form mt-24">
+                            <div class="input-group">
+                                <label for="projectTitle" class="input-label">Project Title</label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                    </svg>
+                                    <input type="text" id="projectTitle" name="projectTitle" placeholder="Enter project title..." required>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="projectFunc" class="input-label">Core Functionality & Scope</label>
+                                <div class="input-wrapper">
+                                    <textarea id="projectFunc" name="projectFunc" class="glass-textarea" placeholder="Describe the core features and databases..." rows="5" required></textarea>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="login-btn mt-24">
+                                <span class="btn-text">Submit Proposal Details</span>
+                                <span class="btn-arrow">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                        <polyline points="12 5 19 12 12 19" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Proposal Status Card -->
+                    <div id="proposal-status-card" class="glass-card d-none">
+                        <h3 class="card-title">Submitted Project Scope</h3>
+                        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius:12px; padding: 20px; margin-bottom: 20px;">
+                            <h4 id="display-proposal-title" style="color: #34D399; font-size: 1.1rem; margin-bottom: 8px;">Dynamic Website</h4>
+                            <p id="display-proposal-desc" style="font-size:0.9rem; line-height:1.5; color: var(--text-secondary);">Functionality details go here...</p>
+                        </div>
+                        <div class="roster-item">
+                            <div class="roster-info">
+                                <div class="avatar bg-gray" style="background:#34D399">✓</div>
+                                <div>
+                                    <h4>Scope Validation Completed</h4>
+                                    <p>Your advisor and lab core coordinators have approved your project topic.</p>
+                                </div>
+                            </div>
+                            <span class="badge">Approved</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: KANBAN BOARD -->
+                <div id="view-kanban" class="spa-view d-none">
+                    <!-- Add Task Quick Form -->
+                    <div class="glass-card">
+                        <h3 class="card-title" style="margin-bottom: 16px;">Add Project Task</h3>
+                        <form id="add-task-form" onsubmit="handleAddTask(event)" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+                            <div style="flex: 2; min-width: 250px;">
+                                <label class="input-label" for="taskTitleInput">Task Description</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="taskTitleInput" placeholder="e.g. Design database layout" required style="padding: 10px 14px; font-size:0.875rem;">
+                                </div>
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <label class="input-label" for="taskPriorityInput">Priority</label>
+                                <div class="input-wrapper input-wrapper--select">
+                                    <select id="taskPriorityInput" required class="glass-select" style="padding: 10px 14px; font-size:0.875rem;">
+                                        <option value="low">Low Priority</option>
+                                        <option value="medium" selected>Medium Priority</option>
+                                        <option value="high">High Priority</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <label class="input-label" for="taskAssigneeInput">Assignee</label>
+                                <div class="input-wrapper input-wrapper--select">
+                                    <select id="taskAssigneeInput" required class="glass-select" style="padding: 10px 14px; font-size:0.875rem;">
+                                        <!-- Dynamically filled with team members -->
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary-small" style="height: 42px;">Add Task</button>
+                        </form>
+                    </div>
+
+                    <!-- Simplified Columns container (In Progress and Completed removed) -->
+                    <div class="kanban-board">
+                        <!-- TODO -->
+                        <div class="kanban-column">
+                            <div class="column-header">
+                                <span class="column-title"><span class="status-dot" style="background:#f87171;"></span> To Do</span>
+                                <span class="column-count" id="count-todo">0</span>
+                            </div>
+                            <div class="tasks-list" id="col-todo" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'todo')" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+                                <!-- Cards dynamically injected -->
+                            </div>
+                        </div>
+                        
+                        <!-- REVIEW -->
+                        <div class="kanban-column">
+                            <div class="column-header">
+                                <span class="column-title"><span class="status-dot" style="background:#60a5fa;"></span> In Review</span>
+                                <span class="column-count" id="count-review">0</span>
+                            </div>
+                            <div class="tasks-list" id="col-review" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'review')" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+                                <!-- Cards dynamically injected -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        // ============================================
+        // APP INITIAL STATE & STORAGE
+        // ============================================
+        const LOCAL_STORAGE_KEY = 'project_board_student_simple_active_state_v1';
+        
+        const DEFAULT_STATE = {
+            theme: 'light',
+            groupName: 'Beta Lab Core Team',
+            techDomain: 'Web Development (Full Stack)',
+            proposal: null, 
+            roster: [
+                { name: 'Tirth Leader', enrollment: '21BCE1001' },
+                { name: 'John Doe', enrollment: '21BCE1002' },
+                { name: 'Alice Smith', enrollment: '21BCE1024' }
+            ],
+            tasks: [
+                { id: 1, title: 'Set up Vite + React template structure', status: 'review', priority: 'high', assignee: 'Tirth Leader' },
+                { id: 2, title: 'Configure Glassmorphic and gradient UI themes', status: 'todo', priority: 'medium', assignee: 'John Doe' },
+                { id: 3, title: 'Map relational and document databases', status: 'todo', priority: 'low', assignee: 'Alice Smith' }
+            ],
+            notifications: [
+                { text: 'Group roster verified and locked.', time: '1 day ago' },
+                { text: 'Student dashboard successfully initialized.', time: 'Just now' }
+            ]
+        };
+
+        let state = {};
+
+        // Load state
+        function loadState() {
+            const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (raw) {
+                try {
+                    state = JSON.parse(raw);
+                } catch(e) {
+                    state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                }
+            } else {
+                state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            }
+        }
+
+        // Save state
+        function saveState() {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+        }
+
+        // Add activity notification
+        function addNotification(text) {
+            const time = 'Just now';
+            state.notifications.unshift({ text, time });
+            if (state.notifications.length > 15) {
+                state.notifications.pop();
+            }
+            saveState();
+        }
+
+        // ============================================
+        // SPA NAVIGATION SYSTEM
+        // ============================================
+        let currentTab = 'overview';
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            
+            // Update active menu link
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const targetNav = document.getElementById(`nav-${tabId}`);
+            if (targetNav) targetNav.classList.add('active');
+
+            // Hide/Show screens
+            document.querySelectorAll('.spa-view').forEach(view => {
+                view.classList.add('d-none');
+            });
+            document.getElementById(`view-${tabId}`).classList.remove('d-none');
+            
+            // Dynamic updates for specific tabs
+            if (tabId === 'kanban') {
+                renderKanban();
+            }
+            
+            window.scrollTo(0, 0);
+        }
+
+        // ============================================
+        // DYNAMIC RENDERING FUNCTIONS
+        // ============================================
+        function updateUI() {
+            // Stats calculation
+            document.getElementById('stat-members').textContent = state.roster.length;
+            document.getElementById('stat-todo').textContent = state.tasks.length;
+
+            renderNotifications();
+            renderRosterTab();
+            renderProposalTab();
+        }
+
+        // 1. Activity Notifications
+        function renderNotifications() {
+            const container = document.getElementById('notif-container');
+            container.innerHTML = '';
+            
+            state.notifications.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'notif-item';
+                li.innerHTML = `
+                    <span>${escapeHTML(item.text)}</span>
+                    <span class="notif-time">${item.time}</span>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        // 2. Roster Tab
+        function renderRosterTab() {
+            const listContainer = document.getElementById('roster-list-container');
+            listContainer.innerHTML = '';
+
+            state.roster.forEach((member) => {
+                const li = document.createElement('li');
+                li.className = 'roster-item';
+                
+                const initials = member.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                li.innerHTML = `
+                    <div class="roster-info">
+                        <div class="avatar">${initials}</div>
+                        <div>
+                            <h4>${escapeHTML(member.name)}</h4>
+                            <p>Enrollment: ${escapeHTML(member.enrollment)}</p>
+                        </div>
+                    </div>
+                    <span class="badge">Member</span>
+                `;
+                listContainer.appendChild(li);
+            });
+
+            // Fill Assignee Select in Kanban Task form
+            const assigneeSelect = document.getElementById('taskAssigneeInput');
+            if (assigneeSelect) {
+                assigneeSelect.innerHTML = '<option value="Unassigned">Unassigned</option>';
+                state.roster.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.name;
+                    opt.textContent = m.name;
+                    assigneeSelect.appendChild(opt);
+                });
+            }
+        }
+
+        // 3. Proposal Tab
+        function renderProposalTab() {
+            const formCard = document.getElementById('proposal-form-card');
+            const statusCard = document.getElementById('proposal-status-card');
+
+            formCard.classList.add('d-none');
+            statusCard.classList.add('d-none');
+
+            if (!state.proposal) {
+                formCard.classList.remove('d-none');
+            } else {
+                statusCard.classList.remove('d-none');
+                document.getElementById('display-proposal-title').textContent = state.proposal.title;
+                document.getElementById('display-proposal-desc').textContent = state.proposal.desc;
+            }
+        }
+
+        function submitProposalForm(e) {
+            e.preventDefault();
+            const title = document.getElementById('projectTitle').value.trim();
+            const desc = document.getElementById('projectFunc').value.trim();
+
+            if (!title || !desc) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            state.proposal = { title, desc };
+            addNotification(`Project proposal details submitted: "${title}"`);
+            saveState();
+            updateUI();
+        }
+
+        // ============================================
+        // KANBAN BOARD SYSTEM
+        // ============================================
+        function renderKanban() {
+            const columns = ['todo', 'review'];
+            columns.forEach(col => {
+                document.getElementById(`col-${col}`).innerHTML = '';
+            });
+
+            const counts = { todo: 0, review: 0 };
+
+            state.tasks.forEach(task => {
+                // Map tasks to simple columns
+                let mappedStatus = task.status;
+                if (mappedStatus !== 'todo' && mappedStatus !== 'review') {
+                    // Fallback in case of migration
+                    mappedStatus = 'todo';
+                    task.status = 'todo';
+                }
+
+                if (counts[mappedStatus] !== undefined) counts[mappedStatus]++;
+                
+                const card = document.createElement('div');
+                card.className = 'task-card';
+                card.draggable = true;
+                card.setAttribute('ondragstart', `handleDragStart(event, ${task.id})`);
+                card.id = `task-card-${task.id}`;
+
+                const assigneeInitials = task.assignee.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                const prevDisabled = mappedStatus === 'todo' ? 'disabled style="opacity:0.2; cursor:not-allowed;"' : '';
+                const nextDisabled = mappedStatus === 'review' ? 'disabled style="opacity:0.2; cursor:not-allowed;"' : '';
+
+                card.innerHTML = `
+                    <h4 class="task-title">${escapeHTML(task.title)}</h4>
+                    <div class="task-meta">
+                        <span class="task-assignee">
+                            <span class="task-assignee-avatar">${assigneeInitials}</span>
+                            ${escapeHTML(task.assignee)}
+                        </span>
+                        <span class="task-priority priority-${task.priority}">${task.priority}</span>
+                    </div>
+                    <div class="task-controls">
+                        <div class="task-move-btns">
+                            <button onclick="moveTaskBtn(${task.id}, 'prev')" class="task-move-btn" ${prevDisabled} title="Move to To Do">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
+                            </button>
+                            <button onclick="moveTaskBtn(${task.id}, 'next')" class="task-move-btn" ${nextDisabled} title="Move to In Review">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+                            </button>
+                        </div>
+                        <button onclick="deleteTask(${task.id})" class="task-delete-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Delete
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById(`col-${mappedStatus}`).appendChild(card);
+            });
+
+            columns.forEach(col => {
+                document.getElementById(`count-${col}`).textContent = counts[col];
+            });
+            
+            // Sync dashboard counts
+            document.getElementById('stat-todo').textContent = state.tasks.length;
+        }
+
+        function handleAddTask(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('taskTitleInput');
+            const priorityInput = document.getElementById('taskPriorityInput');
+            const assigneeInput = document.getElementById('taskAssigneeInput');
+
+            const title = titleInput.value.trim();
+            const priority = priorityInput.value;
+            const assignee = assigneeInput.value;
+
+            if (!title) return;
+
+            const nextId = state.tasks.length > 0 ? Math.max(...state.tasks.map(t => t.id)) + 1 : 1;
+            
+            state.tasks.push({
+                id: nextId,
+                title,
+                status: 'todo',
+                priority,
+                assignee
+            });
+
+            addNotification(`Added task "${title}" to To Do.`);
+            saveState();
+            renderKanban();
+
+            // Clear inputs
+            titleInput.value = '';
+            priorityInput.value = 'medium';
+            assigneeInput.value = 'Unassigned';
+        }
+
+        function moveTaskBtn(taskId, direction) {
+            const task = state.tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            if (direction === 'prev') {
+                task.status = 'todo';
+            } else if (direction === 'next') {
+                task.status = 'review';
+            }
+
+            saveState();
+            renderKanban();
+        }
+
+        function deleteTask(taskId) {
+            const idx = state.tasks.findIndex(t => t.id === taskId);
+            if (idx !== -1) {
+                const title = state.tasks[idx].title;
+                state.tasks.splice(idx, 1);
+                addNotification(`Deleted task "${title}".`);
+                saveState();
+                renderKanban();
+            }
+        }
+
+        // HTML5 drag/drop support
+        let draggedTaskId = null;
+        function handleDragStart(e, taskId) {
+            draggedTaskId = taskId;
+            e.dataTransfer.setData('text/plain', taskId);
+        }
+        
+        function allowDrop(e) {
+            e.preventDefault();
+        }
+
+        function dragEnter(e) {
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function dragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e, status) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            const taskId = parseInt(e.dataTransfer.getData('text/plain') || draggedTaskId);
+            const task = state.tasks.find(t => t.id === taskId);
+            
+            if (task && task.status !== status) {
+                const oldStatus = task.status;
+                task.status = status;
+                addNotification(`Moved task "${task.title}" to ${status}.`);
+                saveState();
+                renderKanban();
+            }
+            draggedTaskId = null;
+        }
+
+        // Helper to escape HTML tags
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;');
+        }
+
+        // ============================================
+        // LIGHT / DARK MODE THEME SWITCHER
+        // ============================================
+        function toggleTheme() {
+            const body = document.body;
+            const btnIcon = document.getElementById('theme-icon');
+            
+            if (body.classList.contains('theme-light')) {
+                // Switch to Dark Mode
+                body.classList.remove('theme-light');
+                state.theme = 'dark';
+                btnIcon.innerHTML = `
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                `;
+                addNotification('Theme set to Dark.');
+            } else {
+                // Switch to Light Mode
+                body.classList.add('theme-light');
+                state.theme = 'light';
+                btnIcon.innerHTML = `
+                    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                `;
+                addNotification('Theme set to Light.');
+            }
+            saveState();
+        }
+
+        // Initialize Theme from Saved State
+        function initTheme() {
+            const body = document.body;
+            const btnIcon = document.getElementById('theme-icon');
+            
+            if (state.theme === 'light') {
+                body.classList.add('theme-light');
+                btnIcon.innerHTML = `
+                    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                `;
+            } else {
+                body.classList.remove('theme-light');
+                btnIcon.innerHTML = `
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                `;
+            }
+        }
+
+        // ============================================
+        // 3D FLOATING PARTICLES
+        // ============================================
+        function initParticles() {
+            const field = document.getElementById('particleField');
+            if (!field) return;
+
+            const particleCount = 20;
+            for (let i = 0; i < particleCount; i++) {
+                createParticle(field);
+            }
+        }
+
+        function createParticle(container) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            const size = Math.random() * 3 + 1;
+            const left = Math.random() * 100;
+            const duration = Math.random() * 15 + 10;
+            const delay = Math.random() * 10;
+            const opacity = Math.random() * 0.35 + 0.1;
+            const isRed = Math.random() > 0.75;
+
+            particle.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${left}%;
+                animation-duration: ${duration}s;
+                animation-delay: ${delay}s;
+                opacity: 0;
+                background: ${isRed ? 'rgba(163, 11, 11, 0.6)' : 'rgba(255, 255, 255, 0.5)'};
+                box-shadow: 0 0 ${size * 2}px ${isRed ? 'rgba(163, 11, 11, 0.3)' : 'rgba(255, 255, 255, 0.2)'};
+            `;
+
+            container.appendChild(particle);
+        }
+
+        // ============================================
+        // APP BOOTSTRAP
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            initTheme();
+            updateUI();
+            initParticles();
+            
+            // Render overview view initially
+            switchTab('overview');
+        });
+    </script>
+</body>
+</html>
