@@ -588,3 +588,34 @@ BEGIN
     END
 END
 GO
+
+
+
+-- Procedure
+
+CREATE PROCEDURE sp_LoginUser
+    @LoginId NVARCHAR(100),       -- What the user typed into the single login box
+    @PasswordHash NVARCHAR(256)   -- The hashed password passed from your C# code
+AS
+BEGIN
+    -- SET NOCOUNT ON prevents extra result sets from interfering with C# execution
+    SET NOCOUNT ON;
+
+    SELECT 
+        UserId, 
+        FullName, 
+        Email, 
+        EnrollmentNo, 
+        Role, 
+        IsLeader
+    FROM 
+        Users
+    WHERE 
+        IsActive = 1                        -- Rule 1: They must not be suspended/deleted
+        AND PasswordHash = @PasswordHash    -- Rule 2: Passwords must match
+        AND (                               -- Rule 3: Match any of the 3 identifiers
+            Email = @LoginId 
+            OR EnrollmentNo = @LoginId 
+            OR TRY_CAST(@LoginId AS INT) = UserId
+        );
+END

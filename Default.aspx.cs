@@ -115,7 +115,7 @@ namespace Project_Board
         {
             if (role == "Student")
             {
-                Response.Redirect("StudentDashboard.aspx", false);
+                Response.Redirect("StudentDashboard.aspx", false);` 1
             }
             else if (role == "Faculty")
             {

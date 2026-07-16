@@ -62,20 +62,6 @@
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
-        <header class="topbar">
-            <div class="search-bar">
-                <i class="fa-solid fa-search"></i>
-                <input type="text" placeholder="Search overview...">
-            </div>
-            
-            <div class="topbar-actions">
-                <button class="action-btn">
-                    <i class="fa-regular fa-bell"></i>
-                    <span class="notification-badge"></span>
-                </button>
-            </div>
-        </header>
-
         <div class="dashboard-container">
             <div class="view-section active">
                 <div class="page-header">
@@ -89,27 +75,24 @@
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-icon users"><i class="fa-solid fa-users"></i></div>
-                            <div class="stat-trend positive"><i class="fa-solid fa-arrow-up"></i> 12%</div>
                         </div>
-                        <div class="stat-value">1,248</div>
+                        <div class="stat-value"><asp:Label ID="lblTotalUsers" runat="server" Text="0"></asp:Label></div>
                         <div class="stat-label">Total Active Users</div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-icon groups"><i class="fa-solid fa-user-group"></i></div>
-                            <div class="stat-trend positive"><i class="fa-solid fa-arrow-up"></i> 5%</div>
                         </div>
-                        <div class="stat-value">156</div>
+                        <div class="stat-value"><asp:Label ID="lblTotalGroups" runat="server" Text="0"></asp:Label></div>
                         <div class="stat-label">Total Groups</div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-icon projects"><i class="fa-solid fa-folder-open"></i></div>
-                            <div class="stat-trend negative"><i class="fa-solid fa-arrow-down"></i> 2%</div>
                         </div>
-                        <div class="stat-value">84</div>
+                        <div class="stat-value"><asp:Label ID="lblPendingProjects" runat="server" Text="0"></asp:Label></div>
                         <div class="stat-label">Pending Projects</div>
                     </div>
 
@@ -117,46 +100,12 @@
                         <div class="stat-header">
                             <div class="stat-icon tech"><i class="fa-solid fa-microchip"></i></div>
                         </div>
-                        <div class="stat-value">32</div>
+                        <div class="stat-value"><asp:Label ID="lblTotalTechs" runat="server" Text="0"></asp:Label></div>
                         <div class="stat-label">Registered Technologies</div>
                     </div>
                 </div>
 
-                <div class="data-section">
-                    <div class="section-header">
-                        <h2>Recent Project Submissions</h2>
-                        <div class="section-actions">
-                            <a href="Admin_ProjectsManagement.aspx" class="btn-secondary" style="text-decoration:none; display:inline-block;">View All</a>
-                        </div>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Project Title</th>
-                                <th>Group</th>
-                                <th>Type</th>
-                                <th>Status</th>
-                                <th>Submitted Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>AI-Powered Health Assistant</td>
-                                <td>Group Alpha</td>
-                                <td>UDP</td>
-                                <td><span class="badge status-pending">Pending</span></td>
-                                <td>Today, 10:45 AM</td>
-                            </tr>
-                            <tr>
-                                <td>Blockchain Voting System</td>
-                                <td>CyberKnights</td>
-                                <td>IDP</td>
-                                <td><span class="badge status-active">Approved</span></td>
-                                <td>Yesterday, 02:30 PM</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                
             </div>
         </div>
     </main>

@@ -108,28 +108,35 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <div style="max-width: 300px;">
-                                        <strong>AI Health Assistant</strong>
-                                        <p style="font-size:0.75rem; color:var(--c-text-muted); margin-top:0.25rem;">
-                                            A chatbot diagnosing minor symptoms using NLP and ML algorithms.
-                                        </p>
-                                    </div>
-                                </td>
-                                <td>Group Alpha</td>
-                                <td>
-                                    <span class="tech-tag">AI</span>
-                                    <span class="tech-tag">NLP</span>
-                                </td>
-                                <td><span class="badge status-pending">Pending</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="icon-btn" title="Approve" style="color:var(--c-green)"><i class="fa-solid fa-check"></i></button>
-                                        <button class="icon-btn" title="Reject" style="color:var(--c-red)"><i class="fa-solid fa-xmark"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <asp:Repeater ID="rptProjects" runat="server" OnItemCommand="rptProjects_ItemCommand">
+                                <ItemTemplate>
+                                    <tr>
+                                        <td>
+                                            <div style="max-width: 300px;">
+                                                <strong><%# Eval("ProjectTitle") %></strong>
+                                                <p style="font-size:0.75rem; color:var(--c-text-muted); margin-top:0.25rem;">
+                                                    <%# Eval("Functionality") %>
+                                                </p>
+                                            </div>
+                                        </td>
+                                        <td><%# Eval("GroupName") %></td>
+                                        <td>
+                                            <%# Eval("KeywordHtml") %>
+                                        </td>
+                                        <td><span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <asp:LinkButton ID="btnApprove" runat="server" CssClass="icon-btn" style="color:var(--c-green)" ToolTip="Approve" CommandName="Approve" CommandArgument='<%# Eval("ProjectId") %>' Visible='<%# Eval("Status").ToString() == "Pending" %>'>
+                                                    <i class="fa-solid fa-check"></i>
+                                                </asp:LinkButton>
+                                                <asp:LinkButton ID="btnReject" runat="server" CssClass="icon-btn" style="color:var(--c-red)" ToolTip="Reject" CommandName="Reject" CommandArgument='<%# Eval("ProjectId") %>' Visible='<%# Eval("Status").ToString() == "Pending" %>'>
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </asp:LinkButton>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ItemTemplate>
+                            </asp:Repeater>
                         </tbody>
                     </table>
                 </div>

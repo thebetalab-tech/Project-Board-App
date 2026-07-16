@@ -101,20 +101,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>Group Alpha</strong></td>
-                                <td>John Smith</td>
-                                <td>Alice Brown, Mike Davis, Sarah Connor</td>
-                                <td>Dr. Robert Chen</td>
-                                <td><span class="badge status-active">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>CyberKnights</strong></td>
-                                <td>Emma Wilson</td>
-                                <td>Tom Hardy</td>
-                                <td><span style="color:var(--c-text-muted)">Not Assigned</span></td>
-                                <td><span class="badge status-forming">Forming</span></td>
-                            </tr>
+                            <asp:Repeater ID="rptGroups" runat="server">
+                                <ItemTemplate>
+                                    <tr>
+                                        <td><strong><%# Eval("GroupName") %></strong></td>
+                                        <td><%# Eval("LeaderName") %></td>
+                                        <td><%# string.IsNullOrEmpty(Eval("Members")?.ToString()) ? "<span style='color:var(--c-text-muted)'>None</span>" : Eval("Members") %></td>
+                                        <td><%# Eval("MentorName") != DBNull.Value ? Eval("MentorName") : "<span style='color:var(--c-text-muted)'>Not Assigned</span>" %></td>
+                                        <td>
+                                            <span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span>
+                                        </td>
+                                    </tr>
+                                </ItemTemplate>
+                            </asp:Repeater>
                         </tbody>
                     </table>
                 </div>

@@ -23,13 +23,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Prevent form submission on demo
-    const addUserForm = document.getElementById('addUserForm');
-    if(addUserForm) {
-        addUserForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('User added successfully (Demo mode)');
-            closeModal('userModal');
-        });
-    }
 });

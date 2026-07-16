@@ -101,29 +101,26 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>#1</td>
-                                <td><strong>React.js</strong></td>
-                                <td style="text-align: right;">
-                                    <button class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#2</td>
-                                <td><strong>Node.js</strong></td>
-                                <td style="text-align: right;">
-                                    <button class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#3</td>
-                                <td><strong>Machine Learning</strong></td>
-                                <td style="text-align: right;">
-                                    <button class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
+                            <asp:Repeater ID="rptTechs" runat="server" OnItemCommand="rptTechs_ItemCommand">
+                                <ItemTemplate>
+                                    <tr>
+                                        <td>#<%# Eval("TechId") %></td>
+                                        <td><strong><%# Eval("TechName") %></strong></td>
+                                        <td style="text-align: right;">
+                                            <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteTech" CommandArgument='<%# Eval("TechId") %>' OnClientClick="return confirm('Are you sure you want to delete this technology?');">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </asp:LinkButton>
+                                        </td>
+                                    </tr>
+                                </ItemTemplate>
+                            </asp:Repeater>
                         </tbody>
                     </table>
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center;">
+                        <asp:TextBox ID="txtNewTech" runat="server" CssClass="form-control" placeholder="New Technology Name..." Width="300px"></asp:TextBox>
+                        <asp:Button ID="btnAddTech" runat="server" Text="Add Technology" CssClass="btn-primary" OnClick="btnAddTech_Click" />
+                    </div>
+                    <asp:Label ID="lblMessage" runat="server" EnableViewState="false" style="display:block; margin-top: 1rem; font-weight: 500;"></asp:Label>
                 </div>
             </div>
         </div>

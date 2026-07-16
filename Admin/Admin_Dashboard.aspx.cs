@@ -13,9 +13,52 @@ namespace Project_Board.Admin
         {
             if (!IsPostBack)
             {
-                if(Session["role"]==null || Session["role"].ToString() != "Admin")
+                if (Session["role"] == null || Session["role"].ToString() != "Admin")
                 {
                     Response.Redirect("~/Default.aspx");
+                    return;
+                }
+
+                LoadDashboardStats();
+            }
+        }
+
+        private void LoadDashboardStats()
+        {
+            string connString = System.Configuration.ConfigurationManager.ConnectionStrings["ProjectBoardDB"]?.ConnectionString
+                ?? System.Configuration.ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"]?.ConnectionString;
+
+            if (string.IsNullOrEmpty(connString)) return;
+
+            using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connString))
+            {
+                string query = @"
+                    SELECT 
+                        (SELECT COUNT(1) FROM Users WHERE IsActive = 1) AS TotalUsers,
+                        (SELECT COUNT(1) FROM Groups) AS TotalGroups,
+                        (SELECT COUNT(1) FROM Projects WHERE Status = 'Pending') AS PendingProjects,
+                        (SELECT COUNT(1) FROM Technologies) AS TotalTechs";
+
+                using (System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(query, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (System.Data.SqlClient.SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                lblTotalUsers.Text = reader["TotalUsers"].ToString();
+                                lblTotalGroups.Text = reader["TotalGroups"].ToString();
+                                lblPendingProjects.Text = reader["PendingProjects"].ToString();
+                                lblTotalTechs.Text = reader["TotalTechs"].ToString();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                    }
                 }
             }
         }

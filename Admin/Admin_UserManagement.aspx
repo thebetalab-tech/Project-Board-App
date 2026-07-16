@@ -107,65 +107,35 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <div class="user-cell">
-                                        <div class="user-cell-avatar">JS</div>
-                                        <div class="user-cell-info">
-                                            <h4>John Smith</h4>
-                                            <p>john.smith@student.edu</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>ENR2023001</td>
-                                <td><span class="badge student">Student</span></td>
-                                <td><i class="fa-solid fa-crown" style="color: var(--c-yellow);" title="Group Leader"></i> Yes</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="icon-btn"><i class="fa-solid fa-pen"></i></button>
-                                        <button class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="user-cell">
-                                        <div class="user-cell-avatar" style="background:var(--c-blue-bg);color:var(--c-blue)">DR</div>
-                                        <div class="user-cell-info">
-                                            <h4>Dr. Robert Chen</h4>
-                                            <p>r.chen@faculty.edu</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>FAC1042</td>
-                                <td><span class="badge faculty">Faculty</span></td>
-                                <td>-</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="icon-btn"><i class="fa-solid fa-pen"></i></button>
-                                        <button class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="user-cell">
-                                        <div class="user-cell-avatar" style="background:var(--c-accent-bg);color:var(--c-accent)">AD</div>
-                                        <div class="user-cell-info">
-                                            <h4>System Admin</h4>
-                                            <p>admin@university.edu</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>ADM001</td>
-                                <td><span class="badge admin">Admin</span></td>
-                                <td>-</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="icon-btn"><i class="fa-solid fa-pen"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <asp:Repeater ID="rptUsers" runat="server" OnItemCommand="rptUsers_ItemCommand">
+                                <ItemTemplate>
+                                    <tr>
+                                        <td>
+                                            <div class="user-cell">
+                                                <div class="user-cell-avatar" style='<%# GetAvatarStyle(Eval("Role").ToString()) %>'>
+                                                    <%# GetInitials(Eval("FullName").ToString()) %>
+                                                </div>
+                                                <div class="user-cell-info">
+                                                    <h4><%# Eval("FullName") %></h4>
+                                                    <p><%# Eval("Email") %></p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><%# string.IsNullOrEmpty(Eval("EnrollmentNo")?.ToString()) ? "N/A" : Eval("EnrollmentNo") %></td>
+                                        <td><span class='badge <%# Eval("Role").ToString().ToLower() %>'><%# Eval("Role") %></span></td>
+                                        <td>
+                                            <%# Convert.ToBoolean(Eval("IsLeader")) ? "<i class='fa-solid fa-crown' style='color: var(--c-yellow);' title='Group Leader'></i> Yes" : "-" %>
+                                        </td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to deactivate this user?');">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </asp:LinkButton>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ItemTemplate>
+                            </asp:Repeater>
                         </tbody>
                     </table>
                 </div>
@@ -177,37 +147,47 @@
     <div class="modal-overlay" id="userModal">
         <div class="modal-content">
             <h2 style="margin-bottom: 1.5rem; font-family: var(--f-display);">Add New User</h2>
-            <form id="addUserForm">
+            <div id="addUserForm">
                 <div class="form-group">
                     <label>Full Name</label>
-                    <input type="text" class="form-control" placeholder="Enter full name" required>
+                    <asp:TextBox ID="txtFullName" runat="server" CssClass="form-control" placeholder="Enter full name" Required="true"></asp:TextBox>
                 </div>
+                
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" class="form-control" placeholder="user@university.edu" required>
+                    <asp:TextBox ID="txtEmail" runat="server" TextMode="Email" CssClass="form-control" placeholder="user@university.edu" Required="true"></asp:TextBox>
                 </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" CssClass="form-control" placeholder="Create a temporary password" Required="true"></asp:TextBox>
+                </div>
+                
                 <div style="display:flex; gap:1rem;">
                     <div class="form-group" style="flex:1;">
                         <label>Enrollment / Faculty ID</label>
-                        <input type="text" class="form-control" placeholder="e.g. ENR2023...">
+                        <asp:TextBox ID="txtEnrollment" runat="server" CssClass="form-control" placeholder="e.g. ENR2023..."></asp:TextBox>
                     </div>
+                    
                     <div class="form-group" style="flex:1;">
                         <label>Role</label>
-                        <select class="form-control">
-                            <option value="Student">Student</option>
-                            <option value="Faculty">Faculty</option>
-                            <option value="Admin">Admin</option>
-                        </select>
+                        <asp:DropDownList ID="ddlRole" runat="server" CssClass="form-control">
+                            <asp:ListItem Value="Student">Student</asp:ListItem>
+                            <asp:ListItem Value="Faculty">Faculty</asp:ListItem>
+                            <asp:ListItem Value="Admin">Admin</asp:ListItem>
+                        </asp:DropDownList>
                     </div>
                 </div>
+                
+                <asp:Label ID="lblMessage" runat="server" ForeColor="#ff4d4d" EnableViewState="false" style="display:block;margin-bottom:10px;"></asp:Label>
+                
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal('userModal')">Cancel</button>
-                    <button type="submit" class="btn-primary">Save User</button>
+                    <asp:Button ID="btnAddUser" runat="server" Text="Save User" CssClass="btn-primary" OnClick="btnAddUser_Click" />
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-
     <script src="admin.js"></script>
     </form>
 </body>
