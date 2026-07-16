@@ -1,0 +1,154 @@
+        /* Custom layout overrides for standalone profile page */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 4rem 2rem;
+            background-color: var(--c-bg-warm);
+        }
+
+        .profile-wrapper {
+            background: var(--c-bg-card);
+            border: 1px solid var(--c-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .profile-sidebar-card {
+            width: 320px;
+            background: var(--c-bg-elevated);
+            padding: 3.5rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid var(--c-border);
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--c-accent);
+            color: white;
+            font-size: 3rem;
+            font-family: var(--f-display);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 16px var(--c-accent-glow);
+            position: relative;
+        }
+        
+        .profile-avatar-edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--c-bg);
+            color: var(--c-text-muted);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid var(--c-border);
+            transition: var(--transition);
+        }
+
+        .profile-avatar-edit:hover {
+            color: var(--c-accent);
+            border-color: var(--c-accent);
+        }
+
+        .profile-name {
+            font-family: var(--f-display);
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--c-text);
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .profile-badge {
+            margin-top: 0.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .profile-main-card {
+            flex: 1;
+            padding: 3.5rem;
+            background: var(--c-bg-card);
+        }
+
+        .back-btn-container {
+            margin-bottom: 2.5rem;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--c-text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+        
+        .back-btn:hover {
+            color: var(--c-accent);
+        }
+
+        .section-header-custom {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--c-border);
+        }
+
+        .section-header-custom h3 {
+            font-family: var(--f-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--c-text);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 768px) {
+            .profile-wrapper {
+                flex-direction: column;
+            }
+            .profile-sidebar-card {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--c-border);
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 1.5rem;
+            }
+            .profile-main-card {
+                padding: 2rem;
+            }
+        }

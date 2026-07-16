@@ -40,7 +40,7 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">Preferences</div>
-                <a href="Admin_Profile.aspx" class="nav-link">
+                <a href="../User/Profile.aspx" class="nav-link">
                     <i class="fa-solid fa-user"></i> Profile
                 </a>
                 <a href="../Logout.aspx" class="nav-link">
@@ -50,13 +50,13 @@
         </nav>
 
         <div class="sidebar-footer">
-            <div class="user-profile">
+                <!-- Fetch From Session -->
+                <div class="avatar"><asp:Label ID="userintial" runat="server"></asp:Label></div>
                 <div class="user-info" ID="userInfo">
                     <h4><asp:Label ID="userNameLabel" runat="server"></asp:Label></h4>
                     <p><asp:Label ID="userEmailLabel" runat="server"></asp:Label></p>
                 </div>
             </div>
-        </div>
     </aside>
 
     <!-- MAIN CONTENT -->
