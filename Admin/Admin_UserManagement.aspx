@@ -14,7 +14,7 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo-icon">P</div>
+
             <h2>Project Board</h2>
         </div>
         
@@ -40,8 +40,8 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">Preferences</div>
-                <a href="#settings" class="nav-link">
-                    <i class="fa-solid fa-gear"></i> Settings
+                <a href="Admin_Profile.aspx" class="nav-link">
+                    <i class="fa-solid fa-user"></i> Profile
                 </a>
                 <a href="../Logout.aspx" class="nav-link">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
@@ -51,10 +51,9 @@
 
         <div class="sidebar-footer">
             <div class="user-profile">
-                <div class="avatar">AD</div>
-                <div class="user-info">
-                    <h4>System Admin</h4>
-                    <p>admin@university.edu</p>
+                <div class="user-info" ID="userInfo">
+                    <h4><asp:Label ID="userNameLabel" runat="server"></asp:Label></h4>
+                    <p><asp:Label ID="userEmailLabel" runat="server"></asp:Label></p>
                 </div>
             </div>
         </div>

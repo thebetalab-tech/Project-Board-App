@@ -117,6 +117,7 @@ namespace Project_Board
                             Session["UserId"] = userIdObj.ToString();
                         }
                     }
+                    connection.Close();
                 }
 
                 ShowMessage("Account created successfully. You can log in now.", true);

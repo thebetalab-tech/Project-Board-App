@@ -22,6 +22,12 @@ namespace Project_Board.Admin
 
             if (!IsPostBack)
             {
+                // Fetch user information from session
+                string userName = Session["FullName"]?.ToString() ?? "Guest";
+                string userEmail = Session["Email"]?.ToString() ?? "No email provided";
+                userNameLabel.Text = userName;
+                userEmailLabel.Text = userEmail;
+
                 LoadTechnologies();
             }
         }
