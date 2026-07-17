@@ -91,12 +91,12 @@ namespace Project_Board
 
                     string passwordHash = HashPassword(passwordValue);
 
-                    using (SqlCommand command = new SqlCommand("sp_crud_users", connection))
+                    string query = @"INSERT INTO Users (FullName, Email, PasswordHash, EnrollmentNo, Role, IsLeader, IsActive, CreatedAt) 
+                                     VALUES (@FullName, @Email, @PasswordHash, @EnrollmentNo, @Role, @IsLeader, 1, GETDATE())";
+                    using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.CommandType = CommandType.StoredProcedure;
+                        command.CommandType = CommandType.Text;
                         
-                        // Using explicit SQL Types is great for performance and avoiding type mismatch errors
-                        command.Parameters.Add("@Action", SqlDbType.NVarChar, 20).Value = "INSERT";
                         command.Parameters.Add("@FullName", SqlDbType.NVarChar, 100).Value = fullNameValue;
                         command.Parameters.Add("@Email", SqlDbType.NVarChar, 100).Value = emailValue;
                         command.Parameters.Add("@PasswordHash", SqlDbType.NVarChar, 256).Value = passwordHash;

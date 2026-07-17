@@ -115,7 +115,14 @@ namespace Project_Board
         {
             if (role == "Student")
             {
-                Response.Redirect("StudentDashboard.aspx", false);
+                if(Session["IsLeader"] != null && Session["IsLeader"].ToString() == "True")
+                {
+                    Response.Redirect("Student/Leader/Dashboard.aspx", false);           
+                }
+                else
+                {
+                    Response.Redirect("Student/Member/Dashboard.aspx", false);
+                }
             }
             else if (role == "Faculty")
             {

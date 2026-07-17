@@ -192,6 +192,11 @@
     <Content Include="CreateGroup.aspx" />
     <Content Include="Admin\technologies.html" />
     <Content Include="Admin\users.html" />
+    <Content Include="Student\Leader\Dashboard.aspx" />
+    <Content Include="Student\Leader\Leader_Members.aspx" />
+    <Content Include="Student\Leader\Leader_Mentor.aspx" />
+    <Content Include="Student\Member\Dashboard.aspx" />
+    <Content Include="Student\Member\Member_Team.aspx" />
     <Content Include="User\Profile.aspx" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
@@ -295,6 +300,32 @@
     </Compile>
     <Compile Include="CreateGroup.aspx.designer.cs">
       <DependentUpon>CreateGroup.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Leader\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Member\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Member\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Leader\Leader_Members.aspx.cs">
+      <DependentUpon>Leader_Members.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\Leader_Mentor.aspx.cs">
+      <DependentUpon>Leader_Mentor.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Member\Member_Team.aspx.cs">
+      <DependentUpon>Member_Team.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="User\Profile.aspx.cs">
       <DependentUpon>Profile.aspx</DependentUpon>

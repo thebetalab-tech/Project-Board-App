@@ -41,11 +41,10 @@ namespace Project_Board.Admin
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                // Using the Selection Stored Procedure
-                using (SqlCommand cmd = new SqlCommand("sp_select_users", conn))
+                string query = "SELECT UserId, FullName, Email, EnrollmentNo, Role, IsLeader FROM Users WHERE IsActive = 1 ORDER BY CreatedAt DESC";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Action", "ALL");
+                    cmd.CommandType = CommandType.Text;
 
                     try
                     {
@@ -87,18 +86,18 @@ namespace Project_Board.Admin
             {
                 try
                 {
-                    // Using the CRUD Stored Procedure
-                    using (SqlCommand insertCmd = new SqlCommand("sp_crud_users", conn))
+                    string query = @"INSERT INTO Users (FullName, Email, PasswordHash, EnrollmentNo, Role, IsLeader, IsActive, CreatedAt) 
+                                     VALUES (@FullName, @Email, @PasswordHash, @EnrollmentNo, @Role, @IsLeader, 1, GETDATE())";
+                    using (SqlCommand insertCmd = new SqlCommand(query, conn))
                     {
-                        insertCmd.CommandType = CommandType.StoredProcedure;
+                        insertCmd.CommandType = CommandType.Text;
                         
-                        insertCmd.Parameters.AddWithValue("@Action", "INSERT");
                         insertCmd.Parameters.AddWithValue("@FullName", fullName);
                         insertCmd.Parameters.AddWithValue("@Email", email);
                         insertCmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
                         insertCmd.Parameters.AddWithValue("@EnrollmentNo", string.IsNullOrEmpty(enrollment) ? (object)DBNull.Value : enrollment);
                         insertCmd.Parameters.AddWithValue("@Role", role);
-                        insertCmd.Parameters.AddWithValue("@IsLeader", false); // Default to false for new users
+                        insertCmd.Parameters.AddWithValue("@IsLeader", 0);
 
                         conn.Open();
                         insertCmd.ExecuteNonQuery();
@@ -138,11 +137,10 @@ namespace Project_Board.Admin
                 
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
-                    // Using the CRUD Stored Procedure for the Soft Delete
-                    using (SqlCommand cmd = new SqlCommand("sp_crud_users", conn))
+                    string query = "UPDATE Users SET IsActive = 0 WHERE UserId = @UserId";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@Action", "DELETE");
+                        cmd.CommandType = CommandType.Text;
                         cmd.Parameters.AddWithValue("@UserId", userId);
 
                         try
