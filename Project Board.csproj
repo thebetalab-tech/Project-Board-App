@@ -197,6 +197,7 @@
     <Content Include="Student\Leader\Leader_Mentor.aspx" />
     <Content Include="Student\Member\Dashboard.aspx" />
     <Content Include="Student\Member\Member_Team.aspx" />
+    <Content Include="User\forget_password.aspx" />
     <Content Include="User\Profile.aspx" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
@@ -326,6 +327,13 @@
     <Compile Include="Student\Member\Member_Team.aspx.cs">
       <DependentUpon>Member_Team.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\forget_password.aspx.cs">
+      <DependentUpon>forget_password.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\forget_password.aspx.designer.cs">
+      <DependentUpon>forget_password.aspx</DependentUpon>
     </Compile>
     <Compile Include="User\Profile.aspx.cs">
       <DependentUpon>Profile.aspx</DependentUpon>

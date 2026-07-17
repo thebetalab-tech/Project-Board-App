@@ -93,7 +93,7 @@
                         </div>
 
                         <div class="form-options">
-                            <a href="#" class="forgot-link" id="forgotPassword">Forgot Password?</a>
+                            <a href="User/forget_password.aspx" class="forgot-link" id="forgotPassword">Forgot Password?</a>
                         </div>
 
                         <asp:LinkButton ID="loginBtn" runat="server" ClientIDMode="Static" CssClass="login-btn"
