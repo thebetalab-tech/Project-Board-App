@@ -75,8 +75,7 @@ namespace Project_Board.Admin
 
             if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                lblMessage.Text = "Name, Email, and Password are required.";
-                lblMessage.ForeColor = System.Drawing.ColorTranslator.FromHtml("#ff4d4d"); // Red
+                ShowModalWithMessage("Name, Email, and Password are required.", true);
                 return;
             }
 
@@ -109,24 +108,27 @@ namespace Project_Board.Admin
                         txtEnrollment.Text = string.Empty;
                         ddlRole.SelectedIndex = 0;
                         
-                        lblMessage.ForeColor = System.Drawing.Color.Green;
-                        lblMessage.Text = "User added successfully.";
-                        
                         LoadUsers();
+                        ShowModalWithMessage("User added successfully.", false);
                     }
                 }
                 catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
                 {
                     // This catches the UNIQUE constraint violation from SQL Server if the email exists
-                    lblMessage.ForeColor = System.Drawing.ColorTranslator.FromHtml("#ff4d4d");
-                    lblMessage.Text = "A user with this email already exists.";
+                    ShowModalWithMessage("A user with this email already exists.", true);
                 }
                 catch (Exception ex)
                 {
-                    lblMessage.ForeColor = System.Drawing.ColorTranslator.FromHtml("#ff4d4d");
-                    lblMessage.Text = "Error: " + ex.Message;
+                    ShowModalWithMessage("Error: " + ex.Message, true);
                 }
             }
+        }
+
+        private void ShowModalWithMessage(string message, bool isError)
+        {
+            lblMessage.Text = message;
+            lblMessage.ForeColor = isError ? System.Drawing.ColorTranslator.FromHtml("#ff4d4d") : System.Drawing.Color.Green;
+            ClientScript.RegisterStartupScript(this.GetType(), "KeepModalOpen", "<script>window.onload = function() { openModal('userModal'); };</script>");
         }
 
         protected void rptUsers_ItemCommand(object source, RepeaterCommandEventArgs e)

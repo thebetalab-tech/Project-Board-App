@@ -67,5 +67,11 @@ namespace Project_Board.Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label userintial;
+
+        protected global::System.Web.UI.WebControls.DropDownList ddlFaculty;
+        protected global::System.Web.UI.WebControls.DropDownList ddlTech;
+        protected global::System.Web.UI.WebControls.Button btnAssign;
+        protected global::System.Web.UI.WebControls.Label lblAssignMessage;
+        protected global::System.Web.UI.WebControls.Repeater rptFacultyTech;
     }
 }

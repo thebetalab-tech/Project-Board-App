@@ -81,18 +81,23 @@
                     <div style="padding: 1.5rem;">
                         <p style="color: var(--c-text-muted); margin-bottom: 1.5rem; font-size: 0.875rem;">Select your faculty mentor. Note: you can only have one active request outstanding. If your request is pending, you must withdraw it to request a different mentor.</p>
 
-                        <div class="form-group" style="max-width: 400px;">
-                            <label for="mentorSelect">Available Faculty</label>
-                            <select id="mentorSelect" name="mentorSelect" class="form-control">
-                                <option value="" disabled selected>Select a Professor</option>
-                                <option value="Prof. Jane Smith">Prof. Jane Smith (Web Tech)</option>
-                                <option value="Prof. Alan Turing">Prof. Alan Turing (AI & Web)</option>
-                                <option value="Dr. Sarah Connor">Dr. Sarah Connor (Full Stack)</option>
-                            </select>
+                        <!-- If there's an active request -->
+                        <div id="divCurrentRequest" runat="server" visible="false" style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid var(--c-border); border-radius: 8px; background-color: var(--c-bg-elevated);">
+                            <asp:Label ID="lblStatus" runat="server" Text=""></asp:Label>
+                            <br/><br/>
+                            <asp:Button ID="btnWithdraw" runat="server" CssClass="btn-primary" style="background-color: #ef4444 !important; border-color: #ef4444 !important; color: white !important;" Text="Withdraw Request" OnClick="btnWithdraw_Click" />
                         </div>
-                        <button type="button" class="btn-primary">
-                            Send Request <i class="fa-solid fa-arrow-right" style="margin-left: 0.5rem;"></i>
-                        </button>
+
+                        <!-- If no active request -->
+                        <div id="divRequestForm" runat="server">
+                            <div class="form-group" style="max-width: 400px;">
+                                <label for="ddlMentors">Available Faculty</label>
+                                <asp:DropDownList ID="ddlMentors" runat="server" CssClass="form-control">
+                                    <asp:ListItem Value="" Text="Select a Professor" />
+                                </asp:DropDownList>
+                            </div>
+                            <asp:Button ID="btnRequest" runat="server" CssClass="btn-primary" Text="Send Request" OnClick="btnRequest_Click" />
+                        </div>
                     </div>
                 </div>
             </div>

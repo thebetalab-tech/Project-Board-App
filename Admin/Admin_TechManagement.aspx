@@ -121,6 +121,55 @@
                     </div>
                     <asp:Label ID="lblMessage" runat="server" EnableViewState="false" style="display:block; margin-top: 1rem; font-weight: 500;"></asp:Label>
                 </div>
+
+                <div class="data-section" style="max-width: 800px; margin-top: 2rem;">
+                    <div class="section-header">
+                        <h2>Assign Technology to Faculty</h2>
+                    </div>
+                    
+                    <div style="padding: 1.5rem; background-color: var(--c-bg-elevated); border-radius: 8px; border: 1px solid var(--c-border); margin-bottom: 2rem;">
+                        <div style="display: flex; gap: 1rem; align-items: flex-end;">
+                            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                <label>Faculty Member</label>
+                                <asp:DropDownList ID="ddlFaculty" runat="server" CssClass="form-control"></asp:DropDownList>
+                            </div>
+                            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                <label>Technology</label>
+                                <asp:DropDownList ID="ddlTech" runat="server" CssClass="form-control"></asp:DropDownList>
+                            </div>
+                            <asp:Button ID="btnAssign" runat="server" Text="Assign" CssClass="btn-primary" OnClick="btnAssign_Click" />
+                        </div>
+                        <asp:Label ID="lblAssignMessage" runat="server" EnableViewState="false" style="display:block; margin-top: 1rem; font-weight: 500;"></asp:Label>
+                    </div>
+
+                    <div class="section-header">
+                        <h2>Current Assignments</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Faculty Name</th>
+                                <th>Assigned Technology</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <asp:Repeater ID="rptFacultyTech" runat="server" OnItemCommand="rptTechs_ItemCommand">
+                                <ItemTemplate>
+                                    <tr>
+                                        <td><strong><%# Eval("FacultyName") %></strong></td>
+                                        <td><%# Eval("TechName") %></td>
+                                        <td style="text-align: right;">
+                                            <asp:LinkButton ID="btnDeleteAssign" runat="server" CssClass="icon-btn delete" CommandName="DeleteAssignment" CommandArgument='<%# Eval("FacultyId") + "|" + Eval("TechId") %>' OnClientClick="return confirm('Are you sure you want to remove this assignment?');">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </asp:LinkButton>
+                                        </td>
+                                    </tr>
+                                </ItemTemplate>
+                            </asp:Repeater>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>

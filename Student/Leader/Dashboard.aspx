@@ -76,8 +76,8 @@
             <div class="dashboard-container">
                 <div class="page-header">
                     <div class="page-title">
-                        <h1>Beta Lab Core Team</h1>
-                        <p>Technology Domain: Web Development (Full Stack)</p>
+                        <h1><%= GroupName %></h1>
+                        <p>Technology Domain: <%= TechName %></p>
                     </div>
                 </div>
 
@@ -86,52 +86,22 @@
                         <div class="stat-header">
                             <div class="stat-icon users"><i class="fa-solid fa-users"></i></div>
                         </div>
-                        <div class="stat-value">2</div>
+                        <div class="stat-value"><%= TotalMembers %></div>
                         <div class="stat-label">Total Members</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon groups"><i class="fa-solid fa-envelope"></i></div>
-                        </div>
-                        <div class="stat-value">2</div>
-                        <div class="stat-label">Total Invited</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-icon projects"><i class="fa-solid fa-clock-rotate-left"></i></div>
                         </div>
-                        <div class="stat-value">2</div>
+                        <div class="stat-value"><%= PendingInvites %></div>
                         <div class="stat-label">Pending Invites</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-icon tech"><i class="fa-solid fa-check"></i></div>
                         </div>
-                        <div class="stat-value">0</div>
+                        <div class="stat-value"><%= AcceptedInvites %></div>
                         <div class="stat-label">Accepted Invites</div>
-                    </div>
-                </div>
-                
-                <div class="data-section">
-                    <div class="section-header">
-                        <h2>Project Overview</h2>
-                    </div>
-                    <div style="padding: 1.5rem;">
-                        <p style="color: var(--c-text-muted); margin-bottom: 1.5rem;">Core specifications and technology alignment details submitted for the academic project board.</p>
-                        <div style="display: grid; gap: 1.25rem;">
-                            <div>
-                                <label style="font-size: 0.75rem; color: var(--c-text-muted); text-transform: uppercase; font-weight: 600;">Project Title</label>
-                                <p style="font-weight: 700; font-size: 1.1rem; color: var(--c-accent);">Project Board App</p>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.75rem; color: var(--c-text-muted); text-transform: uppercase; font-weight: 600;">Domain Alignment</label>
-                                <p style="font-weight: 500;">Web Development (Full Stack)</p>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.75rem; color: var(--c-text-muted); text-transform: uppercase; font-weight: 600;">Functional Scope</label>
-                                <p style="font-weight: 400;">Creating a collaborative dashboard workspace. The application supports team tracking, mentor selection, proposal approval workflows, and task boards for agile project development.</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

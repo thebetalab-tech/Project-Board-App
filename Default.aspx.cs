@@ -104,8 +104,8 @@ namespace Project_Board
             }
             catch (Exception ex)
             {
-                // Log the exception in a real app. For now, display a generic error.
-                lblError.Text = "An error occurred during login. Please try again later.";
+                // Temporarily display the actual error to debug why login broke
+                lblError.Text = "Error: " + ex.Message + (ex.InnerException != null ? " | Inner: " + ex.InnerException.Message : "");
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }
         }
