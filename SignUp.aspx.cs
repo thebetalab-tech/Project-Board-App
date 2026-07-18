@@ -218,6 +218,7 @@ namespace Project_Board
 
                 ShowMessage("Account created successfully. You can log in now.", true);
 
+                Session["Email"] = emailValue;
                 Session["UserEmail"] = emailValue;
                 Session["EnrollmentNo"] = enrollmentNoValue;
                 Session["Role"] = "Student";

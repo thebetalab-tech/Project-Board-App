@@ -223,6 +223,7 @@
     <Content Include="StudentDashboard.aspx" />
     <Content Include="OnBoarding.aspx" />
     <Content Include="CreateGroup.aspx" />
+    <Content Include="MentorSelection.aspx" />
     <Content Include="Admin\technologies.html" />
     <Content Include="Admin\users.html" />
     <Content Include="Student\Leader\Dashboard.aspx" />
@@ -334,6 +335,13 @@
     </Compile>
     <Compile Include="CreateGroup.aspx.designer.cs">
       <DependentUpon>CreateGroup.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MentorSelection.aspx.cs">
+      <DependentUpon>MentorSelection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MentorSelection.aspx.designer.cs">
+      <DependentUpon>MentorSelection.aspx</DependentUpon>
     </Compile>
     <Compile Include="Student\Leader\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>

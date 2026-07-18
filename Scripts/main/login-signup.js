@@ -61,7 +61,9 @@ function createParticle(container, index) {
    ============================================ */
 function initPasswordToggle() {
     const toggle = document.getElementById('passwordToggle');
+    if (!toggle) return;
     const passwordInput = document.getElementById('password');
+    if (!passwordInput) return;
     const eyeOpen = toggle.querySelector('.eye-open');
     const eyeClosed = toggle.querySelector('.eye-closed');
 
@@ -137,6 +139,7 @@ function showSuccessPulse() {
    ============================================ */
 function initRippleEffect() {
     const loginBtn = document.getElementById('loginBtn');
+    if (!loginBtn) return;
 
     loginBtn.addEventListener('click', (e) => {
         const ripple = loginBtn.querySelector('.btn-ripple');

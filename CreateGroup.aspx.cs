@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -15,9 +15,23 @@ namespace Project_Board
         protected void Page_Load(object sender, EventArgs e)
         {
             // Check if the user is a leader or not
-            if (Session["IsLeader"] == null || !(bool)Session["IsLeader"])
+            bool isLeader = false;
+            if (Session["IsLeader"] != null)
             {
-                Response.Redirect("OnBoarding.aspx");
+                if (Session["IsLeader"] is bool)
+                {
+                    isLeader = (bool)Session["IsLeader"];
+                }
+                else
+                {
+                    bool.TryParse(Session["IsLeader"].ToString(), out isLeader);
+                }
+            }
+
+            if (!isLeader)
+            {
+                Response.Redirect("OnBoarding.aspx", true);
+                return;
             }
 
             if (!IsPostBack)
@@ -125,8 +139,7 @@ namespace Project_Board
             }
 
             // Redirect on success
-            Response.Redirect("MentorSelection.aspx", false);
-            Context.ApplicationInstance.CompleteRequest();
+            Response.Redirect("MentorSelection.aspx", true);
         }
     }
 }

@@ -7,7 +7,9 @@ obj/
 
 # NuGet
 packages/
-web.config
+Web.config
+Web.Debug.config
+Web.Release.config
 # User files
 *.user
 *.suo

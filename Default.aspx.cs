@@ -83,6 +83,7 @@ namespace Project_Board
                                     Session["FullName"] = reader["FullName"].ToString();
                                     Session["Role"] = reader["Role"].ToString();
                                     Session["Email"] = reader["Email"].ToString();
+                                    Session["UserEmail"] = reader["Email"].ToString();
                                     Session["IsLeader"] = reader["IsLeader"].ToString();
 
                                     // Redirect to the appropriate dashboard

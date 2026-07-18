@@ -24,6 +24,14 @@ namespace Project_Board
         {
             try
             {
+                string email = (Session["UserEmail"] ?? Session["Email"])?.ToString();
+                if (string.IsNullOrEmpty(email))
+                {
+                    ShowMessage("Session expired. Please log in again.", false);
+                    Response.Redirect("Default.aspx", true);
+                    return;
+                }
+
                 // Change Student IsLeader to true in the database
                 string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -32,22 +40,21 @@ namespace Project_Board
                     //change user to leader
                     using (SqlCommand command = new SqlCommand("UPDATE Users SET IsLeader = 1 WHERE Email = @Email", connection))
                     {
-                        command.Parameters.AddWithValue("@Email", Session["UserEmail"].ToString());
+                        command.Parameters.AddWithValue("@Email", email);
                         command.ExecuteNonQuery();
                         Session["IsLeader"] = true;
                     }
-
-                    
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Log the exception (you can log it to a file, database, etc.)
                 // For simplicity, we'll just show a message here
                 ShowMessage("An error occurred while updating your role. Please try again later.", false);
+                System.Diagnostics.Debug.WriteLine(ex.Message);
                 return;
             }
-            Response.Redirect("CreateGroup.aspx");
+            Response.Redirect("CreateGroup.aspx", true);
         }
         protected void btnJoinGroup_Click(object sender, EventArgs e)
         {

@@ -156,7 +156,7 @@ namespace Project_Board.Student.Leader
                     cmd.ExecuteNonQuery();
                 }
             }
-            LoadMentorData();
+            Response.Redirect("~/MentorSelection.aspx", true);
         }
 
         protected void btnWithdraw_Click(object sender, EventArgs e)
