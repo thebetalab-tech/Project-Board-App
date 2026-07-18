@@ -22,14 +22,18 @@
                 <div class="forget-icon">
                     <i class="fa-solid fa-key"></i>
                 </div>
-                <h1 class="forget-title">Reset Password</h1>
-                <p class="forget-subtitle">Identify your account and verify with email code</p>
+                <h1 class="forget-title">
+                    <asp:Literal ID="litTitle" runat="server" Text="Reset Password"></asp:Literal>
+                </h1>
+                <p class="forget-subtitle">
+                    <asp:Literal ID="litSubtitle" runat="server" Text="Identify your account and verify with email code"></asp:Literal>
+                </p>
             </div>
 
             <!-- Message Notification -->
             <asp:Label ID="lblMessage" runat="server" Visible="false" CssClass="form-message"></asp:Label>
 
-            <!-- STEP 1: Enter Email -->
+            <!-- STEP 1: Enter Email (only for non-logged-in users) -->
             <asp:Panel ID="pnlEmailStep" runat="server">
                 <div class="form-group">
                     <label for="txtEmail">Email Address</label>
@@ -49,12 +53,43 @@
                 </div>
             </asp:Panel>
 
-            <!-- STEP 2: Enter Verification Code & New Password -->
-            <asp:Panel ID="pnlVerificationStep" runat="server" Visible="false">
+            <!-- STEP 2: Enter Verification Code (only for non-logged-in users) -->
+            <asp:Panel ID="pnlCodeStep" runat="server" Visible="false">
+                <div class="step-info">
+                    <div class="step-badge">
+                        <i class="fa-solid fa-envelope-circle-check"></i>
+                    </div>
+                    <p class="step-description">We've sent a 6-digit code to <strong><asp:Literal ID="litEmailDisplay" runat="server"></asp:Literal></strong></p>
+                </div>
+
                 <div class="form-group">
                     <label for="txtCode">Verification Code</label>
-                    <asp:TextBox ID="txtCode" runat="server" CssClass="form-control" placeholder="Enter 6-digit code" required="required" MaxLength="6"></asp:TextBox>
-                    <span class="hint-text">Enter the 6-digit random code sent to your email.</span>
+                    <asp:TextBox ID="txtCode" runat="server" CssClass="form-control code-input" placeholder="Enter 6-digit code" required="required" MaxLength="6"></asp:TextBox>
+                    <span class="hint-text">Enter the 6-digit code sent to your email.</span>
+                </div>
+
+                <div class="form-actions">
+                    <asp:LinkButton ID="btnVerifyCode" runat="server" CssClass="btn-primary" OnClick="btnVerifyCode_Click">
+                        <i class="fa-solid fa-shield-check"></i> Verify Code
+                    </asp:LinkButton>
+                    
+                    <div class="back-link-container">
+                        <asp:LinkButton ID="btnBackToEmail" runat="server" CssClass="back-link" OnClick="btnBackToEmail_Click" CausesValidation="false">
+                            <i class="fa-solid fa-arrow-left-long"></i> Back to Email Step
+                        </asp:LinkButton>
+                    </div>
+                </div>
+            </asp:Panel>
+
+            <!-- STEP 3: Set New Password (for both logged-in and verified non-logged-in users) -->
+            <asp:Panel ID="pnlPasswordStep" runat="server" Visible="false">
+                <div class="step-info">
+                    <div class="step-badge step-badge--success">
+                        <i class="fa-solid fa-lock-open"></i>
+                    </div>
+                    <p class="step-description">
+                        <asp:Literal ID="litPasswordStepInfo" runat="server" Text="Set your new password below."></asp:Literal>
+                    </p>
                 </div>
 
                 <div class="form-group">
@@ -69,15 +104,22 @@
 
                 <div class="form-actions">
                     <asp:LinkButton ID="btnReset" runat="server" CssClass="btn-primary" OnClick="btnReset_Click">
-                        <i class="fa-solid fa-circle-check"></i> Reset & Log In
+                        <i class="fa-solid fa-circle-check"></i> Update Password
                     </asp:LinkButton>
                     
                     <div class="back-link-container">
-                        <asp:LinkButton ID="btnBackToEmail" runat="server" CssClass="back-link" OnClick="btnBackToEmail_Click" CausesValidation="false">
-                            <i class="fa-solid fa-arrow-left-long"></i> Back to Email Step
+                        <asp:LinkButton ID="btnBackFromPassword" runat="server" CssClass="back-link" OnClick="btnBackFromPassword_Click" CausesValidation="false">
+                            <i class="fa-solid fa-arrow-left-long"></i> <asp:Literal ID="litBackText" runat="server" Text="Cancel"></asp:Literal>
                         </asp:LinkButton>
                     </div>
                 </div>
+            </asp:Panel>
+
+            <!-- Progress Indicator -->
+            <asp:Panel ID="pnlProgress" runat="server" CssClass="progress-dots">
+                <span class="dot" id="dot1" runat="server"></span>
+                <span class="dot" id="dot2" runat="server"></span>
+                <span class="dot" id="dot3" runat="server"></span>
             </asp:Panel>
 
         </div>
