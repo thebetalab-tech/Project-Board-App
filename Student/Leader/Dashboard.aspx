@@ -31,6 +31,9 @@
                     <a href="Leader_Mentor.aspx" class="nav-link">
                         <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
                     </a>
+                    <a href="InvitationManager.aspx" class="nav-link">
+                        <i class="fa-solid fa-envelope"></i> Invitations
+                    </a>
                     <a href="../Member/Dashboard.aspx" class="nav-link">
                         <i class="fa-solid fa-user-group"></i> View as Member
                     </a>
@@ -47,7 +50,7 @@
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
-                    <div class="avatar">TL</div>
+                    <div class="avatar"><%= UserInitials %></div>
                     <div class="user-info">
                         <h4><%= Session["FullName"] ?? "Student Leader" %></h4>
                         <p><%= Session["Email"] ?? "leader@example.com" %></p>
@@ -65,7 +68,7 @@
                 </div>
                 <div class="topbar-actions">
                     <div class="status-badge-container">
-                        <span class="status-dot"></span> Team Forming
+                        <span class="status-dot" style='<%= MemberNeeded ? "" : "background: var(--c-green);" %>'></span> <%= MemberNeeded ? "Team Forming" : "Team Completed" %>
                     </div>
                     <a href="../../User/Profile.aspx" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>

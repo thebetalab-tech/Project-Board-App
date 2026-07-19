@@ -223,7 +223,7 @@ namespace Project_Board
                 Session["EnrollmentNo"] = enrollmentNoValue;
                 Session["Role"] = "Student";
                 Session["IsLeader"] = false;
-                Session["UserFullName"] = fullNameValue;
+                Session["FullName"] = fullNameValue;
 
                 // Redirect the user to the Onboarding page
                 Response.Redirect("OnBoarding.aspx", false);

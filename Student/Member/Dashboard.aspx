@@ -28,6 +28,9 @@
                     <a href="Member_Team.aspx" class="nav-link">
                         <i class="fa-solid fa-users"></i> Team & Mentor
                     </a>
+                    <a href="InvitationManager.aspx" class="nav-link">
+                        <i class="fa-solid fa-envelope"></i> Invitations
+                    </a>
                     <% if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Leader") { %>
                     <a href="../Leader/Dashboard.aspx" class="nav-link">
                         <i class="fa-solid fa-user-tie"></i> Leader Panel
@@ -46,7 +49,7 @@
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
-                    <div class="avatar">SM</div>
+                    <div class="avatar"><%= UserInitials %></div>
                     <div class="user-info">
                         <h4><%= Session["FullName"] ?? "Student Member" %></h4>
                         <p><%= Session["Email"] ?? "member@example.com" %></p>
@@ -64,7 +67,7 @@
                 </div>
                 <div class="topbar-actions">
                     <div class="status-badge-container">
-                        <span class="status-dot"></span> Team Forming
+                        <span class="status-dot" style='<%= MemberNeeded ? "" : "background: var(--c-green);" %>'></span> <%= MemberNeeded ? "Team Forming" : "Team Completed" %>
                     </div>
                     <a href="../../User/Profile.aspx" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
@@ -75,31 +78,32 @@
             <div class="dashboard-container">
                 <div class="page-header">
                     <div class="page-title">
-                        <h1>Beta Lab Core Team</h1>
-                        <p>Technology Domain: Web Development (Full Stack)</p>
+                        <h1><%= IsAssigned ? GroupName : "Welcome, " + Session["FullName"] %></h1>
+                        <p><%= IsAssigned ? "Technology Domain: " + TechName : "You need to join a group to see project details." %></p>
                     </div>
                 </div>
 
+                <% if (IsAssigned) { %>
                 <div class="data-section">
                     <div class="section-header">
                         <h2>Team Leader</h2>
                     </div>
                     <div style="padding: 1.5rem;">
                         <div class="user-cell" style="margin-bottom: 1rem;">
-                            <div class="user-cell-avatar" style="width: 48px; height: 48px; font-size: 1.25rem;">TL</div>
+                            <div class="user-cell-avatar" style="width: 48px; height: 48px; font-size: 1.25rem;"><%= LeaderInitials %></div>
                             <div class="user-cell-info">
-                                <h4 style="font-size: 1.1rem; margin-bottom: 4px;">Tirth Leader</h4>
+                                <h4 style="font-size: 1.1rem; margin-bottom: 4px;"><%= LeaderName %></h4>
                                 <p style="color: var(--c-accent); font-weight: 500;">Team Leader</p>
                             </div>
                         </div>
                         <div style="display: grid; gap: 0.75rem;">
                             <div>
                                 <label style="font-size: 0.75rem; color: var(--c-text-muted); text-transform: uppercase;">Enrollment Number</label>
-                                <p style="font-weight: 500;">123456789</p>
+                                <p style="font-weight: 500;"><%= LeaderEnrollment %></p>
                             </div>
                             <div>
                                 <label style="font-size: 0.75rem; color: var(--c-text-muted); text-transform: uppercase;">Email</label>
-                                <p style="font-weight: 500;">tirth.leader@example.com</p>
+                                <p style="font-weight: 500;"><%= LeaderEmail %></p>
                             </div>
                         </div>
                     </div>
@@ -114,19 +118,23 @@
                         <div style="display: grid; gap: 1.25rem;">
                             <div>
                                 <label style="font-size: 0.75rem; color: var(--c-text-muted); text-transform: uppercase; font-weight: 600;">Project Title</label>
-                                <p style="font-weight: 700; font-size: 1.1rem; color: var(--c-accent);">Project Board App</p>
+                                <p style="font-weight: 700; font-size: 1.1rem; color: var(--c-accent);"><%= GroupName %></p>
                             </div>
                             <div>
                                 <label style="font-size: 0.75rem; color: var(--c-text-muted); text-transform: uppercase; font-weight: 600;">Domain Alignment</label>
-                                <p style="font-weight: 500;">Web Development (Full Stack)</p>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.75rem; color: var(--c-text-muted); text-transform: uppercase; font-weight: 600;">Functional Scope</label>
-                                <p style="font-weight: 400;">Creating a collaborative dashboard workspace. The application supports team tracking, mentor selection, proposal approval workflows, and task boards for agile project development.</p>
+                                <p style="font-weight: 500;"><%= TechName %></p>
                             </div>
                         </div>
                     </div>
                 </div>
+                <% } else { %>
+                <div class="data-section" style="text-align: center; padding: 4rem 2rem;">
+                    <i class="fa-solid fa-users-slash" style="font-size: 3rem; color: var(--c-text-muted); margin-bottom: 1rem;"></i>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">You are not in a group yet</h2>
+                    <p style="color: var(--c-text-muted); margin-bottom: 2rem;">Browse available groups that are looking for members and send a request to join.</p>
+                    <a href="../../JoinGroup.aspx" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px;">Browse &amp; Join Groups</a>
+                </div>
+                <% } %>
             </div>
         </main>
     </form>

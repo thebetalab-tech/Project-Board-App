@@ -1,10 +1,10 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Leader_Members.aspx.cs" Inherits="Project_Board.Student.Leader.Leader_Members" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="InvitationManager.aspx.cs" Inherits="Project_Board.Student.Leader.InvitationManager" %>
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leader Dashboard — Team Members</title>
+    <title>Leader Invitations — Project Board</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../Admin/admin.css">
 </head>
@@ -21,13 +21,13 @@
                     <a href="Dashboard.aspx" class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Overview
                     </a>
-                    <a href="Leader_Members.aspx" class="nav-link active">
+                    <a href="Leader_Members.aspx" class="nav-link">
                         <i class="fa-solid fa-users"></i> Team Members
                     </a>
                     <a href="Leader_Mentor.aspx" class="nav-link">
                         <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
                     </a>
-                    <a href="InvitationManager.aspx" class="nav-link">
+                    <a href="InvitationManager.aspx" class="nav-link active">
                         <i class="fa-solid fa-envelope"></i> Invitations
                     </a>
                     <a href="../Member/Dashboard.aspx" class="nav-link">
@@ -63,9 +63,6 @@
                     <input type="text" placeholder="Search...">
                 </div>
                 <div class="topbar-actions">
-                    <div class="status-badge-container" style="background: var(--c-bg-elevated); padding: 0.5rem 1rem; border-radius: 20px; display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.875rem;">
-                        <span class="status-dot" style='<%= MemberNeeded ? "width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--c-blue);" : "width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--c-green);" %>'></span> <%= MemberNeeded ? "Team Forming" : "Team Completed" %>
-                    </div>
                     <a href="../../User/Profile.aspx" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>
@@ -75,53 +72,14 @@
             <div class="dashboard-container">
                 <div class="page-header">
                     <div class="page-title">
-                        <h1>Team Members</h1>
-                        <p>Manage your group members and send invitations.</p>
-                    </div>
-                    <div>
-                        <asp:Button ID="btnToggleStatus" runat="server" CssClass="btn-primary" OnClick="btnToggleStatus_Click" />
+                        <h1>Invitations Manager</h1>
+                        <p>Manage join requests and pending invitations for your group.</p>
                     </div>
                 </div>
 
-                <div class="data-section">
+                <asp:Panel ID="pnlRequests" runat="server" CssClass="data-section" Visible="false">
                     <div class="section-header">
-                        <h2>Active Members</h2>
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Member ID</th>
-                                    <th>Member Name</th>
-                                    <th>Enrollment No.</th>
-                                    <th>Email</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <asp:Repeater ID="rptGroups" runat="server">
-                                    <ItemTemplate>
-                                        <tr>
-                                            <td><strong><%# Eval("UserId") %></strong></td>
-                                            <td><%# Eval("FullName") %></td>
-                                            <td><%# Eval("EnrollmentNo") %></td>
-                                            <td><%# Eval("Email") %></td>
-                                            <td>
-                                                <span class='badge status-<%# Eval("JoinStatus").ToString().ToLower() %>'>
-                                                    <%# Eval("JoinStatus") %>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    </ItemTemplate>
-                                </asp:Repeater>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <asp:Panel ID="pnlInviteSection" runat="server" CssClass="data-section">
-                    <div class="section-header">
-                        <h2>Invite New Members</h2>
+                        <h2>Join Requests <span class="badge" style="background: var(--c-red); color: white;">New</span></h2>
                     </div>
                     <div class="table-responsive">
                         <table>
@@ -132,20 +90,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <asp:Repeater ID="rptEligible" runat="server" OnItemCommand="rptEligible_ItemCommand">
+                                <asp:Repeater ID="rptRequests" runat="server" OnItemCommand="rptRequests_ItemCommand">
                                     <ItemTemplate>
                                         <tr>
                                             <td>
                                                 <div class="user-cell">
-                                                    <div class="user-cell-avatar"><i class="fa-solid fa-user" style="color: var(--c-text-muted);"></i></div>
+                                                    <div class="user-cell-avatar"><i class="fa-solid fa-user-clock" style="color: var(--c-text-muted);"></i></div>
                                                     <div class="user-cell-info">
                                                         <h4><%# Eval("FullName") %></h4>
                                                         <p><%# Eval("Email") %> | <%# Eval("EnrollmentNo") %></p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td style="text-align: right;">
-                                                <asp:Button ID="btnInvite" runat="server" CssClass="btn-secondary" Text="Invite" CommandName="Invite" CommandArgument='<%# Eval("UserId") %>' />
+                                            <td style="text-align: right; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                                <asp:Button ID="btnAccept" runat="server" CssClass="btn-primary" Text="Accept" CommandName="Accept" CommandArgument='<%# Eval("UserId") %>' style="background: var(--c-green);" />
+                                                <asp:Button ID="btnReject" runat="server" CssClass="btn-secondary" Text="Reject" CommandName="Reject" CommandArgument='<%# Eval("UserId") %>' style="background: var(--c-red); color: white; border: none;" />
                                             </td>
                                         </tr>
                                     </ItemTemplate>
@@ -153,6 +112,48 @@
                             </tbody>
                         </table>
                     </div>
+                </asp:Panel>
+
+                <asp:Panel ID="pnlPending" runat="server" CssClass="data-section" Visible="false">
+                    <div class="section-header">
+                        <h2>Sent Invitations</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student Details</th>
+                                    <th style="text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <asp:Repeater ID="rptPending" runat="server" OnItemCommand="rptPending_ItemCommand">
+                                    <ItemTemplate>
+                                        <tr>
+                                            <td>
+                                                <div class="user-cell">
+                                                    <div class="user-cell-avatar"><i class="fa-solid fa-paper-plane" style="color: var(--c-text-muted);"></i></div>
+                                                    <div class="user-cell-info">
+                                                        <h4><%# Eval("FullName") %></h4>
+                                                        <p><%# Eval("Email") %> | <%# Eval("EnrollmentNo") %></p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <asp:Button ID="btnRevoke" runat="server" CssClass="btn-secondary" Text="Revoke" CommandName="Revoke" CommandArgument='<%# Eval("UserId") %>' />
+                                            </td>
+                                        </tr>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+                            </tbody>
+                        </table>
+                    </div>
+                </asp:Panel>
+
+                <asp:Panel ID="pnlEmptyState" runat="server" CssClass="data-section" style="text-align: center; padding: 4rem 2rem;">
+                    <i class="fa-solid fa-inbox" style="font-size: 3rem; color: var(--c-text-muted); margin-bottom: 1rem;"></i>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Inbox Zero</h2>
+                    <p style="color: var(--c-text-muted); margin-bottom: 2rem;">You do not have any pending requests or sent invitations.</p>
                 </asp:Panel>
             </div>
         </main>

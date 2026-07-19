@@ -24,6 +24,9 @@
                     <a href="Member_Team.aspx" class="nav-link active">
                         <i class="fa-solid fa-users"></i> Team & Mentor
                     </a>
+                    <a href="InvitationManager.aspx" class="nav-link">
+                        <i class="fa-solid fa-envelope"></i> Invitations
+                    </a>
                     <% if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Leader") { %>
                     <a href="../Leader/Dashboard.aspx" class="nav-link">
                         <i class="fa-solid fa-user-tie"></i> Leader Panel
@@ -94,40 +97,45 @@
                         <h2>Roster Members</h2>
                     </div>
                     <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Member Name</th>
-                                    <th>Role</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="user-cell">
-                                            <div class="user-cell-avatar">TL</div>
-                                            <div class="user-cell-info">
-                                                <h4>Tirth Leader</h4>
-                                                <p>123456789</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: right;"><span class="badge admin">Leader</span></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="user-cell">
-                                            <div class="user-cell-avatar">JD</div>
-                                            <div class="user-cell-info">
-                                                <h4>John Doe</h4>
-                                                <p>987654321</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: right;"><span class="badge student">Member</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <asp:Panel ID="pnlUnassigned" runat="server">
+                            <div style="background: var(--c-bg-elevated); border: 1px solid var(--c-border); padding: 1.5rem; border-radius: 8px;">
+                                <h4 style="color: var(--c-text-muted); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fa-solid fa-users-slash"></i> Not in a Team
+                                </h4>
+                                <p style="font-size: 0.85rem; color: var(--c-text-muted);">You haven't joined a team yet. Once you join a team, your roster members will appear here.</p>
+                            </div>
+                        </asp:Panel>
+                        
+                        <asp:Panel ID="pnlAssigned" runat="server">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Member Name</th>
+                                        <th>Role</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <asp:Repeater ID="rptRoster" runat="server">
+                                        <ItemTemplate>
+                                            <tr>
+                                                <td>
+                                                    <div class="user-cell">
+                                                        <div class="user-cell-avatar"><%# GetInitials(Eval("FullName").ToString()) %></div>
+                                                        <div class="user-cell-info">
+                                                            <h4><%# Eval("FullName") %></h4>
+                                                            <p><%# Eval("EnrollmentNo") %></p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <span class='<%# Eval("Role").ToString() == "Leader" ? "badge admin" : "badge student" %>'><%# Eval("Role") %></span>
+                                                </td>
+                                            </tr>
+                                        </ItemTemplate>
+                                    </asp:Repeater>
+                                </tbody>
+                            </table>
+                        </asp:Panel>
                     </div>
                 </div>
             </div>

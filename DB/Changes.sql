@@ -1,0 +1,1 @@
+﻿ALTER TABLE Groups ADD MemberNeeded BIT NOT NULL DEFAULT 1;

@@ -27,6 +27,9 @@
                     <a href="Leader_Mentor.aspx" class="nav-link active">
                         <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
                     </a>
+                    <a href="InvitationManager.aspx" class="nav-link">
+                        <i class="fa-solid fa-envelope"></i> Invitations
+                    </a>
                     <a href="../Member/Dashboard.aspx" class="nav-link">
                         <i class="fa-solid fa-user-group"></i> View as Member
                     </a>

@@ -162,6 +162,7 @@
     <Content Include="Admin\groups.html" />
     <Content Include="Admin\index.html" />
     <Content Include="Admin\projects.html" />
+    <Content Include="JoinGroup.aspx" />
     <Content Include="Logout.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -220,16 +221,17 @@
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="SignUp.aspx" />
     <Content Include="Site.Master" />
-    <Content Include="StudentDashboard.aspx" />
     <Content Include="OnBoarding.aspx" />
     <Content Include="CreateGroup.aspx" />
     <Content Include="MentorSelection.aspx" />
     <Content Include="Admin\technologies.html" />
     <Content Include="Admin\users.html" />
     <Content Include="Student\Leader\Dashboard.aspx" />
+    <Content Include="Student\Leader\InvitationManager.aspx" />
     <Content Include="Student\Leader\Leader_Members.aspx" />
     <Content Include="Student\Leader\Leader_Mentor.aspx" />
     <Content Include="Student\Member\Dashboard.aspx" />
+    <Content Include="Student\Member\InvitationManager.aspx" />
     <Content Include="Student\Member\Member_Team.aspx" />
     <Content Include="User\forget_password.aspx" />
     <Content Include="User\Profile.aspx" />
@@ -286,6 +288,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="JoinGroup.aspx.cs">
+      <DependentUpon>JoinGroup.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JoinGroup.aspx.designer.cs">
+      <DependentUpon>JoinGroup.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Logout.aspx.cs">
       <DependentUpon>Logout.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -315,13 +324,6 @@
     <Compile Include="Site.Mobile.Master.designer.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
     </Compile>
-    <Compile Include="StudentDashboard.aspx.cs">
-      <DependentUpon>StudentDashboard.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="StudentDashboard.aspx.designer.cs">
-      <DependentUpon>StudentDashboard.aspx</DependentUpon>
-    </Compile>
     <Compile Include="OnBoarding.aspx.cs">
       <DependentUpon>OnBoarding.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -350,6 +352,13 @@
     <Compile Include="Student\Leader\Dashboard.aspx.designer.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Student\Leader\InvitationManager.aspx.cs">
+      <DependentUpon>InvitationManager.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\InvitationManager.aspx.designer.cs">
+      <DependentUpon>InvitationManager.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Student\Member\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -365,9 +374,19 @@
       <DependentUpon>Leader_Mentor.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Student\Member\InvitationManager.aspx.cs">
+      <DependentUpon>InvitationManager.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Member\InvitationManager.aspx.designer.cs">
+      <DependentUpon>InvitationManager.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Student\Member\Member_Team.aspx.cs">
       <DependentUpon>Member_Team.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Member\Member_Team.aspx.designer.cs">
+      <DependentUpon>Member_Team.aspx</DependentUpon>
     </Compile>
     <Compile Include="User\forget_password.aspx.cs">
       <DependentUpon>forget_password.aspx</DependentUpon>

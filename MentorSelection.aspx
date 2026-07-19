@@ -267,6 +267,12 @@
         .badge-pill strong {
             color: var(--text-primary);
         }
+
+        #form1 {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
     </style>
 </head>
 <body class="theme-light">

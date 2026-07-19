@@ -11,6 +11,8 @@ namespace Project_Board.Student.Leader
         protected int TotalMembers { get; set; } = 0;
         protected int PendingInvites { get; set; } = 0;
         protected int AcceptedInvites { get; set; } = 0;
+        protected string UserInitials { get; set; } = "TL";
+        protected bool MemberNeeded { get; set; } = true;
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -22,6 +24,11 @@ namespace Project_Board.Student.Leader
             
             if (!IsPostBack)
             {
+                string fullName = Session["FullName"]?.ToString() ?? "Student Leader";
+                if (!string.IsNullOrEmpty(fullName))
+                {
+                    UserInitials = fullName.Substring(0, 1).ToUpper();
+                }
                 LoadDashboardStats();
             }
         }
@@ -34,7 +41,7 @@ namespace Project_Board.Student.Leader
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string query = @"
-                    SELECT g.GroupName, t.TechName, g.GroupId
+                    SELECT g.GroupName, t.TechName, g.GroupId, g.MemberNeeded
                     FROM Groups g
                     LEFT JOIN Technologies t ON g.TechId = t.TechId
                     WHERE g.LeaderId = @LeaderId;
@@ -51,6 +58,11 @@ namespace Project_Board.Student.Leader
                             GroupName = reader["GroupName"].ToString();
                             TechName = reader["TechName"] != DBNull.Value ? reader["TechName"].ToString() : "Not Assigned";
                             int groupId = Convert.ToInt32(reader["GroupId"]);
+                            
+                            if (reader["MemberNeeded"] != DBNull.Value)
+                            {
+                                MemberNeeded = Convert.ToBoolean(reader["MemberNeeded"]);
+                            }
                             
                             reader.Close();
                             

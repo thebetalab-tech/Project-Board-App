@@ -11,8 +11,14 @@ namespace Project_Board.Student.Leader
     {
         protected global::System.Web.UI.WebControls.Repeater rptGroups;
         protected global::System.Web.UI.WebControls.Repeater rptPending;
-        protected global::System.Web.UI.WebControls.TextBox txtInviteEmail;
-        protected global::System.Web.UI.WebControls.Button btnInvite;
+        protected global::System.Web.UI.WebControls.Repeater rptEligible;
+        protected global::System.Web.UI.WebControls.Repeater rptRequests;
+        protected global::System.Web.UI.WebControls.Panel pnlInviteSection;
+        protected global::System.Web.UI.WebControls.Panel pnlRequests;
+        protected global::System.Web.UI.WebControls.Button btnToggleStatus;
+        
+        protected string UserInitials { get; set; } = "TL";
+        protected bool MemberNeeded { get; set; } = true;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -24,6 +30,11 @@ namespace Project_Board.Student.Leader
 
             if (!IsPostBack)
             {
+                string fullName = Session["FullName"]?.ToString() ?? "Student Leader";
+                if (!string.IsNullOrEmpty(fullName))
+                {
+                    UserInitials = fullName.Substring(0, 1).ToUpper();
+                }
                 LoadMembers();
             }
         }
@@ -48,6 +59,21 @@ namespace Project_Board.Student.Leader
                 int groupId = GetGroupId(conn);
                 if (groupId == 0) return;
 
+                // Fetch MemberNeeded status
+                string groupInfoSql = "SELECT MemberNeeded FROM Groups WHERE GroupId = @GroupId";
+                using (SqlCommand cmd = new SqlCommand(groupInfoSql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@GroupId", groupId);
+                    object result = cmd.ExecuteScalar();
+                    if (result != DBNull.Value && result != null)
+                    {
+                        MemberNeeded = Convert.ToBoolean(result);
+                    }
+                }
+                
+                btnToggleStatus.Text = MemberNeeded ? "Mark Team Completed" : "Mark Team Forming";
+                pnlInviteSection.Visible = MemberNeeded;
+
                 string query = @"
                     SELECT u.UserId, u.FullName, u.Email, u.EnrollmentNo, gm.JoinStatus, u.Role
                     FROM GroupMembers gm 
@@ -66,41 +92,73 @@ namespace Project_Board.Student.Leader
                         dvAccepted.RowFilter = "JoinStatus = 'Accepted'";
                         rptGroups.DataSource = dvAccepted;
                         rptGroups.DataBind();
-
-                        DataView dvPending = new DataView(dt);
-                        dvPending.RowFilter = "JoinStatus = 'Pending'";
-                        rptPending.DataSource = dvPending;
-                        rptPending.DataBind();
+                    }
+                }
+                
+                if (MemberNeeded)
+                {
+                    string eligibleQuery = @"
+                        SELECT UserId, FullName, Email, EnrollmentNo 
+                        FROM Users 
+                        WHERE Role = 'Student' AND IsLeader = 0 AND IsActive = 1 
+                        AND UserId NOT IN (SELECT UserId FROM GroupMembers WHERE JoinStatus = 'Accepted')
+                        AND UserId NOT IN (SELECT UserId FROM GroupMembers WHERE GroupId = @GroupId)";
+                    using (SqlCommand cmd = new SqlCommand(eligibleQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@GroupId", groupId);
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dtEligible = new DataTable();
+                            da.Fill(dtEligible);
+                            rptEligible.DataSource = dtEligible;
+                            rptEligible.DataBind();
+                        }
                     }
                 }
             }
         }
 
-        protected void btnInvite_Click(object sender, EventArgs e)
+        protected void btnToggleStatus_Click(object sender, EventArgs e)
         {
-            string inviteValue = txtInviteEmail.Text.Trim();
-            if (string.IsNullOrEmpty(inviteValue)) return;
-
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 conn.Open();
                 int groupId = GetGroupId(conn);
                 if (groupId == 0) return;
-
-                // Find user
-                string findUser = "SELECT UserId FROM Users WHERE (Email = @Val OR EnrollmentNo = @Val) AND IsActive = 1";
-                int targetUserId = 0;
-                using (SqlCommand cmd = new SqlCommand(findUser, conn))
+                
+                string groupInfoSql = "SELECT MemberNeeded FROM Groups WHERE GroupId = @GroupId";
+                bool currentStatus = true;
+                using (SqlCommand cmd = new SqlCommand(groupInfoSql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Val", inviteValue);
+                    cmd.Parameters.AddWithValue("@GroupId", groupId);
                     object result = cmd.ExecuteScalar();
-                    if (result != null) targetUserId = Convert.ToInt32(result);
+                    if (result != DBNull.Value && result != null) currentStatus = Convert.ToBoolean(result);
                 }
-
-                if (targetUserId > 0)
+                
+                string updateSql = "UPDATE Groups SET MemberNeeded = @NewStatus WHERE GroupId = @GroupId";
+                using (SqlCommand cmd = new SqlCommand(updateSql, conn))
                 {
-                    // Check if already invited
+                    cmd.Parameters.AddWithValue("@NewStatus", !currentStatus);
+                    cmd.Parameters.AddWithValue("@GroupId", groupId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            LoadMembers();
+        }
+
+        protected void rptEligible_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName == "Invite")
+            {
+                int targetUserId = Convert.ToInt32(e.CommandArgument);
+                string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    conn.Open();
+                    int groupId = GetGroupId(conn);
+                    if (groupId == 0) return;
+
                     string checkSql = "SELECT COUNT(1) FROM GroupMembers WHERE GroupId = @GroupId AND UserId = @UserId";
                     using (SqlCommand cmd = new SqlCommand(checkSql, conn))
                     {
@@ -119,34 +177,9 @@ namespace Project_Board.Student.Leader
                         }
                     }
                 }
-            }
-            txtInviteEmail.Text = "";
-            LoadMembers();
-        }
-
-        protected void rptPending_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "Cancel")
-            {
-                int targetUserId = Convert.ToInt32(e.CommandArgument);
-                string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
-                using (SqlConnection conn = new SqlConnection(connString))
-                {
-                    conn.Open();
-                    int groupId = GetGroupId(conn);
-                    if (groupId > 0)
-                    {
-                        string delSql = "DELETE FROM GroupMembers WHERE GroupId = @GroupId AND UserId = @UserId AND JoinStatus = 'Pending'";
-                        using (SqlCommand cmd = new SqlCommand(delSql, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@GroupId", groupId);
-                            cmd.Parameters.AddWithValue("@UserId", targetUserId);
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-                }
                 LoadMembers();
             }
         }
+
     }
 }
