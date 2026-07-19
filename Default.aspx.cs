@@ -127,7 +127,7 @@ namespace Project_Board
             }
             else if (role == "Faculty")
             {
-                Response.Redirect("Faculty/Faculty_Dashboard.aspx", false);
+                Response.Redirect("Faculty/Dashboard.aspx", false);
             }
             else if (role == "Admin")
             {

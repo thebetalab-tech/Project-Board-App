@@ -1,49 +1,47 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="Project_Board.Student.Leader.Dashboard" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="Project_Board.Faculty.Dashboard" %>
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leader Dashboard — Overview</title>
+    <title>Project Board - Faculty Dashboard</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../Admin/admin.css?v=639200793428857004">
-    <style>
-        .status-badge-container { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.875rem; background: var(--c-bg-elevated); padding: 0.5rem 1rem; border-radius: 20px;}
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--c-blue); }
-    </style>
+    <!-- Premium editorial theme -->
+    <link rel="stylesheet" href="../Admin/admin.css?v=639200797339083061">
 </head>
 <body>
     <form id="form1" runat="server">
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-header">
+                <div class="logo-icon"><i class="fa-solid fa-graduation-cap" style="color: white;"></i></div>
                 <h2>Project Board</h2>
             </div>
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
                     <a href="Dashboard.aspx" class="nav-link active">
-                        <i class="fa-solid fa-chart-pie"></i> Overview
+                        <i class="fa-solid fa-chart-pie"></i> Dashboard
                     </a>
-                    <a href="Leader_Members.aspx" class="nav-link">
-                        <i class="fa-solid fa-users"></i> Team Members
+                    <a href="GroupManagement.aspx" class="nav-link">
+                        <i class="fa-solid fa-users-gear"></i> Group Management
                     </a>
-                    <a href="Leader_Mentor.aspx" class="nav-link">
-                        <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
+                    <a href="ProjectManagement.aspx" class="nav-link">
+                        <i class="fa-solid fa-folder-tree"></i> Project Management
                     </a>
                     <a href="InvitationManager.aspx" class="nav-link">
-                        <i class="fa-solid fa-envelope"></i> Invitations
-                    </a>
-                    <a href="../Member/Dashboard.aspx" class="nav-link">
-                        <i class="fa-solid fa-user-group"></i> View as Member
+                        <i class="fa-solid fa-envelope"></i> Mentor Requests
                     </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
-                    <a href="../../User/Profile.aspx" class="nav-link">
+                    <a href="../User/Profile.aspx" class="nav-link">
                         <i class="fa-solid fa-user"></i> Profile
                     </a>
-                    <a href="../../Logout.aspx" class="nav-link">
+                    <a href="../Logout.aspx" class="nav-link">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </div>
@@ -52,8 +50,8 @@
                 <div class="user-profile">
                     <div class="avatar"><%= UserInitials %></div>
                     <div class="user-info">
-                        <h4><%= Session["FullName"] ?? "Student Leader" %></h4>
-                        <p><%= Session["Email"] ?? "leader@example.com" %></p>
+                        <h4><%= Session["FullName"] ?? "Faculty Member" %></h4>
+                        <p><%= Session["Email"] ?? "faculty@example.com" %></p>
                     </div>
                 </div>
             </div>
@@ -67,10 +65,7 @@
                     <input type="text" placeholder="Search...">
                 </div>
                 <div class="topbar-actions">
-                    <div class="status-badge-container">
-                        <span class="status-dot" style='<%= MemberNeeded ? "" : "background: var(--c-green);" %>'></span> <%= MemberNeeded ? "Team Forming" : "Team Completed" %>
-                    </div>
-                    <a href="../../User/Profile.aspx" class="action-btn" title="Profile">
+                    <a href="../User/Profile.aspx" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 </div>
@@ -79,39 +74,40 @@
             <div class="dashboard-container">
                 <div class="page-header">
                     <div class="page-title">
-                        <h1><%= GroupName %></h1>
-                        <p>Technology Domain: <%= TechName %></p>
+                        <h1>Faculty Dashboard</h1>
+                        <p>Welcome to the Faculty Dashboard section.</p>
                     </div>
                 </div>
-
-                <div class="stats-grid">
+                
+                                <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-icon users"><i class="fa-solid fa-users"></i></div>
                         </div>
-                        <div class="stat-value"><%= TotalMembers %></div>
-                        <div class="stat-label">Total Members</div>
+                        <div class="stat-value"><%= MentoredGroupsCount %></div>
+                        <div class="stat-label">Mentored Groups</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon projects"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                            <div class="stat-icon projects"><i class="fa-solid fa-folder-tree"></i></div>
                         </div>
-                        <div class="stat-value"><%= PendingInvites %></div>
-                        <div class="stat-label">Pending Invites</div>
+                        <div class="stat-value"><%= ActiveProjectsCount %></div>
+                        <div class="stat-label">Active Projects</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon tech"><i class="fa-solid fa-check"></i></div>
+                            <div class="stat-icon tech"><i class="fa-solid fa-envelope"></i></div>
                         </div>
-                        <div class="stat-value"><%= AcceptedInvites %></div>
-                        <div class="stat-label">Accepted Invites</div>
+                        <div class="stat-value"><%= PendingRequestsCount %></div>
+                        <div class="stat-label">Pending Requests</div>
                     </div>
                 </div>
             </div>
         </main>
     </form>
-	<script src="../../Admin/admin.js"></script>
+    
+    <!-- Mobile toggle script -->
+    <script src="../Admin/admin.js"></script>
 </body>
 </html>
-
 

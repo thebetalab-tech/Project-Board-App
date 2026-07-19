@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Dashboard — Team & Mentor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../Admin/admin.css">
+    <link rel="stylesheet" href="../../Admin/admin.css?v=639200793429448624">
 </head>
 <body>
     <form id="form1" runat="server">
@@ -141,5 +141,8 @@
             </div>
         </main>
     </form>
+	<script src="../../Admin/admin.js"></script>
 </body>
 </html>
+
+

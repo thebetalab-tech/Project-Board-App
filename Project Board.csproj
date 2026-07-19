@@ -157,6 +157,10 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
+    <Content Include="Faculty\Dashboard.aspx" />
+    <Content Include="Faculty\GroupManagement.aspx" />
+    <Content Include="Faculty\InvitationManager.aspx" />
+    <Content Include="Faculty\ProjectManagement.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Admin\groups.html" />
@@ -284,6 +288,34 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\GroupManagement.aspx.cs">
+      <DependentUpon>GroupManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\GroupManagement.aspx.designer.cs">
+      <DependentUpon>GroupManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\InvitationManager.aspx.cs">
+      <DependentUpon>InvitationManager.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\InvitationManager.aspx.designer.cs">
+      <DependentUpon>InvitationManager.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\ProjectManagement.aspx.cs">
+      <DependentUpon>ProjectManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\ProjectManagement.aspx.designer.cs">
+      <DependentUpon>ProjectManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

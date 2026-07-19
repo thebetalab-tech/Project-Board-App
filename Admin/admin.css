@@ -61,9 +61,14 @@ body {
     background-color: var(--c-bg-warm);
     color: var(--c-text);
     line-height: 1.5;
-    display: flex;
     min-height: 100vh;
     overflow-x: hidden;
+}
+
+form {
+    display: block;
+    width: 100%;
+    min-height: 100vh;
 }
 
 /* --------------------------------------------------------------------------
@@ -78,6 +83,7 @@ body {
     position: fixed;
     height: 100vh;
     z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .sidebar-header {
@@ -141,6 +147,7 @@ body {
     font-weight: 500;
     transition: var(--transition);
     margin-bottom: 0.25rem;
+    min-height: 44px;
 }
 
 .nav-link i {
@@ -205,8 +212,10 @@ body {
 .main-content {
     flex: 1;
     margin-left: 280px;
+    width: calc(100% - 280px);
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
 .topbar {
@@ -267,6 +276,11 @@ body {
     cursor: pointer;
     position: relative;
     transition: var(--transition);
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .action-btn:hover {
@@ -289,8 +303,6 @@ body {
    -------------------------------------------------------------------------- */
 .dashboard-container {
     padding: 3rem;
-    max-width: 1400px;
-    margin: 0 auto;
     width: 100%;
 }
 
@@ -557,8 +569,8 @@ tbody tr:hover {
 }
 
 .icon-btn {
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     border-radius: 6px;
     border: none;
     background: transparent;

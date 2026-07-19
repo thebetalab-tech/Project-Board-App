@@ -876,10 +876,13 @@ body {
         box-shadow: none;
         background: rgba(0, 0, 0, 0.55);
         /* slightly darker background on mobile for better legibility */
+        align-items: center;
     }
 
     .form-side-content {
-        max-width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        width: 100%;
     }
 }
 
