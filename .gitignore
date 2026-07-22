@@ -6,7 +6,7 @@ bin/
 obj/
 
 # NuGet
-web.config
+/0000000web.config
 # User files
 *.user
 *.suo
