@@ -60,7 +60,7 @@
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
                                 <asp:TextBox ID="txtLoginID" runat="server" ClientIDMode="Static" CssClass="form-input"
-                                    placeholder="Enter your Email Or Enrollment Or UID"></asp:TextBox>
+                                    placeholder="Enter your Email Or Enrollment"></asp:TextBox>
                             </div>
                         </div>
 
