@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="Project_Board.SiteMaster" %>
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="Project_Board.SiteMaster" %>
 
 <!DOCTYPE html>
 
@@ -7,25 +7,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Project Board</title>
-
-    <asp:PlaceHolder runat="server">
-        <%: Scripts.Render("~/bundles/modernizr") %>
-    </asp:PlaceHolder>
 </head>
 
 <body style="margin:0; padding:0; overflow:hidden;">
     <form id="form1" runat="server">
-
-        <asp:ScriptManager runat="server">
-            <Scripts>
-                <asp:ScriptReference Name="MsAjaxBundle" />
-                <asp:ScriptReference Name="jquery" />
-                <asp:ScriptReference Name="WebFormsBundle" />
-            </Scripts>
-        </asp:ScriptManager>
-
+        <asp:ScriptManager runat="server"></asp:ScriptManager>
         <asp:ContentPlaceHolder ID="MainContent" runat="server" />
-
     </form>
 </body>
 </html>

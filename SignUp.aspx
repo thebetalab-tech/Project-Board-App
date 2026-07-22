@@ -13,15 +13,15 @@
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap"
             rel="stylesheet">
 
-        <link rel="stylesheet" href="styles/login-signup.css?v=5">
+        <link rel="stylesheet" href="styles/login-signup.css?v=20260719">
     </head>
 
     <body>
         <div class="bg-scene" id="bgScene">
-            <div class="bg-layer bg-layer--deep">
-                <video id="bg-video-1" class="bg-video" autoplay loop muted playsinline poster="assets/bg.webp">
-                    <source src="assets/background video.mp4" type="video/mp4">
-                </video>
+            <div class="bg-layer bg-layer--deep aurora-container">
+                <div class="aurora-blob blob-1"></div>
+                <div class="aurora-blob blob-2"></div>
+                <div class="aurora-blob blob-3"></div>
             </div>
             <div class="bg-layer bg-layer--mid">
                 <div class="texture-overlay"></div>
