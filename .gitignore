@@ -6,10 +6,7 @@ bin/
 obj/
 
 # NuGet
-packages/
-Web.config
-Web.Debug.config
-Web.Release.config
+web.config
 # User files
 *.user
 *.suo

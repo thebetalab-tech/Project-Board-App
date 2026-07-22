@@ -13,7 +13,39 @@
     <!-- Premium editorial theme -->
     <link rel="stylesheet" href="../Admin/admin.css">
     <!-- Forget password specific style -->
-    <link rel="stylesheet" href="forget_password.css">
+    <link rel="stylesheet" href="forget_password.css?v=2">
+    <style>
+        html, body {
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: var(--c-bg-warm, #faf9f7) !important;
+        }
+        body {
+            display: block !important;
+        }
+        form#form1 {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+            width: 100% !important;
+            padding: 1.5rem !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+        }
+        .forget-wrapper {
+            width: 100% !important;
+            max-width: 460px !important;
+            margin: auto !important;
+            background: var(--c-bg-card, #ffffff) !important;
+            border: 1px solid var(--c-border, rgba(0, 0, 0, 0.08)) !important;
+            border-radius: 20px !important;
+            box-shadow: var(--shadow-lg, 0 12px 24px rgba(0,0,0,0.06)) !important;
+            padding: 2.5rem 2rem !important;
+            box-sizing: border-box !important;
+        }
+    </style>
 </head>
 <body>
     <form id="form1" runat="server" autocomplete="off">
