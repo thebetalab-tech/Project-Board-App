@@ -283,21 +283,54 @@ function initRippleEffect() {
 function initInputAnimations() {
     const inputs = document.querySelectorAll('.input-wrapper input');
 
+    function checkInputValue(input) {
+        if (!input) return;
+        const group = input.closest('.input-group');
+        if (!group) return;
+
+        if (input.value && input.value.trim()) {
+            group.classList.add('has-value');
+        } else {
+            group.classList.remove('has-value');
+        }
+
+        if (input.id === 'password') {
+            updatePasswordStrength(input);
+        }
+    }
+
     inputs.forEach(input => {
-        // Floating label effect on focus/blur
+        // Initial check for pre-filled or browser autofilled values
+        checkInputValue(input);
+
         input.addEventListener('focus', () => {
-            input.closest('.input-group').classList.add('focused');
+            const group = input.closest('.input-group');
+            if (group) group.classList.add('focused');
         });
 
         input.addEventListener('blur', () => {
-            input.closest('.input-group').classList.remove('focused');
-            if (input.value.trim()) {
-                input.closest('.input-group').classList.add('has-value');
-            } else {
-                input.closest('.input-group').classList.remove('has-value');
-            }
+            const group = input.closest('.input-group');
+            if (group) group.classList.remove('focused');
+            checkInputValue(input);
+        });
+
+        input.addEventListener('change', () => {
+            checkInputValue(input);
         });
     });
+
+    // Detect browser autofill via CSS keyframe animation event
+    document.addEventListener('animationstart', (e) => {
+        if (e.animationName === 'onAutoFillStart' && e.target) {
+            checkInputValue(e.target);
+        }
+    });
+
+    // Check again after browser finishes initial page load autofill
+    setTimeout(() => {
+        inputs.forEach(checkInputValue);
+    }, 500);
+}
 
     // Links hover sound (visual feedback only)
     const links = document.querySelectorAll('.forgot-link, .register-btn');

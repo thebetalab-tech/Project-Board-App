@@ -2,9 +2,21 @@
         body {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            padding: 4rem 2rem;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
             background-color: var(--c-bg-warm);
+            box-sizing: border-box;
+        }
+
+        form#form1 {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
         }
 
         .profile-wrapper {
@@ -13,7 +25,6 @@
             border-radius: 20px;
             box-shadow: var(--shadow-lg);
             width: 100%;
-            max-width: 950px;
             display: flex;
             flex-direction: row;
             overflow: hidden;

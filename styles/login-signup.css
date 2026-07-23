@@ -617,6 +617,31 @@ body {
     background: rgba(255, 255, 255, 0.08);
 }
 
+/* --- Browser Autofill Custom Dark Theme --- */
+@keyframes onAutoFillStart { from {} to {} }
+@keyframes onAutoFillCancel { from {} to {} }
+
+.input-wrapper input:-webkit-autofill,
+.input-wrapper input:-webkit-autofill:hover,
+.input-wrapper input:-webkit-autofill:focus,
+.input-wrapper input:-webkit-autofill:active {
+    -webkit-text-fill-color: #ffffff !important;
+    -webkit-box-shadow: 0 0 0 1000px rgba(24, 32, 48, 0.95) inset !important;
+    box-shadow: 0 0 0 1000px rgba(24, 32, 48, 0.95) inset !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    transition: background-color 50000s ease-in-out 0s !important;
+    caret-color: #ffffff !important;
+    animation-name: onAutoFillStart;
+}
+
+.input-wrapper input:not(:-webkit-autofill) {
+    animation-name: onAutoFillCancel;
+}
+
+.input-wrapper input:-webkit-autofill ~ .input-icon {
+    color: #ffffff !important;
+}
+
 
 
 
