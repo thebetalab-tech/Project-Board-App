@@ -1,88 +1,188 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="OnBoarding.aspx.cs" Inherits="Project_Board.OnBoarding" %>
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Board — Choose Your Path</title>
+    <!-- Vector Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inherit the premium editorial theme -->
+    <link rel="stylesheet" href="Admin/admin.css">
+    <link rel="stylesheet" href="User/profile.css?v=20260723">
+    <style>
+        .onboarding-option-card {
+            background: var(--c-bg-card);
+            border: 1px solid var(--c-border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            text-decoration: none;
+            color: var(--c-text);
+            transition: var(--transition);
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
 
-    <head runat="server">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Project Board — Choose Your Path</title>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap"
-            rel="stylesheet">
-        <link rel="stylesheet" href="styles/login-signup.css?v=20260723_v4">
-    </head>
+        .onboarding-option-card:hover {
+            border-color: var(--c-accent);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+            background: var(--c-bg-card-hover);
+        }
 
-    <body>
-        <form id="form1" runat="server">
-            <div class="theme-bg">
-                <div class="theme-bg__image"></div>
-                <div class="theme-bg__blur"></div>
-                <div class="theme-bg__gradient"></div>
-            </div>
+        .option-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            background: var(--c-accent-bg);
+            color: var(--c-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
 
-            <form id="form1" runat="server">
-                <div class="onboarding-container">
+        .onboarding-option-card:hover .option-icon-box {
+            background: var(--c-accent);
+            color: #ffffff;
+            box-shadow: 0 4px 12px var(--c-accent-glow);
+        }
 
-                    <div class="branding-content"
-                        style="text-align: center; margin-bottom: 24px; animation: fadeInDown 1s cubic-bezier(0.16, 1, 0.3, 1) both;">
-                        <div class="brand-text-group">
-                            <h1 class="brand-title">
-                                <span class="brand-word brand-word--project">Project </span>
-                                <span class="brand-word brand-word--board">Board</span>
-                            </h1>
-                            <p class="brand-tagline">Organize. Track. Collaborate.</p>
+        .option-details {
+            flex: 1;
+        }
+
+        .option-title {
+            font-family: var(--f-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--c-text);
+            margin-bottom: 0.35rem;
+        }
+
+        .option-desc {
+            font-size: 0.875rem;
+            color: var(--c-text-muted);
+            line-height: 1.45;
+        }
+
+        .option-arrow {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--c-bg-elevated);
+            color: var(--c-text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .onboarding-option-card:hover .option-arrow {
+            background: var(--c-accent);
+            color: #ffffff;
+            transform: translateX(4px);
+        }
+
+        .brand-logo-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: var(--c-accent);
+            color: white;
+            font-size: 2.25rem;
+            font-family: var(--f-display);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 16px var(--c-accent-glow);
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="profile-wrapper">
+            
+            <!-- Left Sidebar Card -->
+            <div class="profile-sidebar-card">
+                <div class="brand-logo-circle">
+                    <i class="fa-solid fa-cubes-stacked"></i>
+                </div>
+                
+                <h2 class="profile-name">Project Board</h2>
+                <div class="profile-badge">
+                    <span class="badge admin" style="font-size: 0.85rem;">Student Onboarding</span>
+                </div>
+                
+                <div class="stats-grid" style="width: 100%; margin-bottom: 0;">
+                    <div class="stat-card" style="padding: 1.25rem; text-align: center; display: flex; flex-direction: column; align-items: center; background: var(--c-bg-card);">
+                        <div class="stat-value" style="font-size: 1.25rem; font-weight: 600; color: var(--c-accent); margin-bottom: 0.25rem;">
+                            <i class="fa-solid fa-layer-group"></i>
                         </div>
-                    </div>
-
-                    <div class="onboarding-cards">
-
-                        <asp:LinkButton ID="btnStartGroup" runat="server" CssClass="onboarding-card"
-                            OnClick="btnStartGroup_Click">
-                            <div class="card-icon-wrapper">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                    <circle cx="9" cy="7" r="4" />
-                                    <line x1="19" y1="8" x2="19" y2="14" />
-                                    <line x1="22" y1="11" x2="16" y2="11" />
-                                </svg>
-                            </div>
-                            <h3 class="card-title">Start my own group</h3>
-                            <p class="card-text">Become a leader, create a new project group, and invite members to join
-                                your team.</p>
-                            <div class="card-action">
-                                <span>Continue</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="5" y1="12" x2="19" y2="12" />
-                                    <polyline points="12 5 19 12 12 19" />
-                                </svg>
-                            </div>
-                        </asp:LinkButton>
-
-                        <asp:LinkButton ID="btnJoinGroup" runat="server" CssClass="onboarding-card"
-                            OnClick="btnJoinGroup_Click">
-                            <div class="card-icon-wrapper">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                    <circle cx="9" cy="7" r="4" />
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                </svg>
-                            </div>
-                            <h3 class="card-title">Join a group</h3>
-                            <p class="card-text">Search for existing groups and request to join their project team.</p>
-                            <div class="card-action">
-                                <span>Continue</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="5" y1="12" x2="19" y2="12" />
-                                    <polyline points="12 5 19 12 12 19" />
-                                </svg>
-                            </div>
-                        </asp:LinkButton>
-
+                        <div class="stat-label" style="font-size: 0.8rem; line-height: 1.3;">Organize &amp; Collaborate</div>
                     </div>
                 </div>
-            </form>
-            <script src="Scripts/main/login-signup.js?v=20260723_v4"></script>
-    </body>
+            </div>
 
-    </html>
+            <!-- Right Main Form -->
+            <div class="profile-main-card">
+                <div class="back-btn-container">
+                    <a href="Default.aspx" class="back-btn">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                    </a>
+                </div>
+
+                <div class="section-header-custom">
+                    <h3>Choose Your Path</h3>
+                    <p style="color: var(--c-text-muted); font-size: 0.9rem; margin-top: 0.35rem;">
+                        Select how you would like to participate in your project team.
+                    </p>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    
+                    <!-- Option 1: Start my own group -->
+                    <asp:LinkButton ID="btnStartGroup" runat="server" CssClass="onboarding-option-card" OnClick="btnStartGroup_Click">
+                        <div class="option-icon-box">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <div class="option-details">
+                            <div class="option-title">Start my own group</div>
+                            <div class="option-desc">Become a team leader, create a new project group, and invite members to collaborate.</div>
+                        </div>
+                        <div class="option-arrow">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </asp:LinkButton>
+
+                    <!-- Option 2: Join a group -->
+                    <asp:LinkButton ID="btnJoinGroup" runat="server" CssClass="onboarding-option-card" OnClick="btnJoinGroup_Click">
+                        <div class="option-icon-box">
+                            <i class="fa-solid fa-users-rectangle"></i>
+                        </div>
+                        <div class="option-details">
+                            <div class="option-title">Join a group</div>
+                            <div class="option-desc">Search for existing project groups and send a request to join their team.</div>
+                        </div>
+                        <div class="option-arrow">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </asp:LinkButton>
+
+                </div>
+            </div>
+
+        </div>
+    </form>
+</body>
+</html>
