@@ -30,9 +30,12 @@
                     <a href="<%= ResolveUrl("~/Student/Leader/InvitationManager.aspx") %>" class="nav-link active">
                         <i class="fa-solid fa-envelope"></i> Invitations
                     </a>
+<<<<<<< HEAD
                     <a href="<%= ResolveUrl("~/Student/Member/Dashboard.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user-group"></i> View as Member
                     </a>
+=======
+>>>>>>> 92bb3aa0d9bd18ccc2d8e38f6606100c26e28d35
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
