@@ -6,11 +6,98 @@
 document.addEventListener('DOMContentLoaded', () => {
     initParticles();
     initPasswordToggle();
+    initPasswordStrength();
     initFormValidation();
     initRippleEffect();
     initInputAnimations();
     initSeamlessVideoLoop();
 });
+
+
+/* ============================================
+   PASSWORD STRENGTH METER
+   ============================================ */
+function initPasswordStrength() {
+    const passwordInput = document.getElementById('password');
+    const strengthContainer = document.getElementById('passwordStrength');
+    const strengthLabel = document.getElementById('strengthLabel');
+    if (!passwordInput || !strengthContainer || !strengthLabel) return;
+
+    const bars = strengthContainer.querySelectorAll('.strength-bar');
+    const reqItems = strengthContainer.querySelectorAll('.strength-requirements li');
+
+    passwordInput.addEventListener('input', () => {
+        const val = passwordInput.value;
+
+        if (!val.length) {
+            strengthContainer.classList.remove('visible');
+            bars.forEach(bar => {
+                bar.classList.remove('active');
+                bar.removeAttribute('data-level');
+            });
+            strengthLabel.textContent = '';
+            strengthLabel.removeAttribute('data-level');
+            reqItems.forEach(li => li.classList.remove('met'));
+            return;
+        }
+
+        strengthContainer.classList.add('visible');
+
+        // Check individual requirements
+        const checks = {
+            length: val.length >= 8,
+            uppercase: /[A-Z]/.test(val),
+            lowercase: /[a-z]/.test(val),
+            number: /[0-9]/.test(val),
+            special: /[^a-zA-Z0-9]/.test(val)
+        };
+
+        // Update requirement checklist
+        reqItems.forEach(li => {
+            const req = li.getAttribute('data-req');
+            if (checks[req]) {
+                li.classList.add('met');
+            } else {
+                li.classList.remove('met');
+            }
+        });
+
+        // Evaluate overall strength
+        const score = evaluatePassword(val, checks);
+        const levels = ['weak', 'fair', 'good', 'strong'];
+        const labels = ['Weak', 'Fair', 'Good', 'Strong'];
+        const level = levels[score];
+
+        bars.forEach((bar, i) => {
+            if (i <= score) {
+                bar.classList.add('active');
+                bar.setAttribute('data-level', level);
+            } else {
+                bar.classList.remove('active');
+                bar.removeAttribute('data-level');
+            }
+        });
+
+        strengthLabel.textContent = labels[score];
+        strengthLabel.setAttribute('data-level', level);
+    });
+}
+
+function evaluatePassword(password, checks) {
+    let score = 0;
+
+    // Length checks
+    if (password.length >= 8) score++;
+    if (password.length >= 12) score++;
+
+    // Character variety
+    const variety = [checks.lowercase, checks.uppercase, checks.number, checks.special].filter(Boolean).length;
+    if (variety >= 2) score++;
+    if (variety >= 4) score++;
+
+    // Clamp to 0-3 (weak, fair, good, strong)
+    return Math.min(Math.max(score - 1, 0), 3);
+}
 
 
 /* ============================================
@@ -59,36 +146,64 @@ function createParticle(container, index) {
 /* ============================================
    PASSWORD SHOW/HIDE TOGGLE
    ============================================ */
+function togglePasswordVisibility(button) {
+    if (!button) return;
+    const wrapper = button.closest('.input-wrapper') || button.parentElement;
+    if (!wrapper) return;
+
+    const input = wrapper.querySelector('input');
+    if (!input) return;
+
+    const eyeOpen = button.querySelector('.eye-open');
+    const eyeClosed = button.querySelector('.eye-closed');
+
+    const currentType = input.getAttribute('type') || input.type;
+    const isPassword = currentType === 'password';
+
+    if (isPassword) {
+        input.type = 'text';
+        input.setAttribute('type', 'text');
+        if (eyeOpen) eyeOpen.style.display = 'none';
+        if (eyeClosed) eyeClosed.style.display = 'block';
+    } else {
+        input.type = 'password';
+        input.setAttribute('type', 'password');
+        if (eyeOpen) eyeOpen.style.display = 'block';
+        if (eyeClosed) eyeClosed.style.display = 'none';
+    }
+
+    // Micro animation on toggle — preserve translateY(-50%) for vertical centering
+    button.style.transform = 'translateY(-50%) scale(0.8)';
+    setTimeout(() => {
+        button.style.transform = '';
+    }, 150);
+}
+
 function initPasswordToggle() {
-    const toggle = document.getElementById('passwordToggle');
-    if (!toggle) return;
-    const passwordInput = document.getElementById('password');
-    if (!passwordInput) return;
-    const eyeOpen = toggle.querySelector('.eye-open');
-    const eyeClosed = toggle.querySelector('.eye-closed');
+    const toggles = document.querySelectorAll('.password-toggle');
+    toggles.forEach(toggle => {
+        if (toggle.dataset.toggleInitialized) return;
+        toggle.dataset.toggleInitialized = "true";
 
-    let isVisible = false;
-
-    toggle.addEventListener('click', () => {
-        isVisible = !isVisible;
-
-        if (isVisible) {
-            passwordInput.type = 'text';
-            eyeOpen.style.display = 'none';
-            eyeClosed.style.display = 'block';
-        } else {
-            passwordInput.type = 'password';
-            eyeOpen.style.display = 'block';
-            eyeClosed.style.display = 'none';
-        }
-
-        // Micro animation on toggle
-        toggle.style.transform = 'scale(0.8)';
-        setTimeout(() => {
-            toggle.style.transform = 'scale(1)';
-        }, 150);
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            togglePasswordVisibility(toggle);
+        });
     });
 }
+
+// Global Event Delegation fallback for dynamic/ASP.NET renders
+document.addEventListener('click', (e) => {
+    const toggleBtn = e.target.closest('.password-toggle');
+    if (toggleBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        togglePasswordVisibility(toggleBtn);
+    }
+});
+
+
 
 
 /* ============================================
@@ -97,7 +212,7 @@ function initPasswordToggle() {
 function initFormValidation() {
     const form = document.getElementById('loginForm') || document.getElementById('signupForm');
     const loginBtn = document.getElementById('loginBtn');
-    
+
     // Support both Default.aspx (txtLoginID, txtPassword) and SignUp.aspx (loginId, password)
     const loginIdInput = document.getElementById('loginId') || document.getElementById('txtLoginID');
     const passwordInput = document.getElementById('password') || document.getElementById('txtPassword');
