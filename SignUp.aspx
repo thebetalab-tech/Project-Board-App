@@ -13,7 +13,7 @@
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap"
             rel="stylesheet">
 
-        <link rel="stylesheet" href="styles/login-signup.css?v=20260719">
+        <link rel="stylesheet" href="styles/login-signup.css?v=20260723_v3">
     </head>
 
     <body>
@@ -137,10 +137,10 @@
                                     <span class="strength-label" id="strengthLabel"></span>
                                     <ul class="strength-requirements" id="strengthRequirements">
                                         <li data-req="length"><span class="req-icon"></span>At least 8 characters</li>
-                                        <li data-req="uppercase"><span class="req-icon"></span>One uppercase letter (A–Z)</li>
-                                        <li data-req="lowercase"><span class="req-icon"></span>One lowercase letter (a–z)</li>
-                                        <li data-req="number"><span class="req-icon"></span>One number (0–9)</li>
-                                        <li data-req="special"><span class="req-icon"></span>One special character (!@#$…)</li>
+                                        <li data-req="uppercase"><span class="req-icon"></span>One uppercase letter (A-Z)</li>
+                                        <li data-req="lowercase"><span class="req-icon"></span>One lowercase letter (a-z)</li>
+                                        <li data-req="number"><span class="req-icon"></span>One number (0-9)</li>
+                                        <li data-req="special"><span class="req-icon"></span>One special character (!@#$...)</li>
                                     </ul>
                                 </div>
                             </div>
@@ -257,7 +257,7 @@
             </div>
         </div>
 
-        <script src="Scripts/main/login-signup.js"></script>
+        <script src="Scripts/main/login-signup.js?v=20260723_v3"></script>
     </body>
 
     </html>

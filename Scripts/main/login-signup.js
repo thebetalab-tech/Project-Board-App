@@ -17,70 +17,74 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ============================================
    PASSWORD STRENGTH METER
    ============================================ */
-function initPasswordStrength() {
-    const passwordInput = document.getElementById('password');
+function updatePasswordStrength(passwordInput) {
+    if (!passwordInput) return;
     const strengthContainer = document.getElementById('passwordStrength');
     const strengthLabel = document.getElementById('strengthLabel');
-    if (!passwordInput || !strengthContainer || !strengthLabel) return;
+    if (!strengthContainer || !strengthLabel) return;
 
     const bars = strengthContainer.querySelectorAll('.strength-bar');
     const reqItems = strengthContainer.querySelectorAll('.strength-requirements li');
+    const val = passwordInput.value;
 
-    passwordInput.addEventListener('input', () => {
-        const val = passwordInput.value;
+    if (!val.length) {
+        strengthContainer.classList.remove('visible');
+        bars.forEach(bar => {
+            bar.classList.remove('active');
+            bar.removeAttribute('data-level');
+        });
+        strengthLabel.textContent = '';
+        strengthLabel.removeAttribute('data-level');
+        reqItems.forEach(li => li.classList.remove('met'));
+        return;
+    }
 
-        if (!val.length) {
-            strengthContainer.classList.remove('visible');
-            bars.forEach(bar => {
-                bar.classList.remove('active');
-                bar.removeAttribute('data-level');
-            });
-            strengthLabel.textContent = '';
-            strengthLabel.removeAttribute('data-level');
-            reqItems.forEach(li => li.classList.remove('met'));
-            return;
+    strengthContainer.classList.add('visible');
+
+    // Check individual requirements
+    const checks = {
+        length: val.length >= 8,
+        uppercase: /[A-Z]/.test(val),
+        lowercase: /[a-z]/.test(val),
+        number: /[0-9]/.test(val),
+        special: /[^a-zA-Z0-9]/.test(val)
+    };
+
+    // Update requirement checklist
+    reqItems.forEach(li => {
+        const req = li.getAttribute('data-req');
+        if (checks[req]) {
+            li.classList.add('met');
+        } else {
+            li.classList.remove('met');
         }
-
-        strengthContainer.classList.add('visible');
-
-        // Check individual requirements
-        const checks = {
-            length: val.length >= 8,
-            uppercase: /[A-Z]/.test(val),
-            lowercase: /[a-z]/.test(val),
-            number: /[0-9]/.test(val),
-            special: /[^a-zA-Z0-9]/.test(val)
-        };
-
-        // Update requirement checklist
-        reqItems.forEach(li => {
-            const req = li.getAttribute('data-req');
-            if (checks[req]) {
-                li.classList.add('met');
-            } else {
-                li.classList.remove('met');
-            }
-        });
-
-        // Evaluate overall strength
-        const score = evaluatePassword(val, checks);
-        const levels = ['weak', 'fair', 'good', 'strong'];
-        const labels = ['Weak', 'Fair', 'Good', 'Strong'];
-        const level = levels[score];
-
-        bars.forEach((bar, i) => {
-            if (i <= score) {
-                bar.classList.add('active');
-                bar.setAttribute('data-level', level);
-            } else {
-                bar.classList.remove('active');
-                bar.removeAttribute('data-level');
-            }
-        });
-
-        strengthLabel.textContent = labels[score];
-        strengthLabel.setAttribute('data-level', level);
     });
+
+    // Evaluate overall strength
+    const score = evaluatePassword(val, checks);
+    const levels = ['weak', 'fair', 'good', 'strong'];
+    const labels = ['Weak', 'Fair', 'Good', 'Strong'];
+    const level = levels[score];
+
+    bars.forEach((bar, i) => {
+        if (i <= score) {
+            bar.classList.add('active');
+            bar.setAttribute('data-level', level);
+        } else {
+            bar.classList.remove('active');
+            bar.removeAttribute('data-level');
+        }
+    });
+
+    strengthLabel.textContent = labels[score];
+    strengthLabel.setAttribute('data-level', level);
+}
+
+function initPasswordStrength() {
+    const passwordInput = document.getElementById('password');
+    if (passwordInput) {
+        updatePasswordStrength(passwordInput);
+    }
 }
 
 function evaluatePassword(password, checks) {
@@ -180,26 +184,22 @@ function togglePasswordVisibility(button) {
 }
 
 function initPasswordToggle() {
-    const toggles = document.querySelectorAll('.password-toggle');
-    toggles.forEach(toggle => {
-        if (toggle.dataset.toggleInitialized) return;
-        toggle.dataset.toggleInitialized = "true";
-
-        toggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            togglePasswordVisibility(toggle);
-        });
-    });
+    // Handled via global event delegation below
 }
 
-// Global Event Delegation fallback for dynamic/ASP.NET renders
+// Global Event Delegation for dynamic/ASP.NET renders and password input
 document.addEventListener('click', (e) => {
     const toggleBtn = e.target.closest('.password-toggle');
     if (toggleBtn) {
         e.preventDefault();
         e.stopPropagation();
         togglePasswordVisibility(toggleBtn);
+    }
+});
+
+document.addEventListener('input', (e) => {
+    if (e.target && e.target.id === 'password') {
+        updatePasswordStrength(e.target);
     }
 });
 

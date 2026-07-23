@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Board — Create Group</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/login-signup.css?v=5">
+    <link rel="stylesheet" href="styles/login-signup.css?v=20260723_v3">
 </head>
 <body class="theme-light">
     
@@ -118,6 +118,6 @@
             </div>
         </div>
     </form>
-    <script src="Scripts/main/login-signup.js"></script>
+    <script src="Scripts/main/login-signup.js?v=20260723_v3"></script>
 </body>
 </html>
