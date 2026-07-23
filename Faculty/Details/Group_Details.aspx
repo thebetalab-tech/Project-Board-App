@@ -11,7 +11,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Premium editorial theme -->
-    <link rel="stylesheet" href="../../Admin/admin.css">
+    <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
     <style>
         .details-grid {
             display: grid;
@@ -65,25 +65,25 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
-                    <a href="../Dashboard.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Dashboard
                     </a>
-                    <a href="../GroupManagement.aspx" class="nav-link active">
+                    <a href="<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>" class="nav-link active">
                         <i class="fa-solid fa-users-gear"></i> Group Management
                     </a>
-                    <a href="../ProjectManagement.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-folder-tree"></i> Project Management
                     </a>
-                    <a href="../InvitationManager.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-envelope"></i> Mentor Requests
                     </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
-                    <a href="../../User/Profile.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user"></i> Profile
                     </a>
-                    <a href="../../Logout.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </div>
@@ -107,14 +107,14 @@
                     <input type="text" placeholder="Search...">
                 </div>
                 <div class="topbar-actions">
-                    <a href="../../User/Profile.aspx" class="action-btn" title="Profile">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 </div>
             </div>
 
             <div class="dashboard-container">
-                <a href="../GroupManagement.aspx" class="back-link">
+                <a href="<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>" class="back-link">
                     <i class="fa-solid fa-arrow-left"></i> Back to Group Management
                 </a>
                 <div class="page-header">
@@ -189,6 +189,6 @@
     </form>
     
     <!-- Mobile toggle script -->
-    <script src="../../Admin/admin.js"></script>
+    <script src="<%= ResolveUrl("~/Admin/admin.js") %>"></script>
 </body>
 </html>

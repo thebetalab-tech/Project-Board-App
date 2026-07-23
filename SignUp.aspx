@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="SignUp.aspx.cs" Inherits="Project_Board.SignUp" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SignUp.aspx.cs" Inherits="Project_Board.SignUp" %>
     <!DOCTYPE html>
     <html lang="en">
 
@@ -8,12 +8,12 @@
         <meta name="description"
             content="Project Board - Sign up for your project management dashboard. Organize, track, and collaborate on your projects seamlessly.">
         <title>Project Board — Sign Up</title>
-        <link rel="icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap"
             rel="stylesheet">
 
-        <link rel="stylesheet" href="styles/login-signup.css?v=20260723_v3">
+        <link rel="stylesheet" href="styles/login-signup.css?v=20260723_v3" />
     </head>
 
     <body>
@@ -244,7 +244,7 @@
 
                     <div class="form-footer">
                         <p class="footer-text">Already have an account?</p>
-                        <a href="Default.aspx" class="register-btn" id="registerBtn">
+                        <a href="<%= ResolveUrl("~/Default.aspx") %>" class="register-btn" id="registerBtn">
                             <span>Login Now</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
                                 height="16">

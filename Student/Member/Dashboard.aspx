@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Dashboard — Overview</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../Admin/admin.css?v=639200793429409149">
+    <link runat="server" rel="stylesheet" href="~/Admin/admin.css?v=639200793429409149" />
     <style>
         .status-badge-container { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.875rem; background: var(--c-bg-elevated); padding: 0.5rem 1rem; border-radius: 20px;}
         .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--c-blue); }
@@ -22,27 +22,27 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
-                    <a href="Dashboard.aspx" class="nav-link active">
+                    <a href="<%= ResolveUrl("~/Student/Member/Dashboard.aspx") %>" class="nav-link active">
                         <i class="fa-solid fa-chart-pie"></i> Overview
                     </a>
-                    <a href="Member_Team.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Member/Member_Team.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-users"></i> Team & Mentor
                     </a>
-                    <a href="InvitationManager.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-envelope"></i> Invitations
                     </a>
                     <% if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Leader") { %>
-                    <a href="../Leader/Dashboard.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user-tie"></i> Leader Panel
                     </a>
                     <% } %>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
-                    <a href="../../User/Profile.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user"></i> Profile
                     </a>
-                    <a href="../../Logout.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </div>
@@ -69,7 +69,7 @@
                     <div class="status-badge-container">
                         <span class="status-dot" style='<%= MemberNeeded ? "" : "background: var(--c-green);" %>'></span> <%= MemberNeeded ? "Team Forming" : "Team Completed" %>
                     </div>
-                    <a href="../../User/Profile.aspx" class="action-btn" title="Profile">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 </div>
@@ -132,13 +132,13 @@
                     <i class="fa-solid fa-users-slash" style="font-size: 3rem; color: var(--c-text-muted); margin-bottom: 1rem;"></i>
                     <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">You are not in a group yet</h2>
                     <p style="color: var(--c-text-muted); margin-bottom: 2rem;">Browse available groups that are looking for members and send a request to join.</p>
-                    <a href="../../JoinGroup.aspx" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px;">Browse &amp; Join Groups</a>
+                    <a href="<%= ResolveUrl("~/JoinGroup.aspx") %>" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px;">Browse &amp; Join Groups</a>
                 </div>
                 <% } %>
             </div>
         </main>
     </form>
-	<script src="../../Admin/admin.js"></script>
+	<script src="<%= ResolveUrl("~/Admin/admin.js") %>"></script>
 </body>
 </html>
 

@@ -11,9 +11,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Premium editorial theme -->
-    <link rel="stylesheet" href="../Admin/admin.css">
+    <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
     <!-- Forget password specific style -->
-    <link rel="stylesheet" href="forget_password.css?v=2">
+    <link runat="server" rel="stylesheet" href="~/User/forget_password.css?v=2" />
     <style>
         html, body {
             height: 100% !important;
@@ -78,7 +78,7 @@
                     </asp:LinkButton>
                     
                     <div class="back-link-container">
-                        <a href="../Default.aspx" class="back-link">
+                        <a href="<%= ResolveUrl("~/Default.aspx") %>" class="back-link">
                             <i class="fa-solid fa-arrow-left-long"></i> Back to Login
                         </a>
                     </div>

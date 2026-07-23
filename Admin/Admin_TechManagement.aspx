@@ -1,12 +1,12 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Admin_TechManagement.aspx.cs" Inherits="Project_Board.Admin.Admin_TechManagement" %>
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard — Technologies</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="admin.css">
+    <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
 </head>
 <body>
     <form id="form1" runat="server">
@@ -21,29 +21,29 @@
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Main Menu</div>
-                <a href="Admin_Dashboard.aspx" class="nav-link">
+                <a href="<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>" class="nav-link">
                     <i class="fa-solid fa-chart-pie"></i> Overview
                 </a>
-                <a href="Admin_UserManagement.aspx" class="nav-link">
+                <a href="<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>" class="nav-link">
                     <i class="fa-solid fa-users"></i> Users Management
                 </a>
-                <a href="Admin_GroupsManagement.aspx" class="nav-link">
+                <a href="<%= ResolveUrl("~/Admin/Admin_GroupsManagement.aspx") %>" class="nav-link">
                     <i class="fa-solid fa-user-group"></i> Groups
                 </a>
-                <a href="Admin_ProjectsManagement.aspx" class="nav-link">
+                <a href="<%= ResolveUrl("~/Admin/Admin_ProjectsManagement.aspx") %>" class="nav-link">
                     <i class="fa-solid fa-folder-open"></i> Projects
                 </a>
-                <a href="Admin_TechManagement.aspx" class="nav-link active">
+                <a href="<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>" class="nav-link active">
                     <i class="fa-solid fa-microchip"></i> Technologies
                 </a>
             </div>
 
             <div class="nav-section">
                 <div class="nav-section-title">Preferences</div>
-                <a href="../User/Profile.aspx" class="nav-link">
+                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="nav-link">
                     <i class="fa-solid fa-user"></i> Profile
                 </a>
-                <a href="../Logout.aspx" class="nav-link">
+                <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="nav-link">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                 </a>
             </div>
@@ -174,7 +174,7 @@
         </div>
     </main>
 
-    <script src="admin.js"></script>
+    <script src="<%= ResolveUrl("~/Admin/admin.js") %>"></script>
     </form>
 </body>
 </html>

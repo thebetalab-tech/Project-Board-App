@@ -8,7 +8,7 @@
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap"
             rel="stylesheet">
-        <link rel="stylesheet" href="styles/login-signup.css?v=20260723_v3">
+        <link rel="stylesheet" href="styles/login-signup.css?v=20260723_v3" />
 
         <div class="bg-scene" id="bgScene">
             <div class="bg-layer bg-layer--deep aurora-container">
@@ -93,7 +93,7 @@
                         </div>
 
                         <div class="form-options">
-                            <a href="User/forget_password.aspx" class="forgot-link" id="forgotPassword">Forgot Password?</a>
+                            <a href="<%= ResolveUrl("~/User/forget_password.aspx") %>" class="forgot-link" id="forgotPassword">Forgot Password?</a>
                         </div>
 
                         <asp:LinkButton ID="loginBtn" runat="server" ClientIDMode="Static" CssClass="login-btn"
@@ -122,7 +122,7 @@
 
                     <div class="form-footer">
                         <p class="footer-text">Don't have an account?</p>
-                        <a href="SignUp.aspx" class="register-btn" id="registerBtn">
+                        <a href="<%= ResolveUrl("~/SignUp.aspx") %>" class="register-btn" id="registerBtn">
                             <span>Register Now</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
                                 height="16">

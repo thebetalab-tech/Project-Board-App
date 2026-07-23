@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leader Dashboard — Mentor Request</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../Admin/admin.css?v=639200793429373241">
+    <link runat="server" rel="stylesheet" href="~/Admin/admin.css?v=639200793429373241" />
 </head>
 <body>
     <form id="form1" runat="server">
@@ -18,28 +18,28 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
-                    <a href="Dashboard.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Overview
                     </a>
-                    <a href="Leader_Members.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-users"></i> Team Members
                     </a>
-                    <a href="Leader_Mentor.aspx" class="nav-link active">
+                    <a href="<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>" class="nav-link active">
                         <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
                     </a>
-                    <a href="InvitationManager.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Leader/InvitationManager.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-envelope"></i> Invitations
                     </a>
-                    <a href="../Member/Dashboard.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Member/Dashboard.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user-group"></i> View as Member
                     </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
-                    <a href="../../User/Profile.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user"></i> Profile
                     </a>
-                    <a href="../../Logout.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </div>
@@ -63,7 +63,7 @@
                     <input type="text" placeholder="Search...">
                 </div>
                 <div class="topbar-actions">
-                    <a href="../../User/Profile.aspx" class="action-btn" title="Profile">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 </div>
@@ -106,7 +106,7 @@
             </div>
         </main>
     </form>
-	<script src="../../Admin/admin.js"></script>
+	<script src="<%= ResolveUrl("~/Admin/admin.js") %>"></script>
 </body>
 </html>
 

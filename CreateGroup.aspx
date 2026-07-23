@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Board — Create Group</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/login-signup.css?v=20260723_v3">
+    <link  rel="stylesheet" href="styles/login-signup.css?v=20260723_v3" />
 </head>
 <body class="theme-light">
     
@@ -107,7 +107,7 @@
                 </div>
                 
                 <div class="form-footer" style="margin-top: 30px; display: flex; justify-content: center;">
-                    <a href="OnBoarding.aspx" class="register-btn" style="display: flex; align-items: center; gap: 8px;">
+                    <a href="<%= ResolveUrl("~/OnBoarding.aspx") %>" class="register-btn" style="display: flex; align-items: center; gap: 8px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                             <line x1="19" y1="12" x2="5" y2="12" />
                             <polyline points="12 19 5 12 12 5" />
@@ -118,6 +118,6 @@
             </div>
         </div>
     </form>
-    <script src="Scripts/main/login-signup.js?v=20260723_v3"></script>
+    <script src="<%= ResolveUrl("~/Scripts/main/login-signup.js?v=20260723_v3") %>"></script>
 </body>
 </html>

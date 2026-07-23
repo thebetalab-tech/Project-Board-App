@@ -98,11 +98,9 @@
       <Private>True</Private>
       <HintPath>packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-
     <Reference Include="Newtonsoft.Json">
       <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-
     <Reference Include="Microsoft.AspNet.FriendlyUrls">
       <HintPath>packages\Microsoft.AspNet.FriendlyUrls.Core.1.0.2\lib\net45\Microsoft.AspNet.FriendlyUrls.dll</HintPath>
     </Reference>
@@ -122,7 +120,8 @@
     <Content Include="Admin\Admin_UserManagement.aspx" />
     <Content Include="Admin\Details\Group_Details.aspx" />
     <Content Include="Admin\Details\Project_Details.aspx" />
-
+    <Content Include="assets\background video.mp4" />
+    <Content Include="assets\bg.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="Faculty\Dashboard.aspx" />
@@ -137,8 +136,9 @@
     <Content Include="Admin\index.html" />
     <Content Include="Admin\projects.html" />
     <Content Include="JoinGroup.aspx" />
+    <Content Include="login-signup.css" />
     <Content Include="Logout.aspx" />
-
+    <Content Include="Scripts\main\login-signup.js" />
     <Content Include="SignUp.aspx" />
     <Content Include="Site.Master" />
     <Content Include="OnBoarding.aspx" />
@@ -153,11 +153,11 @@
     <Content Include="Student\Member\Dashboard.aspx" />
     <Content Include="Student\Member\InvitationManager.aspx" />
     <Content Include="Student\Member\Member_Team.aspx" />
+    <Content Include="styles\login-signup.css" />
     <Content Include="User\forget_password.aspx" />
     <Content Include="User\Profile.aspx" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
-
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
@@ -210,7 +210,6 @@
     <Compile Include="Admin\Details\Project_Details.aspx.designer.cs">
       <DependentUpon>Project_Details.aspx</DependentUpon>
     </Compile>
-
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -390,9 +389,10 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\bg.webp" />
     <None Include="packages.config" />
-    <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
-    <Content Include="Scripts\jquery-3.7.0.min.map" />
+    <None Include="Properties\PublishProfiles\site79733-WebDeploy.pubxml" />
+    <None Include="Properties\PublishProfiles\site80531-WebDeploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
