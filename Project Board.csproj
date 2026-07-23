@@ -120,6 +120,8 @@
     <Content Include="Admin\Admin_ProjectsManagement.aspx" />
     <Content Include="Admin\Admin_TechManagement.aspx" />
     <Content Include="Admin\Admin_UserManagement.aspx" />
+    <Content Include="Admin\Details\Group_Details.aspx" />
+    <Content Include="Admin\Details\Project_Details.aspx" />
 
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
@@ -193,6 +195,20 @@
     </Compile>
     <Compile Include="Admin\Admin_UserManagement.aspx.designer.cs">
       <DependentUpon>Admin_UserManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Details\Group_Details.aspx.cs">
+      <DependentUpon>Group_Details.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Details\Group_Details.aspx.designer.cs">
+      <DependentUpon>Group_Details.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Details\Project_Details.aspx.cs">
+      <DependentUpon>Project_Details.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Details\Project_Details.aspx.designer.cs">
+      <DependentUpon>Project_Details.aspx</DependentUpon>
     </Compile>
 
     <Compile Include="App_Start\RouteConfig.cs" />

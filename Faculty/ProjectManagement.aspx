@@ -118,6 +118,11 @@
                                                         <i class="fa-solid fa-xmark"></i>
                                                     </asp:LinkButton>
                                                 </div>
+                                                <div class="table-actions" runat="server" visible='<%# Eval("Status").ToString() != "Pending" %>'>
+                                                    <a href="Details/Project_Details.aspx?ProjectId=<%# Eval("ProjectId") %>" class="icon-btn" title="View Details">
+                                                        <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     </ItemTemplate>

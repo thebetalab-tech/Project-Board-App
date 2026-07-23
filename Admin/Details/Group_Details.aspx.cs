@@ -3,15 +3,15 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
 
-namespace Project_Board.Faculty.Details
+namespace Project_Board.Admin.Details
 {
     public partial class Group_Details : System.Web.UI.Page
     {
-        protected string UserInitials { get; set; } = "FM";
+        protected string UserInitials { get; set; } = "AD";
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["UserId"] == null || Session["Role"]?.ToString() != "Faculty")
+            if (Session["UserId"] == null || Session["Role"]?.ToString() != "Admin")
             {
                 Response.Redirect("~/Default.aspx");
                 return;
@@ -19,7 +19,7 @@ namespace Project_Board.Faculty.Details
 
             if (!IsPostBack)
             {
-                string fullName = Session["FullName"]?.ToString() ?? "Faculty Member";
+                string fullName = Session["FullName"]?.ToString() ?? "Administrator";
                 if (!string.IsNullOrEmpty(fullName))
                 {
                     UserInitials = fullName.Substring(0, 1).ToUpper();
@@ -44,23 +44,20 @@ namespace Project_Board.Faculty.Details
                 return;
             }
 
-            int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                // Verify the group belongs to this mentor and get details
                 string queryDetails = @"
                     SELECT g.GroupName, g.Status, t.TechName, u.FullName AS LeaderName
                     FROM Groups g
                     INNER JOIN Technologies t ON g.TechId = t.TechId
                     INNER JOIN Users u ON g.LeaderId = u.UserId
-                    WHERE g.GroupId = @GroupId AND g.MentorId = @FacultyId";
+                    WHERE g.GroupId = @GroupId";
 
                 using (SqlCommand cmd = new SqlCommand(queryDetails, conn))
                 {
                     cmd.Parameters.AddWithValue("@GroupId", groupId);
-                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
                     
                     conn.Open();
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -74,13 +71,12 @@ namespace Project_Board.Faculty.Details
                         }
                         else
                         {
-                            ShowError("Group not found or you do not have permission to view it.");
+                            ShowError("Group not found.");
                             return;
                         }
                     }
                 }
 
-                // Get members
                 string queryMembers = @"
                     SELECT u.FullName, u.Email, u.EnrollmentNo, u.IsLeader
                     FROM GroupMembers gm

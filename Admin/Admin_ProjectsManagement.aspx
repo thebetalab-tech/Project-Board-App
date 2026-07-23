@@ -133,6 +133,9 @@
                                                 <asp:LinkButton ID="btnReject" runat="server" CssClass="icon-btn" style="color:var(--c-red)" ToolTip="Reject" CommandName="Reject" CommandArgument='<%# Eval("ProjectId") %>' Visible='<%# Eval("Status").ToString() == "Pending" %>'>
                                                     <i class="fa-solid fa-xmark"></i>
                                                 </asp:LinkButton>
+                                                <a href="Details/Project_Details.aspx?ProjectId=<%# Eval("ProjectId") %>" class="icon-btn" title="View Details">
+                                                    <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>

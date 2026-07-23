@@ -97,6 +97,7 @@
                                 <th>Members</th>
                                 <th>Faculty Mentor</th>
                                 <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -109,6 +110,13 @@
                                         <td><%# Eval("MentorName") != DBNull.Value ? Eval("MentorName") : "<span style='color:var(--c-text-muted)'>Not Assigned</span>" %></td>
                                         <td>
                                             <span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span>
+                                        </td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <a href="Details/Group_Details.aspx?GroupId=<%# Eval("GroupId") %>" class="icon-btn" title="View Details">
+                                                    <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 </ItemTemplate>

@@ -1,11 +1,10 @@
-z<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Project_Details.aspx.cs" Inherits="Project_Board.Faculty.Details.Project_Details" %>
-
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Project_Details.aspx.cs" Inherits="Project_Board.Admin.Details.Project_Details" %>
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Board - Project Details</title>
+    <title>Admin - Project Details</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
@@ -81,25 +80,28 @@ z<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Project_Details.aspx.
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo-icon"><i class="fa-solid fa-graduation-cap" style="color: white;"></i></div>
                 <h2>Project Board</h2>
             </div>
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
-                    <a href="../Dashboard.aspx" class="nav-link">
-                        <i class="fa-solid fa-chart-pie"></i> Dashboard
+                    <a href="../Admin_Dashboard.aspx" class="nav-link">
+                        <i class="fa-solid fa-chart-pie"></i> Overview
                     </a>
-                    <a href="../GroupManagement.aspx" class="nav-link">
-                        <i class="fa-solid fa-users-gear"></i> Group Management
+                    <a href="../Admin_UserManagement.aspx" class="nav-link">
+                        <i class="fa-solid fa-users"></i> Users Management
                     </a>
-                    <a href="../ProjectManagement.aspx" class="nav-link active">
-                        <i class="fa-solid fa-folder-tree"></i> Project Management
+                    <a href="../Admin_GroupsManagement.aspx" class="nav-link">
+                        <i class="fa-solid fa-user-group"></i> Groups
                     </a>
-                    <a href="../InvitationManager.aspx" class="nav-link">
-                        <i class="fa-solid fa-envelope"></i> Mentor Requests
+                    <a href="../Admin_ProjectsManagement.aspx" class="nav-link active">
+                        <i class="fa-solid fa-folder-open"></i> Projects
+                    </a>
+                    <a href="../Admin_TechManagement.aspx" class="nav-link">
+                        <i class="fa-solid fa-microchip"></i> Technologies
                     </a>
                 </div>
+
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
                     <a href="../../User/Profile.aspx" class="nav-link">
@@ -111,12 +113,10 @@ z<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Project_Details.aspx.
                 </div>
             </nav>
             <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="avatar"><%= UserInitials %></div>
-                    <div class="user-info">
-                        <h4><%= Session["FullName"] ?? "Faculty Member" %></h4>
-                        <p><%= Session["Email"] ?? "faculty@example.com" %></p>
-                    </div>
+                <div class="avatar"><%= UserInitials %></div>
+                <div class="user-info">
+                    <h4><%= Session["FullName"] ?? "Administrator" %></h4>
+                    <p><%= Session["Email"] ?? "admin@example.com" %></p>
                 </div>
             </div>
         </aside>
@@ -136,7 +136,7 @@ z<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Project_Details.aspx.
             </div>
 
             <div class="dashboard-container">
-                <a href="../ProjectManagement.aspx" class="back-link">
+                <a href="../Admin_ProjectsManagement.aspx" class="back-link">
                     <i class="fa-solid fa-arrow-left"></i> Back to Project Management
                 </a>
                 <div class="page-header">
@@ -199,7 +199,6 @@ z<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Project_Details.aspx.
         </main>
     </form>
     
-    <!-- Mobile toggle script -->
     <script src="../../Admin/admin.js"></script>
 </body>
 </html>
