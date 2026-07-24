@@ -41,14 +41,7 @@ namespace Project_Board.Student.Leader
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string query = @"
-                    SELECT 
-                        g.GroupName, 
-                        t.TechName, 
-                        g.GroupId, 
-                        g.MemberNeeded,
-                        (SELECT COUNT(UserId) FROM GroupMembers WHERE GroupId = g.GroupId) AS TotalMembers,
-                        (SELECT ISNULL(SUM(CASE WHEN JoinStatus = 'Pending' THEN 1 ELSE 0 END), 0) FROM GroupMembers WHERE GroupId = g.GroupId) AS PendingInvites,
-                        (SELECT ISNULL(SUM(CASE WHEN JoinStatus = 'Accepted' THEN 1 ELSE 0 END), 0) FROM GroupMembers WHERE GroupId = g.GroupId) AS AcceptedInvites
+                    SELECT g.GroupName, t.TechName, g.GroupId, g.MemberNeeded
                     FROM Groups g
                     LEFT JOIN Technologies t ON g.TechId = t.TechId
                     WHERE g.LeaderId = @LeaderId;
@@ -64,15 +57,37 @@ namespace Project_Board.Student.Leader
                         {
                             GroupName = reader["GroupName"].ToString();
                             TechName = reader["TechName"] != DBNull.Value ? reader["TechName"].ToString() : "Not Assigned";
+                            int groupId = Convert.ToInt32(reader["GroupId"]);
                             
                             if (reader["MemberNeeded"] != DBNull.Value)
                             {
                                 MemberNeeded = Convert.ToBoolean(reader["MemberNeeded"]);
                             }
                             
-                            TotalMembers = reader["TotalMembers"] != DBNull.Value ? Convert.ToInt32(reader["TotalMembers"]) : 0;
-                            PendingInvites = reader["PendingInvites"] != DBNull.Value ? Convert.ToInt32(reader["PendingInvites"]) : 0;
-                            AcceptedInvites = reader["AcceptedInvites"] != DBNull.Value ? Convert.ToInt32(reader["AcceptedInvites"]) : 0;
+                            reader.Close();
+                            
+                            // Get Stats
+                            string statsQuery = @"
+                                SELECT 
+                                    COUNT(UserId) AS Total,
+                                    SUM(CASE WHEN JoinStatus = 'Pending' THEN 1 ELSE 0 END) AS Pending,
+                                    SUM(CASE WHEN JoinStatus = 'Accepted' THEN 1 ELSE 0 END) AS Accepted
+                                FROM GroupMembers
+                                WHERE GroupId = @GroupId
+                            ";
+                            using (SqlCommand statsCmd = new SqlCommand(statsQuery, conn))
+                            {
+                                statsCmd.Parameters.AddWithValue("@GroupId", groupId);
+                                using (SqlDataReader statsReader = statsCmd.ExecuteReader())
+                                {
+                                    if (statsReader.Read())
+                                    {
+                                        TotalMembers = statsReader["Total"] != DBNull.Value ? Convert.ToInt32(statsReader["Total"]) : 0;
+                                        PendingInvites = statsReader["Pending"] != DBNull.Value ? Convert.ToInt32(statsReader["Pending"]) : 0;
+                                        AcceptedInvites = statsReader["Accepted"] != DBNull.Value ? Convert.ToInt32(statsReader["Accepted"]) : 0;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
