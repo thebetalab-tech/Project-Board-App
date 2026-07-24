@@ -36,6 +36,9 @@
                 <a href="<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>" class="nav-link">
                     <i class="fa-solid fa-microchip"></i> Technologies
                 </a>
+                <a href="<%= ResolveUrl("~/Admin/Mentor_TaskManagement.aspx") %>" class="nav-link">
+                    <i class="fa-solid fa-list-check"></i> Tasks
+                </a>
             </div>
 
             <div class="nav-section">

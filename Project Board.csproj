@@ -120,6 +120,7 @@
     <Content Include="Admin\Admin_UserManagement.aspx" />
     <Content Include="Admin\Details\Group_Details.aspx" />
     <Content Include="Admin\Details\Project_Details.aspx" />
+    <Content Include="Admin\Mentor_TaskManagement.aspx" />
     <Content Include="assets\background video.mp4" />
     <Content Include="assets\bg.png" />
     <Content Include="Content\Site.css" />
@@ -150,8 +151,10 @@
     <Content Include="Student\Leader\InvitationManager.aspx" />
     <Content Include="Student\Leader\Leader_Members.aspx" />
     <Content Include="Student\Leader\Leader_Mentor.aspx" />
+    <Content Include="Student\Leader\Leader_TaskManagement.aspx" />
     <Content Include="Student\Member\Dashboard.aspx" />
     <Content Include="Student\Member\InvitationManager.aspx" />
+    <Content Include="Student\Member\Member_TaskManagement.aspx" />
     <Content Include="Student\Member\Member_Team.aspx" />
     <Content Include="styles\login-signup.css" />
     <Content Include="User\forget_password.aspx" />
@@ -209,6 +212,13 @@
     </Compile>
     <Compile Include="Admin\Details\Project_Details.aspx.designer.cs">
       <DependentUpon>Project_Details.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Mentor_TaskManagement.aspx.cs">
+      <DependentUpon>Mentor_TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Mentor_TaskManagement.aspx.designer.cs">
+      <DependentUpon>Mentor_TaskManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Default.aspx.cs">
@@ -334,6 +344,13 @@
     <Compile Include="Student\Leader\InvitationManager.aspx.designer.cs">
       <DependentUpon>InvitationManager.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Student\Leader\Leader_TaskManagement.aspx.cs">
+      <DependentUpon>Leader_TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\Leader_TaskManagement.aspx.designer.cs">
+      <DependentUpon>Leader_TaskManagement.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Student\Member\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -355,6 +372,13 @@
     </Compile>
     <Compile Include="Student\Member\InvitationManager.aspx.designer.cs">
       <DependentUpon>InvitationManager.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Member\Member_TaskManagement.aspx.cs">
+      <DependentUpon>Member_TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Member\Member_TaskManagement.aspx.designer.cs">
+      <DependentUpon>Member_TaskManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="Student\Member\Member_Team.aspx.cs">
       <DependentUpon>Member_Team.aspx</DependentUpon>
