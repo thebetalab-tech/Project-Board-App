@@ -23,25 +23,25 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
-                    <a href="<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>" class="nav-link">
+                    <a href="~/Faculty/Dashboard.aspx" class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Dashboard
                     </a>
-                    <a href="<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>" class="nav-link">
+                    <a href="~/Faculty/GroupManagement.aspx" class="nav-link">
                         <i class="fa-solid fa-users-gear"></i> Group Management
                     </a>
-                    <a href="<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>" class="nav-link">
+                    <a href="~/Faculty/ProjectManagement.aspx" class="nav-link">
                         <i class="fa-solid fa-folder-tree"></i> Project Management
                     </a>
-                    <a href="<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>" class="nav-link active">
+                    <a href="~/Faculty/InvitationManager.aspx" class="nav-link active">
                         <i class="fa-solid fa-envelope"></i> Mentor Requests
                     </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
-                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="nav-link">
+                    <a href="~/User/Profile.aspx" class="nav-link">
                         <i class="fa-solid fa-user"></i> Profile
                     </a>
-                    <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="nav-link">
+                    <a href="~/Logout.aspx" class="nav-link">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </div>
@@ -65,7 +65,7 @@
                     <input type="text" placeholder="Search...">
                 </div>
                 <div class="topbar-actions">
-                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="action-btn" title="Profile">
+                    <a href="~/User/Profile.aspx" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 </div>
@@ -131,7 +131,7 @@
     </form>
     
     <!-- Mobile toggle script -->
-    <script src="<%= ResolveUrl("~/Admin/admin.js") %>"></script>
+    <script src="~/Admin/admin.js"></script>
 </body>
 </html>
 

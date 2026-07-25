@@ -244,7 +244,7 @@
 
                     <div class="form-footer">
                         <p class="footer-text">Already have an account?</p>
-                        <a href="<%= ResolveUrl("~/Default.aspx") %>" class="register-btn" id="registerBtn">
+                        <a href="~/Default.aspx" class="register-btn" id="registerBtn">
                             <span>Login Now</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
                                 height="16">
