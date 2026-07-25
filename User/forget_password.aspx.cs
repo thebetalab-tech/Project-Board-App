@@ -362,7 +362,7 @@ namespace Project_Board.User
             }
             else if (string.Equals(role, "Faculty", StringComparison.OrdinalIgnoreCase))
             {
-                Response.Redirect("~/Faculty/Faculty_Dashboard.aspx", false);
+                Response.Redirect("~/Faculty/Dashboard.aspx", false);
             }
             else if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
             {

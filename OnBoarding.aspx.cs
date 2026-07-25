@@ -16,7 +16,7 @@ namespace Project_Board
                 // Check if the user is already logged in
                 if (Session["Role"] == null || Session["Role"].ToString() != "Student")
                 {
-                    Response.Redirect("Default.aspx");
+                    Response.Redirect("~/Default.aspx");
                 }
             }
         }
@@ -28,7 +28,7 @@ namespace Project_Board
                 if (string.IsNullOrEmpty(email))
                 {
                     ShowMessage("Session expired. Please log in again.", false);
-                    Response.Redirect("Default.aspx", true);
+                    Response.Redirect("~/Default.aspx", true);
                     return;
                 }
 
@@ -54,11 +54,11 @@ namespace Project_Board
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return;
             }
-            Response.Redirect("CreateGroup.aspx", true);
+            Response.Redirect("~/CreateGroup.aspx", true);
         }
         protected void btnJoinGroup_Click(object sender, EventArgs e)
         {
-            Response.Redirect("JoinGroup.aspx");
+            Response.Redirect("~/JoinGroup.aspx");
         }
 
         private void ShowMessage(string message, bool isSuccess)

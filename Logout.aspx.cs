@@ -16,7 +16,7 @@ namespace Project_Board
             {
                 Session.Clear();
                 Session.Abandon();
-                Response.Redirect("~/Login.aspx");
+                Response.Redirect("~/Default.aspx");
             }
             catch (Exception ex)
             {

@@ -22,30 +22,30 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
-                    <a href="~/Student/Member/Dashboard.aspx" class="nav-link active">
+                    <a href="<%= ResolveUrl("~/Student/Member/Dashboard.aspx") %>" class="nav-link active">
                         <i class="fa-solid fa-chart-pie"></i> Overview
                     </a>
-                    <a href="~/Student/Member/Member_Team.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Member/Member_Team.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-users"></i> Team & Mentor
                     </a>
-                    <a href="~/Student/Member/InvitationManager.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-envelope"></i> Invitations
                     </a>
-                    <a href="~/Student/Member/Member_TaskManagement.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Member/Member_TaskManagement.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-list-check"></i> Tasks
                     </a>
                     <% if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Leader") { %>
-                    <a href="~/Student/Leader/Dashboard.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user-tie"></i> Leader Panel
                     </a>
                     <% } %>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
-                    <a href="~/User/Profile.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user"></i> Profile
                     </a>
-                    <a href="~/Logout.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </div>
@@ -72,7 +72,7 @@
                     <div class="status-badge-container">
                         <span class="status-dot" style='<%= MemberNeeded ? "" : "background: var(--c-green);" %>'></span> <%= MemberNeeded ? "Team Forming" : "Team Completed" %>
                     </div>
-                    <a href="~/User/Profile.aspx" class="action-btn" title="Profile">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 </div>
@@ -135,13 +135,13 @@
                     <i class="fa-solid fa-users-slash" style="font-size: 3rem; color: var(--c-text-muted); margin-bottom: 1rem;"></i>
                     <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">You are not in a group yet</h2>
                     <p style="color: var(--c-text-muted); margin-bottom: 2rem;">Browse available groups that are looking for members and send a request to join.</p>
-                    <a href="~/JoinGroup.aspx" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px;">Browse &amp; Join Groups</a>
+                    <a href="<%= ResolveUrl("~/JoinGroup.aspx") %>" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px;">Browse &amp; Join Groups</a>
                 </div>
                 <% } %>
             </div>
         </main>
     </form>
-	<script src="~/Admin/admin.js"></script>
+	<script src="<%= ResolveUrl("~/Admin/admin.js") %>"></script>
 </body>
 </html>
 

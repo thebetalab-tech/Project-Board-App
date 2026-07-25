@@ -18,27 +18,27 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
-                    <a href="~/Student/Member/Dashboard.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Member/Dashboard.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Overview
                     </a>
-                    <a href="~/Student/Member/Member_Team.aspx" class="nav-link active">
+                    <a href="<%= ResolveUrl("~/Student/Member/Member_Team.aspx") %>" class="nav-link active">
                         <i class="fa-solid fa-users"></i> Team & Mentor
                     </a>
-                    <a href="~/Student/Member/InvitationManager.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-envelope"></i> Invitations
                     </a>
                     <% if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Leader") { %>
-                    <a href="~/Student/Leader/Dashboard.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user-tie"></i> Leader Panel
                     </a>
                     <% } %>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
-                    <a href="~/User/Profile.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-user"></i> Profile
                     </a>
-                    <a href="~/Logout.aspx" class="nav-link">
+                    <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="nav-link">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </div>
@@ -62,7 +62,7 @@
                     <input type="text" placeholder="Search...">
                 </div>
                 <div class="topbar-actions">
-                    <a href="~/User/Profile.aspx" class="action-btn" title="Profile">
+                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 </div>
@@ -141,7 +141,7 @@
             </div>
         </main>
     </form>
-	<script src="~/Admin/admin.js"></script>
+	<script src="<%= ResolveUrl("~/Admin/admin.js") %>"></script>
 </body>
 </html>
 

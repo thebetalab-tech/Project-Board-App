@@ -226,7 +226,7 @@ namespace Project_Board
                 Session["FullName"] = fullNameValue;
 
                 // Redirect the user to the Onboarding page
-                Response.Redirect("OnBoarding.aspx", false);
+                Response.Redirect("~/OnBoarding.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();
             }
             catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)

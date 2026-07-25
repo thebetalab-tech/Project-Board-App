@@ -62,7 +62,7 @@ namespace Project_Board
                     // The query looks up the user by Email or EnrollmentNo
                     string query = @"SELECT UserId, FullName, Email, PasswordHash, Role, IsLeader 
                                      FROM Users 
-                                     WHERE Email = @LoginId OR EnrollmentNo = @LoginId";
+                                     WHERE (Email = @LoginId OR EnrollmentNo = @LoginId) AND IsActive = 1";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -118,20 +118,20 @@ namespace Project_Board
             {
                 if(Session["IsLeader"] != null && Session["IsLeader"].ToString() == "True")
                 {
-                    Response.Redirect("Student/Leader/Dashboard.aspx", false);           
+                    Response.Redirect("~/Student/Leader/Dashboard.aspx", false);           
                 }
                 else
                 {
-                    Response.Redirect("Student/Member/Dashboard.aspx", false);
+                    Response.Redirect("~/Student/Member/Dashboard.aspx", false);
                 }
             }
             else if (role == "Faculty")
             {
-                Response.Redirect("Faculty/Dashboard.aspx", false);
+                Response.Redirect("~/Faculty/Dashboard.aspx", false);
             }
             else if (role == "Admin")
             {
-                Response.Redirect("Admin/Admin_Dashboard.aspx", false);
+                Response.Redirect("~/Admin/Admin_Dashboard.aspx", false);
             }
         }
 

@@ -67,7 +67,7 @@ namespace Project_Board
                 if (groupId == 0)
                 {
                     // User has not created a group yet, redirect to OnBoarding.aspx
-                    Response.Redirect("OnBoarding.aspx");
+                    Response.Redirect("~/OnBoarding.aspx");
                     return;
                 }
 
