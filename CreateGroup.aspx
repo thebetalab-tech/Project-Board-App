@@ -107,7 +107,7 @@
                 </div>
                 
                 <div class="form-footer" style="margin-top: 30px; display: flex; justify-content: center;">
-                    <a href="~/OnBoarding.aspx" class="register-btn" style="display: flex; align-items: center; gap: 8px;">
+                    <a href='<%= ResolveUrl("~/OnBoarding.aspx") %>' class="register-btn" style="display: flex; align-items: center; gap: 8px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                             <line x1="19" y1="12" x2="5" y2="12" />
                             <polyline points="12 19 5 12 12 5" />
@@ -118,6 +118,6 @@
             </div>
         </div>
     </form>
-    <script src="~/Scripts/main/login-signup.js?v=20260723_v3"></script>
+    <script src='<%= ResolveUrl("~/Scripts/main/login-signup.js?v=20260723_v3") %>'></script>
 </body>
 </html>

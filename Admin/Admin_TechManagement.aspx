@@ -21,29 +21,32 @@
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Main Menu</div>
-                <a href="~/Admin/Admin_Dashboard.aspx" class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-chart-pie"></i> Overview
                 </a>
-                <a href="~/Admin/Admin_UserManagement.aspx" class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-users"></i> Users Management
                 </a>
-                <a href="~/Admin/Admin_GroupsManagement.aspx" class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_GroupsManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-user-group"></i> Groups
                 </a>
-                <a href="~/Admin/Admin_ProjectsManagement.aspx" class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_ProjectsManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-folder-open"></i> Projects
                 </a>
-                <a href="~/Admin/Admin_TechManagement.aspx" class="nav-link active">
+                <a href='<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>' class="nav-link active">
                     <i class="fa-solid fa-microchip"></i> Technologies
+                </a>
+                <a href='<%= ResolveUrl("~/Admin/Mentor_TaskManagement.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-list-check"></i> Tasks
                 </a>
             </div>
 
             <div class="nav-section">
                 <div class="nav-section-title">Preferences</div>
-                <a href="~/User/Profile.aspx" class="nav-link">
+                <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-user"></i> Profile
                 </a>
-                <a href="~/Logout.aspx" class="nav-link">
+                <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                 </a>
             </div>
@@ -115,11 +118,15 @@
                             </asp:Repeater>
                         </tbody>
                     </table>
-                    <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center;">
-                        <asp:TextBox ID="txtNewTech" runat="server" CssClass="form-control" placeholder="New Technology Name..." Width="300px"></asp:TextBox>
-                        <asp:Button ID="btnAddTech" runat="server" Text="Add Technology" CssClass="btn-primary" OnClick="btnAddTech_Click" />
+                    <div style="padding: 1.5rem; background-color: var(--c-bg-elevated); border-top: 1px solid var(--c-border);">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div style="flex: 1;">
+                                <asp:TextBox ID="txtNewTech" runat="server" CssClass="form-control" placeholder="New Technology Name..."></asp:TextBox>
+                            </div>
+                            <asp:Button ID="btnAddTech" runat="server" Text="Add Technology" CssClass="btn-primary" OnClick="btnAddTech_Click" />
+                        </div>
+                        <asp:Label ID="lblMessage" runat="server" EnableViewState="false" style="display:block; margin-top: 0.75rem; font-weight: 500;"></asp:Label>
                     </div>
-                    <asp:Label ID="lblMessage" runat="server" EnableViewState="false" style="display:block; margin-top: 1rem; font-weight: 500;"></asp:Label>
                 </div>
 
                 <div class="data-section" style="max-width: 800px; margin-top: 2rem;">
@@ -174,7 +181,7 @@
         </div>
     </main>
 
-    <script src="~/Admin/admin.js"></script>
+    <script src='<%= ResolveUrl("~/Admin/admin.js") %>'></script>
     </form>
 </body>
 </html>

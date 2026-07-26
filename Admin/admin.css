@@ -22,7 +22,8 @@
     --c-text-muted: #5c5c5c;
     --c-text-dim: #999999;
 
-    --c-accent: #7B1E2D; /* Dark Burgundy */
+    --c-accent: #7B1E2D;
+    /* Dark Burgundy */
     --c-accent-light: #A3293D;
     --c-accent-deep: #5C0E1B;
     --c-accent-glow: rgba(123, 30, 45, 0.12);
@@ -42,9 +43,9 @@
     --f-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
     /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.05);
-    --shadow-lg: 0 12px 24px rgba(0,0,0,0.06);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.06);
 
     /* Transitions */
     --transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
@@ -391,10 +392,25 @@ form {
     font-size: 1.5rem;
 }
 
-.stat-icon.users { background: var(--c-blue-bg); color: var(--c-blue); }
-.stat-icon.groups { background: var(--c-accent-bg); color: var(--c-accent); }
-.stat-icon.projects { background: var(--c-yellow-bg); color: var(--c-yellow); }
-.stat-icon.tech { background: var(--c-green-bg); color: var(--c-green); }
+.stat-icon.users {
+    background: var(--c-blue-bg);
+    color: var(--c-blue);
+}
+
+.stat-icon.groups {
+    background: var(--c-accent-bg);
+    color: var(--c-accent);
+}
+
+.stat-icon.projects {
+    background: var(--c-yellow-bg);
+    color: var(--c-yellow);
+}
+
+.stat-icon.tech {
+    background: var(--c-green-bg);
+    color: var(--c-green);
+}
 
 .stat-trend {
     font-size: 0.75rem;
@@ -406,8 +422,15 @@ form {
     border-radius: 4px;
 }
 
-.stat-trend.positive { background: var(--c-green-bg); color: var(--c-green); }
-.stat-trend.negative { background: var(--c-red-bg); color: var(--c-red); }
+.stat-trend.positive {
+    background: var(--c-green-bg);
+    color: var(--c-green);
+}
+
+.stat-trend.negative {
+    background: var(--c-red-bg);
+    color: var(--c-red);
+}
 
 .stat-value {
     font-size: 2rem;
@@ -448,6 +471,29 @@ form {
 .section-actions {
     display: flex;
     gap: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--c-accent);
+    color: #ffffff;
+    border: 1px solid var(--c-accent);
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-family: var(--f-body);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.25;
+    box-sizing: border-box;
+}
+
+.btn-primary:hover {
+    background-color: var(--c-accent-light);
+    border-color: var(--c-accent-light);
 }
 
 .btn-secondary {
@@ -541,13 +587,35 @@ tbody tr:hover {
     font-weight: 600;
 }
 
-.badge.admin { background: var(--c-accent-bg); color: var(--c-accent); }
-.badge.faculty { background: var(--c-blue-bg); color: var(--c-blue); }
-.badge.student { background: var(--c-surface); color: var(--c-text-muted); }
+.badge.admin {
+    background: var(--c-accent-bg);
+    color: var(--c-accent);
+}
 
-.badge.status-active { background: var(--c-green-bg); color: var(--c-green); }
-.badge.status-pending { background: var(--c-yellow-bg); color: var(--c-yellow); }
-.badge.status-forming { background: var(--c-blue-bg); color: var(--c-blue); }
+.badge.faculty {
+    background: var(--c-blue-bg);
+    color: var(--c-blue);
+}
+
+.badge.student {
+    background: var(--c-surface);
+    color: var(--c-text-muted);
+}
+
+.badge.status-active {
+    background: var(--c-green-bg);
+    color: var(--c-green);
+}
+
+.badge.status-pending {
+    background: var(--c-yellow-bg);
+    color: var(--c-yellow);
+}
+
+.badge.status-forming {
+    background: var(--c-blue-bg);
+    color: var(--c-blue);
+}
 
 /* Tech Tags */
 .tech-tag {
@@ -603,15 +671,25 @@ tbody tr:hover {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Modal/Drawer Overlay (Prepared for JS) */
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
     z-index: 1000;
     display: none;
@@ -706,8 +784,11 @@ tbody tr:hover {
 
 .mobile-sidebar-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(2px);
     z-index: 99;
     opacity: 0;
@@ -732,28 +813,28 @@ tbody tr:hover {
         transition: transform 0.3s ease;
         box-shadow: var(--shadow-lg);
     }
-    
+
     .sidebar.active {
         transform: translateX(0);
     }
-    
+
     .main-content {
         margin-left: 0;
         width: 100%;
     }
-    
+
     .topbar {
         padding: 0 1.5rem;
     }
-    
+
     .search-bar {
         width: 200px;
     }
-    
+
     .dashboard-container {
         padding: 2rem 1.5rem;
     }
-    
+
     .mobile-toggle {
         display: flex;
     }
@@ -767,50 +848,50 @@ tbody tr:hover {
         gap: 1rem;
         align-items: flex-start;
     }
-    
+
     .search-bar {
         width: 100%;
     }
-    
+
     .topbar-actions {
         width: 100%;
         justify-content: flex-end;
     }
-    
+
     .page-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
     }
-    
+
     .page-title h1 {
         font-size: 2rem;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .section-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
     }
-    
+
     .section-header .search-bar {
         width: 100% !important;
     }
-    
+
     .form-row {
         grid-template-columns: 1fr !important;
     }
-    
+
     .modal-content {
         padding: 1.5rem;
         margin: 1rem;
         width: calc(100% - 2rem);
     }
-    
+
     .table-actions {
         flex-direction: column;
     }

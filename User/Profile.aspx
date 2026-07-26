@@ -43,7 +43,7 @@
             <!-- Right Main Form -->
             <div class="profile-main-card">
                 <div class="back-btn-container">
-                    <a href="~/Default.aspx" class="back-btn">
+                    <a href='<%= ResolveUrl("~/Default.aspx") %>' class="back-btn">
                         <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
                     </a>
                 </div>

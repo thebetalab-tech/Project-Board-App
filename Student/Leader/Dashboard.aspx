@@ -41,28 +41,28 @@
                 <nav class="sidebar-nav">
                     <div class="nav-section">
                         <div class="nav-section-title">Main Menu</div>
-                        <a href="~/Student/Leader/Dashboard.aspx" class="nav-link active">
+                        <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class="nav-link active">
                             <i class="fa-solid fa-chart-pie"></i> Overview
                         </a>
-                        <a href="~/Student/Leader/Leader_Members.aspx" class="nav-link">
+                        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-users"></i> Team Members
                         </a>
-                        <a href="~/Student/Leader/Leader_Mentor.aspx" class="nav-link">
+                        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
                         </a>
-                        <a href="~/Student/Leader/InvitationManager.aspx" class="nav-link">
+                        <a href='<%= ResolveUrl("~/Student/Leader/InvitationManager.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-envelope"></i> Invitations
                         </a>
-                        <a href="~/Student/Leader/Leader_TaskManagement.aspx" class="nav-link">
+                        <a href='<%= ResolveUrl("~/Student/Leader/Leader_TaskManagement.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-list-check"></i> Tasks
                         </a>
                     </div>
                     <div class="nav-section">
                         <div class="nav-section-title">Preferences</div>
-                        <a href="~/User/Profile.aspx" class="nav-link">
+                        <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-user"></i> Profile
                         </a>
-                        <a href="~/Logout.aspx" class="nav-link">
+                        <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                         </a>
                     </div>
@@ -97,7 +97,7 @@
                                 style='<%= MemberNeeded ? "" : "background: var(--c-green);" %>'></span>
                             <%= MemberNeeded ? "Team Forming" : "Team Completed" %>
                         </div>
-                        <a href="~/User/Profile.aspx" class="action-btn" title="Profile">
+                        <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
                             <i class="fa-solid fa-user"></i>
                         </a>
                     </div>
@@ -146,7 +146,7 @@
                 </div>
             </main>
         </form>
-        <script src="~/Admin/admin.js"></script>
+        <script src='<%= ResolveUrl("~/Admin/admin.js") %>'></script>
     </body>
 
     </html>
