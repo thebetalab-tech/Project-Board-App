@@ -78,7 +78,7 @@
                     </asp:LinkButton>
                     
                     <div class="back-link-container">
-                        <a href="<%= ResolveUrl("~/Default.aspx") %>" class="back-link">
+                        <a href="~/Default.aspx" class="back-link">
                             <i class="fa-solid fa-arrow-left-long"></i> Back to Login
                         </a>
                     </div>

@@ -93,7 +93,7 @@
                         </div>
 
                         <div class="form-options">
-                            <a href="<%= ResolveUrl("~/User/forget_password.aspx") %>" class="forgot-link" id="forgotPassword">Forgot Password?</a>
+                            <a href="~/User/forget_password.aspx" class="forgot-link" id="forgotPassword">Forgot Password?</a>
                         </div>
 
                         <asp:LinkButton ID="loginBtn" runat="server" ClientIDMode="Static" CssClass="login-btn"
@@ -122,7 +122,7 @@
 
                     <div class="form-footer">
                         <p class="footer-text">Don't have an account?</p>
-                        <a href="<%= ResolveUrl("~/SignUp.aspx") %>" class="register-btn" id="registerBtn">
+                        <a href="~/SignUp.aspx" class="register-btn" id="registerBtn">
                             <span>Register Now</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
                                 height="16">
