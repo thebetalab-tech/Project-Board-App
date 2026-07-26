@@ -35,6 +35,9 @@
                     <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-envelope"></i> Mentor Requests
                     </a>
+                    <a href='<%= ResolveUrl("~/Admin/Mentor_TaskManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-list-check"></i> Tasks
+                    </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
@@ -65,6 +68,10 @@
                     <input type="text" placeholder="Search...">
                 </div>
                 <div class="topbar-actions">
+                    <button class="action-btn">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
                     <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>

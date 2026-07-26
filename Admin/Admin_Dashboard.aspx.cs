@@ -14,7 +14,7 @@ namespace Project_Board.Admin
         {
             if (!IsPostBack)
             {
-                if (Session["role"] == null || Session["role"].ToString() != "Admin")
+                if (Session["Role"] == null || Session["Role"].ToString() != "Admin")
                 {
                     Response.Redirect("~/Default.aspx");
                     return;

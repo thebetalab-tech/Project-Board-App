@@ -15,7 +15,7 @@ namespace Project_Board.Admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["role"] == null || Session["role"].ToString() != "Admin")
+            if (Session["Role"] == null || Session["Role"].ToString() != "Admin")
             {
                 Response.Redirect("~/Default.aspx");
                 return;

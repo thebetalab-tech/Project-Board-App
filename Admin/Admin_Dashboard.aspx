@@ -66,6 +66,18 @@
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
+        <header class="topbar">
+            <div class="search-bar" style="visibility: hidden;">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="topbar-actions">
+                <button class="action-btn">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-badge"></span>
+                </button>
+            </div>
+        </header>
         <div class="dashboard-container">
             <div class="view-section active">
                 <div class="page-header">

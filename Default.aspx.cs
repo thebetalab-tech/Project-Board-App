@@ -45,8 +45,7 @@ namespace Project_Board
             // Basic Validation
             if (string.IsNullOrEmpty(loginId) || string.IsNullOrEmpty(password))
             {
-                string keys = string.Join(", ", Request.Form.AllKeys);
-                lblError.Text = "Please enter both login ID and password. (Debug Keys: " + keys + ")";
+                lblError.Text = "Please enter both login ID and password.";
                 return;
             }
 
