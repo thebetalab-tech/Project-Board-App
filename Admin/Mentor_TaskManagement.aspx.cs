@@ -125,8 +125,8 @@ namespace Project_Board.Admin
             foreach (DataRow row in dt.Rows)
             {
                 string st = row["Status"].ToString();
-                if (st == "Pending") PendingCount++;
-                else if (st == "In Progress") InProgressCount++;
+                if (st == "Pending" || st == "Working" || st == "Revision Needed" || st == "Failed") PendingCount++;
+                else if (st == "In Progress" || st == "Appealed") InProgressCount++;
                 else if (st == "Completed") CompletedCount++;
             }
 
@@ -149,6 +149,7 @@ namespace Project_Board.Admin
             int groupId = Convert.ToInt32(ddlGroups.SelectedValue);
             string title = txtTaskTitle.Text.Trim();
             string description = txtTaskDescription.Text.Trim();
+            string pointsToCover = txtPointsToCover.Text.Trim();
             DateTime? dueDate = null;
 
             if (!string.IsNullOrEmpty(txtDueDate.Text))
@@ -192,12 +193,13 @@ namespace Project_Board.Admin
                     cmd.Parameters.AddWithValue("@Action", "INSERT");
                     cmd.Parameters.AddWithValue("@TaskTitle", title);
                     cmd.Parameters.AddWithValue("@TaskDescription", description);
+                    cmd.Parameters.AddWithValue("@PointsToCover", (object)pointsToCover ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@GroupId", groupId);
                     cmd.Parameters.AddWithValue("@AssignedBy", mentorId);
                     cmd.Parameters.AddWithValue("@AssignedTo", leaderId);
                     cmd.Parameters.AddWithValue("@TaskLevel", "MentorToLeader");
                     cmd.Parameters.AddWithValue("@DueDate", (object)dueDate ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Status", "Pending");
+                    cmd.Parameters.AddWithValue("@Status", "Working");
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
@@ -207,6 +209,7 @@ namespace Project_Board.Admin
             // Clear inputs & refresh
             txtTaskTitle.Text = "";
             txtTaskDescription.Text = "";
+            txtPointsToCover.Text = "";
             txtDueDate.Text = "";
             ddlGroups.SelectedIndex = 0;
 
@@ -270,6 +273,26 @@ namespace Project_Board.Admin
                                 ? "No description provided." 
                                 : reader["TaskDescription"].ToString();
 
+                            string points = reader["PointsToCover"] != DBNull.Value ? reader["PointsToCover"].ToString() : "";
+                            if (!string.IsNullOrEmpty(points))
+                            {
+                                lblModalPointsToCover.Text = points;
+                                pnlPointsToCover.Visible = true;
+                            }
+                            else
+                            {
+                                pnlPointsToCover.Visible = false;
+                            }
+
+                            string currentStatus = reader["Status"].ToString();
+                            if (ddlMentorStatusUpdate.Items.FindByValue(currentStatus) != null)
+                            {
+                                ddlMentorStatusUpdate.SelectedValue = currentStatus;
+                            }
+
+                            txtMentorFeedback.Text = reader["FeedbackText"] != DBNull.Value ? reader["FeedbackText"].ToString() : "";
+                            hfReviewTaskId.Value = taskId.ToString();
+
                             string report = reader["ReportText"].ToString();
                             if (!string.IsNullOrEmpty(report))
                             {
@@ -293,6 +316,36 @@ namespace Project_Board.Admin
 
             // Show modal using JS Script
             ScriptManager.RegisterStartupScript(this, GetType(), "OpenReportModal", "openModal('reportModal');", true);
+        }
+
+        protected void btnUpdateStatusByMentor_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(hfReviewTaskId.Value)) return;
+
+            int taskId = Convert.ToInt32(hfReviewTaskId.Value);
+            string status = ddlMentorStatusUpdate.SelectedValue;
+            string feedback = txtMentorFeedback.Text.Trim();
+
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_crud_tasks", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Action", "UPDATE_STATUS");
+                    cmd.Parameters.AddWithValue("@TaskId", taskId);
+                    cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.Parameters.AddWithValue("@FeedbackText", (object)feedback ?? DBNull.Value);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            lblMessage.Text = "Task status and mentor feedback successfully updated!";
+            lblMessage.CssClass = "alert alert-success";
+            lblMessage.Visible = true;
+
+            LoadTasks();
         }
     }
 }

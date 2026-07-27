@@ -20,6 +20,8 @@
         .badge-pending { background-color: var(--c-yellow-bg); color: var(--c-yellow); border: 1px solid rgba(184, 134, 11, 0.2); }
         .badge-progress { background-color: var(--c-blue-bg); color: var(--c-blue); border: 1px solid rgba(43, 92, 143, 0.2); }
         .badge-completed { background-color: var(--c-green-bg); color: var(--c-green); border: 1px solid rgba(45, 125, 70, 0.2); }
+        .badge-appealed { background-color: rgba(138, 43, 226, 0.12); color: #8a2be2; border: 1px solid rgba(138, 43, 226, 0.2); }
+        .badge-danger { background-color: var(--c-red-bg); color: var(--c-red); border: 1px solid rgba(184, 41, 61, 0.2); }
 
         .modal-overlay {
             display: none;
@@ -217,6 +219,56 @@
 
                 <asp:Label ID="lblMessage" runat="server" Visible="false"></asp:Label>
 
+                <!-- GROUP MENTOR TASKS TABLE -->
+                <div class="data-section" style="margin-bottom: 2rem;">
+                    <div class="section-header">
+                        <h2><i class="fa-solid fa-users-viewfinder" style="color:var(--c-accent); margin-right:0.5rem;"></i> Mentor's Tasks (Group Overview)</h2>
+                    </div>
+                    <div class="table-container">
+                        <asp:Repeater ID="rptGroupMentorTasks" runat="server">
+                            <HeaderTemplate>
+                                <table class="modern-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Task Title & Description</th>
+                                            <th>Points to Cover</th>
+                                            <th>Due Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            </HeaderTemplate>
+                            <ItemTemplate>
+                                <tr>
+                                    <td>
+                                        <strong><%# Eval("TaskTitle") %></strong>
+                                        <div style="font-size: 0.8rem; color: var(--c-text-muted); margin-top: 0.2rem;">
+                                            <%# Eval("TaskDescription") != DBNull.Value && !string.IsNullOrEmpty(Eval("TaskDescription").ToString()) ? Eval("TaskDescription") : "No description" %>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="font-size: 0.85rem; color: var(--c-text); max-width: 300px;">
+                                            <%# Eval("PointsToCover") != DBNull.Value && !string.IsNullOrEmpty(Eval("PointsToCover").ToString()) ? Eval("PointsToCover") : "None specified" %>
+                                        </div>
+                                    </td>
+                                    <td><%# Eval("DueDate") != DBNull.Value ? Convert.ToDateTime(Eval("DueDate")).ToString("MMM dd, yyyy") : "No due date" %></td>
+                                    <td>
+                                        <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "Appealed" ? "badge-appealed" : (Eval("Status").ToString() == "Revision Needed" || Eval("Status").ToString() == "Failed" ? "badge-danger" : "badge-progress")) %>'>
+                                            <i class='fa-solid <%# Eval("Status").ToString() == "Completed" ? "fa-check" : (Eval("Status").ToString() == "Appealed" ? "fa-bell" : (Eval("Status").ToString() == "Revision Needed" ? "fa-triangle-exclamation" : "fa-clock")) %>'></i>
+                                            <%# Eval("Status") %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ItemTemplate>
+                            <FooterTemplate>
+                                    </tbody>
+                                </table>
+                            </FooterTemplate>
+                        </asp:Repeater>
+                        <asp:Label ID="lblNoGroupMentorTasks" runat="server" Text="No main project tasks assigned to your group by mentor yet." Visible="false" style="display:block; padding:1.5rem; text-align:center; color:var(--c-text-muted);"></asp:Label>
+                    </div>
+                </div>
+
                 <!-- MEMBER TASKS TABLE -->
                 <div class="data-section">
                     <div class="section-header">
@@ -246,23 +298,26 @@
                                         <div style="font-size: 0.8rem; color: var(--c-text-muted); margin-top: 0.2rem;">
                                             <%# Eval("TaskDescription") != DBNull.Value && !string.IsNullOrEmpty(Eval("TaskDescription").ToString()) ? Eval("TaskDescription") : "No description" %>
                                         </div>
+                                        <div style="font-size: 0.75rem; color: var(--c-accent); margin-top: 0.25rem; font-weight: 600;">
+                                            <%# Eval("ParentTaskTitle") != DBNull.Value && !string.IsNullOrEmpty(Eval("ParentTaskTitle").ToString()) ? "<i class='fa-solid fa-link'></i> Subtask of: " + Eval("ParentTaskTitle") : "" %>
+                                        </div>
                                     </td>
                                     <td><%# Eval("AssignedByName") %></td>
                                     <td><%# Eval("DueDate") != DBNull.Value ? Convert.ToDateTime(Eval("DueDate")).ToString("MMM dd, yyyy") : "No due date" %></td>
                                     <td>
-                                        <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "In Progress" ? "badge-progress" : "badge-pending") %>'>
-                                            <i class='fa-solid <%# Eval("Status").ToString() == "Completed" ? "fa-check" : (Eval("Status").ToString() == "In Progress" ? "fa-spinner" : "fa-clock") %>'></i>
+                                        <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "Appealed" ? "badge-appealed" : (Eval("Status").ToString() == "Revision Needed" || Eval("Status").ToString() == "Failed" ? "badge-danger" : "badge-progress")) %>'>
+                                            <i class='fa-solid <%# Eval("Status").ToString() == "Completed" ? "fa-check" : (Eval("Status").ToString() == "Appealed" ? "fa-bell" : (Eval("Status").ToString() == "Revision Needed" ? "fa-triangle-exclamation" : "fa-clock")) %>'></i>
                                             <%# Eval("Status") %>
                                         </span>
                                     </td>
                                     <td>
                                         <%# Eval("ReportText") != DBNull.Value && !string.IsNullOrEmpty(Eval("ReportText").ToString()) 
-                                            ? "<span style='color:var(--c-green); font-weight:600;'><i class='fa-solid fa-check-circle'></i> Report Submitted</span>" 
-                                            : "<span style='color:var(--c-text-muted);'><i class='fa-solid fa-hourglass-start'></i> Awaiting Report</span>" %>
+                                            ? "<span style='color:var(--c-green); font-weight:600;'><i class='fa-solid fa-check-circle'></i> Appeal Sent</span>" 
+                                            : "<span style='color:var(--c-text-muted);'><i class='fa-solid fa-clock'></i> Working</span>" %>
                                     </td>
                                     <td>
                                         <asp:LinkButton ID="btnReport" runat="server" CommandName="ReportToLeader" CommandArgument='<%# Eval("TaskId") %>' CssClass="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem;">
-                                            <i class="fa-solid fa-pen-to-square"></i> Report & Update
+                                            <i class="fa-solid fa-flag"></i> Appeal Completion
                                         </asp:LinkButton>
                                     </td>
                                 </tr>
@@ -284,7 +339,7 @@
     <div id="reportModal" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-paper-plane" style="color:var(--c-accent); margin-right:0.5rem;"></i> Report Task Progress to Leader</h3>
+                <h3><i class="fa-solid fa-flag" style="color:var(--c-accent); margin-right:0.5rem;"></i> Appeal Completion to Leader</h3>
                 <button type="button" class="close-btn" onclick="closeModal('reportModal')">&times;</button>
             </div>
             <div>
@@ -294,23 +349,21 @@
                     Leader: <strong><asp:Label ID="lblModalLeaderName" runat="server"></asp:Label></strong>
                 </p>
 
-                <div class="form-group" style="margin-bottom:1.25rem;">
-                    <label>Task Status</label>
-                    <asp:DropDownList ID="ddlUpdateStatus" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="Pending" Value="Pending"></asp:ListItem>
-                        <asp:ListItem Text="In Progress" Value="In Progress"></asp:ListItem>
-                        <asp:ListItem Text="Completed" Value="Completed"></asp:ListItem>
-                    </asp:DropDownList>
-                </div>
+                <asp:Panel ID="pnlModalLeaderFeedback" runat="server" style="margin-bottom:1.25rem;">
+                    <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--c-red);">Leader Revision Request / Feedback</label>
+                    <div class="report-box" style="background-color:rgba(184,41,61,0.05); border-color:rgba(184,41,61,0.2); color:var(--c-red); margin-top:0.3rem;">
+                        <asp:Label ID="lblModalLeaderFeedbackText" runat="server"></asp:Label>
+                    </div>
+                </asp:Panel>
 
                 <div class="form-group">
-                    <label>Progress Report / Completion Remarks</label>
-                    <asp:TextBox ID="txtMemberReportText" runat="server" TextMode="MultiLine" Rows="5" CssClass="form-control" Placeholder="Detail your work done, submitted links/files, or current status for your leader..."></asp:TextBox>
+                    <label>Describe what changes you have done / completion details</label>
+                    <asp:TextBox ID="txtMemberReportText" runat="server" TextMode="MultiLine" Rows="5" CssClass="form-control" Placeholder="Detail your work done, submitted links/files, and changes made for your leader..."></asp:TextBox>
                 </div>
             </div>
             <div style="margin-top:1.5rem; text-align:right; display:flex; gap:0.75rem; justify-content:flex-end;">
                 <button type="button" class="btn-primary" style="background-color:var(--c-surface); color:var(--c-text);" onclick="closeModal('reportModal')">Cancel</button>
-                <asp:Button ID="btnSubmitReport" runat="server" Text="Submit Report to Leader" CssClass="btn-primary" OnClick="btnSubmitReport_Click" />
+                <asp:Button ID="btnSubmitReport" runat="server" Text="Submit Appeal Completion" CssClass="btn-primary" OnClick="btnSubmitReport_Click" />
             </div>
         </div>
     </div>

@@ -21,6 +21,8 @@
         .badge-pending { background-color: var(--c-yellow-bg); color: var(--c-yellow); border: 1px solid rgba(184, 134, 11, 0.2); }
         .badge-progress { background-color: var(--c-blue-bg); color: var(--c-blue); border: 1px solid rgba(43, 92, 143, 0.2); }
         .badge-completed { background-color: var(--c-green-bg); color: var(--c-green); border: 1px solid rgba(45, 125, 70, 0.2); }
+        .badge-appealed { background-color: rgba(138, 43, 226, 0.12); color: #8a2be2; border: 1px solid rgba(138, 43, 226, 0.2); }
+        .badge-danger { background-color: var(--c-red-bg); color: var(--c-red); border: 1px solid rgba(184, 41, 61, 0.2); }
         
         .badge-report-yes { background-color: rgba(45, 125, 70, 0.12); color: var(--c-green); padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
         .badge-report-no { background-color: rgba(0, 0, 0, 0.05); color: var(--c-text-muted); padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.75rem; }
@@ -285,6 +287,11 @@
                                 <label>Task Description & Instructions</label>
                                 <asp:TextBox ID="txtTaskDescription" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="Describe the task expectations and deliverables..."></asp:TextBox>
                             </div>
+
+                            <div class="form-group full-width">
+                                <label>Points to be Covered</label>
+                                <asp:TextBox ID="txtPointsToCover" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="List specific points, modules, or questions that must be covered in this task..."></asp:TextBox>
+                            </div>
                         </div>
 
                         <asp:Button ID="btnCreateTask" runat="server" Text="Send Task to Leader" CssClass="btn-primary" OnClick="btnCreateTask_Click" />
@@ -302,9 +309,11 @@
 
                             <asp:DropDownList ID="ddlFilterStatus" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlFilter_SelectedIndexChanged" style="width: auto;">
                                 <asp:ListItem Text="All Statuses" Value=""></asp:ListItem>
-                                <asp:ListItem Text="Pending" Value="Pending"></asp:ListItem>
-                                <asp:ListItem Text="In Progress" Value="In Progress"></asp:ListItem>
+                                <asp:ListItem Text="Working" Value="Working"></asp:ListItem>
+                                <asp:ListItem Text="Appealed" Value="Appealed"></asp:ListItem>
                                 <asp:ListItem Text="Completed" Value="Completed"></asp:ListItem>
+                                <asp:ListItem Text="Revision Needed" Value="Revision Needed"></asp:ListItem>
+                                <asp:ListItem Text="Failed" Value="Failed"></asp:ListItem>
                             </asp:DropDownList>
                         </div>
                     </div>
@@ -338,8 +347,8 @@
                                     <td><%# Eval("AssignedToName") %></td>
                                     <td><%# Eval("DueDate") != DBNull.Value ? Convert.ToDateTime(Eval("DueDate")).ToString("MMM dd, yyyy") : "No due date" %></td>
                                     <td>
-                                        <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "In Progress" ? "badge-progress" : "badge-pending") %>'>
-                                            <i class='fa-solid <%# Eval("Status").ToString() == "Completed" ? "fa-check" : (Eval("Status").ToString() == "In Progress" ? "fa-spinner" : "fa-clock") %>'></i>
+                                        <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "Appealed" ? "badge-appealed" : (Eval("Status").ToString() == "Revision Needed" || Eval("Status").ToString() == "Failed" ? "badge-danger" : "badge-progress")) %>'>
+                                            <i class='fa-solid <%# Eval("Status").ToString() == "Completed" ? "fa-check" : (Eval("Status").ToString() == "Appealed" ? "fa-bell" : (Eval("Status").ToString() == "Revision Needed" ? "fa-triangle-exclamation" : "fa-clock")) %>'></i>
                                             <%# Eval("Status") %>
                                         </span>
                                     </td>
@@ -386,13 +395,21 @@
                     Status: <strong><asp:Label ID="lblModalStatus" runat="server"></asp:Label></strong>
                 </p>
 
+                <asp:HiddenField ID="hfReviewTaskId" runat="server" />
                 <div style="margin-bottom:1.25rem;">
                     <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--c-text-dim);">Task Description</label>
                     <p style="font-size:0.9rem; margin-top:0.3rem;"><asp:Label ID="lblModalDescription" runat="server"></asp:Label></p>
                 </div>
 
-                <div style="border-top:1px solid var(--c-border); padding-top:1rem;">
-                    <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--c-text-dim);">Leader Progress Report</label>
+                <asp:Panel ID="pnlPointsToCover" runat="server" style="margin-bottom:1.25rem;">
+                    <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--c-text-dim);">Points to be Covered</label>
+                    <div class="report-box" style="background-color:rgba(43,92,143,0.05); border-color:rgba(43,92,143,0.2); margin-top:0.3rem;">
+                        <asp:Label ID="lblModalPointsToCover" runat="server"></asp:Label>
+                    </div>
+                </asp:Panel>
+
+                <div style="border-top:1px solid var(--c-border); padding-top:1rem; margin-bottom:1.25rem;">
+                    <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--c-text-dim);">Leader Progress Report / Appeal</label>
 
                     <asp:Panel ID="pnlReportContent" runat="server">
                         <div class="report-box">
@@ -405,13 +422,35 @@
 
                     <asp:Panel ID="pnlNoReport" runat="server">
                         <p style="font-size:0.875rem; color:var(--c-text-muted); font-style:italic; margin-top:0.5rem;">
-                            No report has been submitted by the leader yet.
+                            No completion report has been submitted by the leader yet.
                         </p>
                     </asp:Panel>
                 </div>
+
+                <div style="border-top:1px solid var(--c-border); padding-top:1rem;">
+                    <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--c-text-dim); display:block; margin-bottom:0.5rem;">Mentor Action: Change Status & Provide Feedback</label>
+                    
+                    <div class="form-group" style="margin-bottom:0.75rem;">
+                        <label>Update Status</label>
+                        <asp:DropDownList ID="ddlMentorStatusUpdate" runat="server" CssClass="form-control">
+                            <asp:ListItem Text="Working" Value="Working"></asp:ListItem>
+                            <asp:ListItem Text="Appealed" Value="Appealed"></asp:ListItem>
+                            <asp:ListItem Text="Completed" Value="Completed"></asp:ListItem>
+                            <asp:ListItem Text="Revision Needed" Value="Revision Needed"></asp:ListItem>
+                            <asp:ListItem Text="Failed" Value="Failed"></asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:1rem;">
+                        <label>Mentor Feedback / Remarks</label>
+                        <asp:TextBox ID="txtMentorFeedback" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="Provide instructions for revision or remarks upon completion..."></asp:TextBox>
+                    </div>
+
+                    <asp:Button ID="btnUpdateStatusByMentor" runat="server" Text="Save Status & Feedback" CssClass="btn-primary" OnClick="btnUpdateStatusByMentor_Click" />
+                </div>
             </div>
             <div style="margin-top:1.5rem; text-align:right;">
-                <button type="button" class="btn-primary" onclick="closeModal('reportModal')">Close</button>
+                <button type="button" class="btn-primary" style="background-color:var(--c-surface); color:var(--c-text);" onclick="closeModal('reportModal')">Close</button>
             </div>
         </div>
     </div>

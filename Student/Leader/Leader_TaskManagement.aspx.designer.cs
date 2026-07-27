@@ -32,5 +32,14 @@ namespace Project_Board.Student.Leader
         protected global::System.Web.UI.WebControls.Label lblViewMemberModalReportText;
         protected global::System.Web.UI.WebControls.Label lblViewMemberModalReportDate;
         protected global::System.Web.UI.WebControls.Panel pnlNoMemberReport;
+        protected global::System.Web.UI.WebControls.DropDownList ddlParentTask;
+        protected global::System.Web.UI.WebControls.Panel pnlMentorModalPoints;
+        protected global::System.Web.UI.WebControls.Label lblMentorModalPointsToCover;
+        protected global::System.Web.UI.WebControls.Panel pnlMentorModalFeedback;
+        protected global::System.Web.UI.WebControls.Label lblMentorModalFeedbackText;
+        protected global::System.Web.UI.WebControls.HiddenField hfReviewMemberTaskId;
+        protected global::System.Web.UI.WebControls.DropDownList ddlLeaderStatusUpdate;
+        protected global::System.Web.UI.WebControls.TextBox txtLeaderFeedback;
+        protected global::System.Web.UI.WebControls.Button btnUpdateMemberStatusByLeader;
     }
 }

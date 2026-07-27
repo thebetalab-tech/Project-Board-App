@@ -17,6 +17,9 @@ namespace Project_Board.Student.Member
         protected global::System.Web.UI.WebControls.Label lblModalLeaderName;
         protected global::System.Web.UI.WebControls.DropDownList ddlUpdateStatus;
         protected global::System.Web.UI.WebControls.TextBox txtMemberReportText;
-        protected global::System.Web.UI.WebControls.Button btnSubmitReport;
+        protected global::System.Web.UI.WebControls.Repeater rptGroupMentorTasks;
+        protected global::System.Web.UI.WebControls.Label lblNoGroupMentorTasks;
+        protected global::System.Web.UI.WebControls.Panel pnlModalLeaderFeedback;
+        protected global::System.Web.UI.WebControls.Label lblModalLeaderFeedbackText;
     }
 }

@@ -28,5 +28,11 @@ namespace Project_Board.Admin
         protected global::System.Web.UI.WebControls.Label lblModalReportText;
         protected global::System.Web.UI.WebControls.Label lblModalReportDate;
         protected global::System.Web.UI.WebControls.Panel pnlNoReport;
+        protected global::System.Web.UI.WebControls.TextBox txtPointsToCover;
+        protected global::System.Web.UI.WebControls.Panel pnlPointsToCover;
+        protected global::System.Web.UI.WebControls.Label lblModalPointsToCover;
+        protected global::System.Web.UI.WebControls.HiddenField hfReviewTaskId;
+        protected global::System.Web.UI.WebControls.DropDownList ddlMentorStatusUpdate;
+        protected global::System.Web.UI.WebControls.TextBox txtMentorFeedback;
     }
 }

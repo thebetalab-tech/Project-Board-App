@@ -47,6 +47,7 @@ namespace Project_Board.Student.Leader
                 LoadGroupMembers();
                 LoadMentorTasks();
                 LoadMemberTasks();
+                LoadMentorTasksForDropdown(CurrentGroupId);
             }
         }
 
@@ -105,6 +106,35 @@ namespace Project_Board.Student.Leader
             }
         }
 
+        private void LoadMentorTasksForDropdown(int groupId)
+        {
+            ddlParentTask.Items.Clear();
+            ddlParentTask.Items.Add(new ListItem("None (Independent Task)", ""));
+
+            if (groupId == 0) return;
+
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_select_tasks", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Action", "MENTOR_LEADER_TASKS");
+                    cmd.Parameters.AddWithValue("@GroupId", groupId);
+
+                    conn.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string title = reader["TaskTitle"].ToString();
+                            string id = reader["TaskId"].ToString();
+                            ddlParentTask.Items.Add(new ListItem(title, id));
+                        }
+                    }
+                }
+            }
+        }
+
         private void LoadMentorTasks()
         {
             int leaderId = Convert.ToInt32(Session["UserId"]);
@@ -134,8 +164,8 @@ namespace Project_Board.Student.Leader
             foreach (DataRow row in dt.Rows)
             {
                 string st = row["Status"].ToString();
-                if (st == "Pending") PendingMentorTasks++;
-                else if (st == "In Progress") InProgressMentorTasks++;
+                if (st == "Pending" || st == "Working" || st == "Revision Needed" || st == "Failed") PendingMentorTasks++;
+                else if (st == "In Progress" || st == "Appealed") InProgressMentorTasks++;
                 else if (st == "Completed") CompletedMentorTasks++;
             }
 
@@ -199,7 +229,23 @@ namespace Project_Board.Student.Leader
                             if (reader.Read())
                             {
                                 lblMentorModalTaskTitle.Text = reader["TaskTitle"].ToString();
-                                ddlUpdateStatus.SelectedValue = reader["Status"].ToString();
+                                
+                                string points = reader["PointsToCover"] != DBNull.Value ? reader["PointsToCover"].ToString() : "";
+                                if (!string.IsNullOrEmpty(points))
+                                {
+                                    lblMentorModalPointsToCover.Text = points;
+                                    pnlMentorModalPoints.Visible = true;
+                                }
+                                else pnlMentorModalPoints.Visible = false;
+
+                                string feedback = reader["FeedbackText"] != DBNull.Value ? reader["FeedbackText"].ToString() : "";
+                                if (!string.IsNullOrEmpty(feedback))
+                                {
+                                    lblMentorModalFeedbackText.Text = feedback;
+                                    pnlMentorModalFeedback.Visible = true;
+                                }
+                                else pnlMentorModalFeedback.Visible = false;
+
                                 txtLeaderReportText.Text = reader["ReportText"] != DBNull.Value ? reader["ReportText"].ToString() : "";
                             }
                         }
@@ -215,7 +261,7 @@ namespace Project_Board.Student.Leader
             if (string.IsNullOrEmpty(hfReportTaskId.Value)) return;
 
             int taskId = Convert.ToInt32(hfReportTaskId.Value);
-            string status = ddlUpdateStatus.SelectedValue;
+            string status = "Appealed";
             string reportText = txtLeaderReportText.Text.Trim();
 
             using (SqlConnection conn = new SqlConnection(ConnString))
@@ -269,6 +315,11 @@ namespace Project_Board.Student.Leader
             }
 
             int leaderId = Convert.ToInt32(Session["UserId"]);
+            int? parentTaskId = null;
+            if (!string.IsNullOrEmpty(ddlParentTask.SelectedValue))
+            {
+                parentTaskId = Convert.ToInt32(ddlParentTask.SelectedValue);
+            }
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
@@ -282,8 +333,9 @@ namespace Project_Board.Student.Leader
                     cmd.Parameters.AddWithValue("@AssignedBy", leaderId);
                     cmd.Parameters.AddWithValue("@AssignedTo", memberId);
                     cmd.Parameters.AddWithValue("@TaskLevel", "LeaderToMember");
+                    cmd.Parameters.AddWithValue("@ParentTaskId", (object)parentTaskId ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@DueDate", (object)dueDate ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Status", "Pending");
+                    cmd.Parameters.AddWithValue("@Status", "Working");
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
@@ -294,6 +346,7 @@ namespace Project_Board.Student.Leader
             txtMemberTaskDescription.Text = "";
             txtMemberTaskDueDate.Text = "";
             ddlMembers.SelectedIndex = 0;
+            ddlParentTask.SelectedIndex = 0;
 
             lblMessage.Text = "Task successfully assigned to team member!";
             lblMessage.CssClass = "alert alert-success";
@@ -344,6 +397,15 @@ namespace Project_Board.Student.Leader
                                     pnlMemberReportContent.Visible = false;
                                     pnlNoMemberReport.Visible = true;
                                 }
+
+                                string currentStatus = reader["Status"].ToString();
+                                if (ddlLeaderStatusUpdate.Items.FindByValue(currentStatus) != null)
+                                {
+                                    ddlLeaderStatusUpdate.SelectedValue = currentStatus;
+                                }
+
+                                txtLeaderFeedback.Text = reader["FeedbackText"] != DBNull.Value ? reader["FeedbackText"].ToString() : "";
+                                hfReviewMemberTaskId.Value = taskId.ToString();
                             }
                         }
                     }
@@ -367,6 +429,36 @@ namespace Project_Board.Student.Leader
                 }
                 LoadMemberTasks();
             }
+        }
+
+        protected void btnUpdateMemberStatusByLeader_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(hfReviewMemberTaskId.Value)) return;
+
+            int taskId = Convert.ToInt32(hfReviewMemberTaskId.Value);
+            string status = ddlLeaderStatusUpdate.SelectedValue;
+            string feedback = txtLeaderFeedback.Text.Trim();
+
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_crud_tasks", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Action", "UPDATE_STATUS");
+                    cmd.Parameters.AddWithValue("@TaskId", taskId);
+                    cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.Parameters.AddWithValue("@FeedbackText", (object)feedback ?? DBNull.Value);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            lblMessage.Text = "Member task status and feedback successfully updated!";
+            lblMessage.CssClass = "alert alert-success";
+            lblMessage.Visible = true;
+
+            LoadMemberTasks();
         }
     }
 }
