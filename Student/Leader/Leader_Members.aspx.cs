@@ -174,6 +174,29 @@ namespace Project_Board.Student.Leader
                                 insCmd.Parameters.AddWithValue("@UserId", targetUserId);
                                 insCmd.ExecuteNonQuery();
                             }
+
+                            // Fetch target user & group details for email notification
+                            string detailsSql = @"
+                                SELECT u.FullName AS MemberName, u.Email AS MemberEmail, g.GroupName
+                                FROM Users u, Groups g
+                                WHERE u.UserId = @UserId AND g.GroupId = @GroupId";
+                            using (SqlCommand detCmd = new SqlCommand(detailsSql, conn))
+                            {
+                                detCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                                detCmd.Parameters.AddWithValue("@GroupId", groupId);
+                                using (SqlDataReader rdr = detCmd.ExecuteReader())
+                                {
+                                    if (rdr.Read())
+                                    {
+                                        string memberName = rdr["MemberName"].ToString();
+                                        string memberEmail = rdr["MemberEmail"].ToString();
+                                        string groupName = rdr["GroupName"].ToString();
+                                        string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
+
+                                        Project_Board.Services.EmailService.SendLeaderRequestToMember(memberEmail, memberName, leaderName, groupName);
+                                    }
+                                }
+                            }
                         }
                     }
                 }

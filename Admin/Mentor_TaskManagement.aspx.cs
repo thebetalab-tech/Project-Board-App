@@ -45,7 +45,7 @@ namespace Project_Board.Admin
         private void LoadAssignedGroups()
         {
             int currentUserId = Convert.ToInt32(Session["UserId"]);
-            string userRole = Session["UserRole"]?.ToString() ?? "";
+            string userRole = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? "";
 
             ddlGroups.Items.Clear();
             ddlGroups.Items.Add(new ListItem("-- Select Group to Assign Task --", ""));
@@ -81,7 +81,7 @@ namespace Project_Board.Admin
         private void LoadTasks()
         {
             int currentUserId = Convert.ToInt32(Session["UserId"]);
-            string userRole = Session["UserRole"]?.ToString() ?? "";
+            string userRole = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? "";
             string filterGroupId = ddlFilterGroup.SelectedValue;
             string filterStatus = ddlFilterStatus.SelectedValue;
 
@@ -203,6 +203,45 @@ namespace Project_Board.Admin
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
+                }
+
+                // Send email to Leader (Scenario 5)
+                try
+                {
+                    string infoSql = @"
+                        SELECT u.FullName AS LeaderName, u.Email AS LeaderEmail, g.GroupName
+                        FROM Users u
+                        INNER JOIN Groups g ON u.UserId = g.LeaderId
+                        WHERE g.GroupId = @GroupId";
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@GroupId", groupId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string leaderName = rdr["LeaderName"].ToString();
+                                string leaderEmail = rdr["LeaderEmail"].ToString();
+                                string groupName = rdr["GroupName"].ToString();
+                                string facultyName = Session["FullName"]?.ToString() ?? "Faculty Mentor";
+
+                                Project_Board.Services.EmailService.SendFacultyTaskAssignedToLeader(
+                                    leaderEmail,
+                                    leaderName,
+                                    facultyName,
+                                    groupName,
+                                    title,
+                                    description,
+                                    pointsToCover,
+                                    dueDate?.ToString("dd MMM yyyy")
+                                );
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
             }
 

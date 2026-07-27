@@ -141,7 +141,8 @@
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Main Menu</div>
-                <% if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Faculty") { %>
+                <% string currentRole = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? ""; %>
+                <% if (currentRole == "Faculty") { %>
                     <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Dashboard
                     </a>
@@ -213,6 +214,9 @@
                     <i class="fa-regular fa-bell"></i>
                     <span class="notification-badge"></span>
                 </button>
+                <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
+                    <i class="fa-solid fa-user"></i>
+                </a>
             </div>
         </header>
         <div class="dashboard-container">

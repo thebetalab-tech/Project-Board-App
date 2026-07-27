@@ -190,6 +190,36 @@ namespace Project_Board.Student.Member
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
+
+                // Send email to Leader (Scenario 4)
+                try
+                {
+                    string infoSql = @"
+                        SELECT t.TaskTitle, u.FullName AS LeaderName, u.Email AS LeaderEmail
+                        FROM Tasks t
+                        INNER JOIN Users u ON t.AssignedBy = u.UserId
+                        WHERE t.TaskId = @TaskId";
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@TaskId", taskId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string taskTitle = rdr["TaskTitle"].ToString();
+                                string leaderName = rdr["LeaderName"].ToString();
+                                string leaderEmail = rdr["LeaderEmail"].ToString();
+                                string memberName = Session["FullName"]?.ToString() ?? "Student Member";
+
+                                Project_Board.Services.EmailService.SendMemberReportSubmitted(leaderEmail, leaderName, memberName, taskTitle, reportText);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
             }
 
             lblMessage.Text = "Appeal Completion submitted successfully to your Leader!";

@@ -120,6 +120,44 @@ namespace Project_Board.Student.Leader
                         cmd.ExecuteNonQuery();
                     }
                 }
+
+                // Send email notification (Scenario 9)
+                try
+                {
+                    if (e.CommandName == "Accept")
+                    {
+                        string infoSql = @"
+                            SELECT u.FullName AS MemberName, g.GroupName, l.FullName AS LeaderName, l.Email AS LeaderEmail
+                            FROM Users u, Groups g, Users l
+                            WHERE u.UserId = @UserId AND g.GroupId = @GroupId AND g.LeaderId = l.UserId";
+                        using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                        {
+                            infoCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                            infoCmd.Parameters.AddWithValue("@GroupId", groupId);
+                            using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                            {
+                                if (rdr.Read())
+                                {
+                                    string memberName = rdr["MemberName"].ToString();
+                                    string groupName = rdr["GroupName"].ToString();
+                                    string leaderName = rdr["LeaderName"].ToString();
+                                    string leaderEmail = rdr["LeaderEmail"].ToString();
+
+                                    Project_Board.Services.EmailService.SendMemberJoinedNotification(
+                                        leaderEmail,
+                                        leaderName,
+                                        memberName,
+                                        groupName
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
             }
             LoadInvitations();
         }

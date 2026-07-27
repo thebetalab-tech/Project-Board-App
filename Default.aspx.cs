@@ -81,9 +81,17 @@ namespace Project_Board
                                     Session["UserId"] = reader["UserId"].ToString();
                                     Session["FullName"] = reader["FullName"].ToString();
                                     Session["Role"] = reader["Role"].ToString();
+                                    Session["UserRole"] = reader["Role"].ToString();
                                     Session["Email"] = reader["Email"].ToString();
                                     Session["UserEmail"] = reader["Email"].ToString();
                                     Session["IsLeader"] = reader["IsLeader"].ToString();
+
+                                    // Send Sign-In Email Notification
+                                    Project_Board.Services.EmailService.SendSignInNotification(
+                                        reader["Email"].ToString(),
+                                        reader["FullName"].ToString(),
+                                        reader["Role"].ToString()
+                                    );
 
                                     // Redirect to the appropriate dashboard
                                     RedirectUserBasedOnRole(Session["Role"].ToString());

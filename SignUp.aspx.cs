@@ -184,6 +184,13 @@ namespace Project_Board
                         return;
                     }
 
+                    // Clean up any old inactive user record with the same email if one exists
+                    using (SqlCommand cleanupCmd = new SqlCommand("DELETE FROM Users WHERE Email = @Email AND IsActive = 0", connection))
+                    {
+                        cleanupCmd.Parameters.Add("@Email", SqlDbType.NVarChar, 100).Value = emailValue;
+                        cleanupCmd.ExecuteNonQuery();
+                    }
+
                     string query = @"INSERT INTO Users (FullName, Email, PasswordHash, EnrollmentNo, Role, IsLeader, IsActive, CreatedAt) 
                                      VALUES (@FullName, @Email, @PasswordHash, @EnrollmentNo, @Role, @IsLeader, 1, GETDATE())";
                     using (SqlCommand command = new SqlCommand(query, connection))
@@ -348,8 +355,7 @@ namespace Project_Board
 
         private static bool UserExists(SqlConnection connection, string email)
         {
-            // Removed LOWER() to allow SQL Server to utilize database indexes properly
-            using (SqlCommand command = new SqlCommand("SELECT COUNT(1) FROM Users WHERE Email = @Email", connection))
+            using (SqlCommand command = new SqlCommand("SELECT COUNT(1) FROM Users WHERE Email = @Email AND IsActive = 1", connection))
             {
                 command.Parameters.Add("@Email", SqlDbType.NVarChar, 100).Value = email;
                 return Convert.ToInt32(command.ExecuteScalar()) > 0;

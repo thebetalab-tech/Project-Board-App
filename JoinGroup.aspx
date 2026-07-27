@@ -29,6 +29,9 @@
                         <a href='<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-envelope"></i> Invitations
                         </a>
+                        <a href='<%= ResolveUrl("~/Student/Member/Member_TaskManagement.aspx") %>' class="nav-link">
+                            <i class="fa-solid fa-list-check"></i> Tasks
+                        </a>
                     </div>
                     <div class="nav-section">
                         <div class="nav-section-title">Preferences</div>

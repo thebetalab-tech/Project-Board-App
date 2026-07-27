@@ -97,6 +97,55 @@ namespace Project_Board.Student.Member
                         cmd.ExecuteNonQuery();
                     }
                 }
+
+                // Send email to Leader (Scenarios 9 & 11)
+                try
+                {
+                    bool isAccepted = e.CommandName == "Accept";
+                    string infoSql = @"
+                        SELECT g.GroupName, u.FullName AS LeaderName, u.Email AS LeaderEmail
+                        FROM Groups g
+                        INNER JOIN Users u ON g.LeaderId = u.UserId
+                        WHERE g.GroupId = @GroupId";
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@GroupId", groupId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string groupName = rdr["GroupName"].ToString();
+                                string leaderName = rdr["LeaderName"].ToString();
+                                string leaderEmail = rdr["LeaderEmail"].ToString();
+                                string memberName = Session["FullName"]?.ToString() ?? "Student Member";
+
+                                // 11. Leader gets mail back that member joins or rejects
+                                Project_Board.Services.EmailService.SendMemberResponseToLeader(
+                                    leaderEmail,
+                                    leaderName,
+                                    memberName,
+                                    groupName,
+                                    isAccepted
+                                );
+
+                                // 9. Leader gets mail when member joins group
+                                if (isAccepted)
+                                {
+                                    Project_Board.Services.EmailService.SendMemberJoinedNotification(
+                                        leaderEmail,
+                                        leaderName,
+                                        memberName,
+                                        groupName
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
             }
             LoadInvitations();
         }

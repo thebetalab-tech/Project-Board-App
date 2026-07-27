@@ -277,6 +277,38 @@ namespace Project_Board.Student.Leader
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
+
+                // Send email to Faculty Mentor (Scenario 6)
+                try
+                {
+                    string infoSql = @"
+                        SELECT t.TaskTitle, g.GroupName, u.FullName AS FacultyName, u.Email AS FacultyEmail
+                        FROM Tasks t
+                        INNER JOIN Groups g ON t.GroupId = g.GroupId
+                        INNER JOIN Users u ON t.AssignedBy = u.UserId
+                        WHERE t.TaskId = @TaskId";
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@TaskId", taskId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string taskTitle = rdr["TaskTitle"].ToString();
+                                string groupName = rdr["GroupName"].ToString();
+                                string facultyName = rdr["FacultyName"].ToString();
+                                string facultyEmail = rdr["FacultyEmail"].ToString();
+                                string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
+
+                                Project_Board.Services.EmailService.SendLeaderReportSubmitted(facultyEmail, facultyName, leaderName, groupName, taskTitle, reportText);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
             }
 
             lblMessage.Text = "Report and Status successfully updated for Mentor!";
@@ -339,6 +371,38 @@ namespace Project_Board.Student.Leader
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
+                }
+
+                // Send email to assigned member (Scenario 3)
+                try
+                {
+                    string memSql = "SELECT FullName, Email FROM Users WHERE UserId = @UserId";
+                    using (SqlCommand memCmd = new SqlCommand(memSql, conn))
+                    {
+                        memCmd.Parameters.AddWithValue("@UserId", memberId);
+                        using (SqlDataReader rdr = memCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string memberName = rdr["FullName"].ToString();
+                                string memberEmail = rdr["Email"].ToString();
+                                string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
+
+                                Project_Board.Services.EmailService.SendTaskAssignedToMember(
+                                    memberEmail,
+                                    memberName,
+                                    leaderName,
+                                    title,
+                                    description,
+                                    dueDate?.ToString("dd MMM yyyy")
+                                );
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
             }
 
