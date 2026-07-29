@@ -282,8 +282,8 @@ namespace Project_Board.Student.Leader
                 try
                 {
                     string infoSql = @"
-                        SELECT t.TaskTitle, g.GroupName, u.UserId AS FacultyId, u.FullName AS FacultyName, u.Email AS FacultyEmail
-                        FROM Task t
+                        SELECT t.TaskTitle, g.GroupName, u.FullName AS FacultyName, u.Email AS FacultyEmail
+                        FROM Tasks t
                         INNER JOIN Groups g ON t.GroupId = g.GroupId
                         INNER JOIN Users u ON t.AssignedBy = u.UserId
                         WHERE t.TaskId = @TaskId";
@@ -296,13 +296,11 @@ namespace Project_Board.Student.Leader
                             {
                                 string taskTitle = rdr["TaskTitle"].ToString();
                                 string groupName = rdr["GroupName"].ToString();
-                                int facultyId = Convert.ToInt32(rdr["FacultyId"]);
                                 string facultyName = rdr["FacultyName"].ToString();
                                 string facultyEmail = rdr["FacultyEmail"].ToString();
                                 string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
 
                                 Project_Board.Services.EmailService.SendLeaderReportSubmitted(facultyEmail, facultyName, leaderName, groupName, taskTitle, reportText);
-
                             }
                         }
                     }
@@ -398,7 +396,6 @@ namespace Project_Board.Student.Leader
                                     description,
                                     dueDate?.ToString("dd MMM yyyy")
                                 );
-
                             }
                         }
                     }

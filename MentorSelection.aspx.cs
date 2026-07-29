@@ -236,7 +236,6 @@ namespace Project_Board
                                         groupName,
                                         techName
                                     );
-
                                 }
                             }
                         }
