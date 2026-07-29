@@ -91,4 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.appendChild(table);
         }
     });
+
 });
+

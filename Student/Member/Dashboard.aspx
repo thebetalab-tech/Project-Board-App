@@ -72,10 +72,6 @@
                     <div class="status-badge-container">
                         <span class="status-dot" style='<%= MemberNeeded ? "" : "background: var(--c-green);" %>'></span> <%= MemberNeeded ? "Team Forming" : "Team Completed" %>
                     </div>
-                    <button class="action-btn">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="notification-badge"></span>
-                    </button>
                     <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>

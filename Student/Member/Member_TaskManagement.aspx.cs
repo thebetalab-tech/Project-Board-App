@@ -195,8 +195,8 @@ namespace Project_Board.Student.Member
                 try
                 {
                     string infoSql = @"
-                        SELECT t.TaskTitle, u.FullName AS LeaderName, u.Email AS LeaderEmail
-                        FROM Tasks t
+                        SELECT t.TaskTitle, u.UserId AS LeaderId, u.FullName AS LeaderName, u.Email AS LeaderEmail
+                        FROM Task t
                         INNER JOIN Users u ON t.AssignedBy = u.UserId
                         WHERE t.TaskId = @TaskId";
                     using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
@@ -207,11 +207,13 @@ namespace Project_Board.Student.Member
                             if (rdr.Read())
                             {
                                 string taskTitle = rdr["TaskTitle"].ToString();
+                                int leaderId = Convert.ToInt32(rdr["LeaderId"]);
                                 string leaderName = rdr["LeaderName"].ToString();
                                 string leaderEmail = rdr["LeaderEmail"].ToString();
                                 string memberName = Session["FullName"]?.ToString() ?? "Student Member";
 
                                 Project_Board.Services.EmailService.SendMemberReportSubmitted(leaderEmail, leaderName, memberName, taskTitle, reportText);
+
                             }
                         }
                     }

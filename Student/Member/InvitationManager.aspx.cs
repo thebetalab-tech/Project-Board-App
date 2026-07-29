@@ -103,7 +103,7 @@ namespace Project_Board.Student.Member
                 {
                     bool isAccepted = e.CommandName == "Accept";
                     string infoSql = @"
-                        SELECT g.GroupName, u.FullName AS LeaderName, u.Email AS LeaderEmail
+                        SELECT g.GroupName, u.UserId AS LeaderId, u.FullName AS LeaderName, u.Email AS LeaderEmail
                         FROM Groups g
                         INNER JOIN Users u ON g.LeaderId = u.UserId
                         WHERE g.GroupId = @GroupId";
@@ -115,6 +115,7 @@ namespace Project_Board.Student.Member
                             if (rdr.Read())
                             {
                                 string groupName = rdr["GroupName"].ToString();
+                                int leaderId = Convert.ToInt32(rdr["LeaderId"]);
                                 string leaderName = rdr["LeaderName"].ToString();
                                 string leaderEmail = rdr["LeaderEmail"].ToString();
                                 string memberName = Session["FullName"]?.ToString() ?? "Student Member";
@@ -138,6 +139,7 @@ namespace Project_Board.Student.Member
                                         groupName
                                     );
                                 }
+
                             }
                         }
                     }

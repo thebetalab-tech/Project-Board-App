@@ -230,6 +230,7 @@ form {
     position: sticky;
     top: 0;
     z-index: 90;
+    overflow: visible !important;
 }
 
 .search-bar {
@@ -288,16 +289,6 @@ form {
     color: var(--c-accent);
 }
 
-.notification-badge {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 8px;
-    height: 8px;
-    background-color: var(--c-red);
-    border-radius: 50%;
-    border: 2px solid var(--c-bg);
-}
 
 /* --------------------------------------------------------------------------
    DASHBOARD CONTENT

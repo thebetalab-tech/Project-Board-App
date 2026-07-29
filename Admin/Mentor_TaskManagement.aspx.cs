@@ -235,6 +235,7 @@ namespace Project_Board.Admin
                                     pointsToCover,
                                     dueDate?.ToString("dd MMM yyyy")
                                 );
+
                             }
                         }
                     }

@@ -194,6 +194,7 @@ namespace Project_Board.Student.Leader
                                         string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
 
                                         Project_Board.Services.EmailService.SendLeaderRequestToMember(memberEmail, memberName, leaderName, groupName);
+
                                     }
                                 }
                             }
