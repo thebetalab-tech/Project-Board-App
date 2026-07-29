@@ -15,12 +15,20 @@ namespace Project_Board.Student.Leader
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divRequestForm;
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divCurrentRequest;
 
+        protected string UserInitials { get; set; } = "TL";
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["UserId"] == null)
             {
                 Response.Redirect("~/Default.aspx");
                 return;
+            }
+
+            string fullName = Session["FullName"]?.ToString() ?? "Student Leader";
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                UserInitials = fullName.Substring(0, 1).ToUpper();
             }
 
             if (!IsPostBack)
@@ -71,22 +79,69 @@ namespace Project_Board.Student.Leader
 
                 if (mentorId.HasValue)
                 {
-                    // Already has a mentor request
-                    divRequestForm.Visible = false;
-                    divCurrentRequest.Visible = true;
-                    btnWithdraw.Visible = true; // Show withdraw if there is a mentor request
-                    
-                    // Fetch mentor name
-                    string mentorName = "Unknown";
-                    string qMentor = "SELECT FullName FROM Users WHERE UserId = @UserId";
+                    // Fetch mentor name and email
+                    string mentorName = "Faculty Mentor";
+                    string mentorEmail = "";
+                    string qMentor = "SELECT FullName, Email FROM Users WHERE UserId = @UserId";
                     using (SqlCommand cmd2 = new SqlCommand(qMentor, conn))
                     {
                         cmd2.Parameters.AddWithValue("@UserId", mentorId.Value);
-                        object result = cmd2.ExecuteScalar();
-                        if (result != null) mentorName = result.ToString();
+                        using (SqlDataReader mRdr = cmd2.ExecuteReader())
+                        {
+                            if (mRdr.Read())
+                            {
+                                mentorName = mRdr["FullName"].ToString();
+                                mentorEmail = mRdr["Email"].ToString();
+                            }
+                        }
                     }
 
-                    lblStatus.Text = $"Requested Mentor: <strong>{mentorName}</strong><br/>Status: <strong>{status}</strong>";
+                    string initials = !string.IsNullOrEmpty(mentorName) ? mentorName.Substring(0, 1).ToUpper() : "F";
+
+                    if (status.Equals("Assigned Mentor", StringComparison.OrdinalIgnoreCase) ||
+                        status.Equals("Accepted", StringComparison.OrdinalIgnoreCase) ||
+                        status.Equals("Active", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Accepted / Assigned State: Hide request form and withdraw button completely
+                        divRequestForm.Visible = false;
+                        divCurrentRequest.Visible = true;
+                        btnWithdraw.Visible = false;
+
+                        lblStatus.Text = $@"
+                            <div style='display:flex; align-items:center; gap:1.25rem; padding:0.5rem;'>
+                                <div style='width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.3rem;'>
+                                    {initials}
+                                </div>
+                                <div style='flex:1;'>
+                                    <h3 style='margin:0 0 0.3rem 0; color:var(--c-text); font-size:1.15rem;'>
+                                        <i class='fa-solid fa-award' style='color:#6366f1; margin-right:0.4rem;'></i> Assigned Faculty Mentor: {mentorName}
+                                    </h3>
+                                    <p style='margin:0; font-size:0.875rem; color:var(--c-text-muted);'>
+                                        <i class='fa-solid fa-envelope' style='margin-right:0.3rem;'></i> {mentorEmail}
+                                    </p>
+                                </div>
+                                <span class='badge' style='background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); padding:0.4rem 0.8rem; border-radius:20px; font-weight:600;'>
+                                    Assigned Mentor
+                                </span>
+                            </div>";
+                    }
+                    else
+                    {
+                        // Pending State: Allow withdrawal
+                        divRequestForm.Visible = false;
+                        divCurrentRequest.Visible = true;
+                        btnWithdraw.Visible = true;
+
+                        lblStatus.Text = $@"
+                            <div style='padding:0.5rem;'>
+                                <h4 style='margin:0 0 0.4rem 0; color:#eab308; display:flex; align-items:center; gap:0.5rem;'>
+                                    <i class='fa-solid fa-clock'></i> Mentor Request Pending Approval
+                                </h4>
+                                <p style='margin:0; font-size:0.9rem; color:var(--c-text);'>
+                                    Requested Professor: <strong>{mentorName}</strong> ({mentorEmail})
+                                </p>
+                            </div>";
+                    }
                 }
                 else
                 {
@@ -95,8 +150,8 @@ namespace Project_Board.Student.Leader
                         // No technology selected yet, cannot pick mentor
                         divRequestForm.Visible = false;
                         divCurrentRequest.Visible = true;
-                        btnWithdraw.Visible = false; // Hide withdraw because nothing to withdraw
-                        lblStatus.Text = "<strong>Error:</strong> Your group has not selected a Technology yet. Please select a technology on the Dashboard first.";
+                        btnWithdraw.Visible = false;
+                        lblStatus.Text = "<strong>Error:</strong> Your group has not selected a Technology domain yet. Please select a technology on the Dashboard first.";
                         return;
                     }
 
@@ -156,7 +211,7 @@ namespace Project_Board.Student.Leader
                     cmd.ExecuteNonQuery();
                 }
             }
-            Response.Redirect("~/MentorSelection.aspx", true);
+            LoadMentorData();
         }
 
         protected void btnWithdraw_Click(object sender, EventArgs e)

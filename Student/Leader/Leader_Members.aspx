@@ -27,6 +27,9 @@
                         <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class="nav-link active">
                             <i class="fa-solid fa-users"></i> Team Members
                         </a>
+                        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Project.aspx") %>' class="nav-link">
+                            <i class="fa-solid fa-folder-open"></i> Project Management
+                        </a>
                         <a href='<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
                         </a>
@@ -78,10 +81,6 @@
                                 style='<%= MemberNeeded ? "width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--c-blue);" : "width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--c-green);" %>'></span>
                             <%= MemberNeeded ? "Team Forming" : "Team Completed" %>
                         </div>
-                        <button class="action-btn">
-                            <i class="fa-regular fa-bell"></i>
-                            <span class="notification-badge"></span>
-                        </button>
                         <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
                             <i class="fa-solid fa-user"></i>
                         </a>

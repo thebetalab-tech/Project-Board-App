@@ -131,6 +131,10 @@
     <Content Include="Faculty\GroupManagement.aspx" />
     <Content Include="Faculty\InvitationManager.aspx" />
     <Content Include="Faculty\ProjectManagement.aspx" />
+    <Content Include="Faculty\TaskManagement.aspx" />
+    <Content Include="Faculty\TaskDetails.aspx" />
+    <Content Include="Admin\Admin_TaskManagement.aspx" />
+    <Content Include="DB\Appeals.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Admin\groups.html" />
@@ -151,9 +155,11 @@
     <Content Include="Student\Leader\InvitationManager.aspx" />
     <Content Include="Student\Leader\Leader_Members.aspx" />
     <Content Include="Student\Leader\Leader_Mentor.aspx" />
+    <Content Include="Student\Leader\Leader_Project.aspx" />
     <Content Include="Student\Leader\Leader_TaskManagement.aspx" />
     <Content Include="Student\Member\Dashboard.aspx" />
     <Content Include="Student\Member\InvitationManager.aspx" />
+    <Content Include="Student\Member\Member_Project.aspx" />
     <Content Include="Student\Member\Member_TaskManagement.aspx" />
     <Content Include="Student\Member\Member_Team.aspx" />
     <Content Include="styles\login-signup.css" />
@@ -219,6 +225,41 @@
     </Compile>
     <Compile Include="Admin\Mentor_TaskManagement.aspx.designer.cs">
       <DependentUpon>Mentor_TaskManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Admin_TaskManagement.aspx.cs">
+      <DependentUpon>Admin_TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Admin_TaskManagement.aspx.designer.cs">
+      <DependentUpon>Admin_TaskManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Leader\Leader_Project.aspx.cs">
+      <DependentUpon>Leader_Project.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\Leader_Project.aspx.designer.cs">
+      <DependentUpon>Leader_Project.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Member\Member_Project.aspx.cs">
+      <DependentUpon>Member_Project.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Member\Member_Project.aspx.designer.cs">
+      <DependentUpon>Member_Project.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\TaskManagement.aspx.cs">
+      <DependentUpon>TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\TaskManagement.aspx.designer.cs">
+      <DependentUpon>TaskManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\TaskDetails.aspx.cs">
+      <DependentUpon>TaskDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\TaskDetails.aspx.designer.cs">
+      <DependentUpon>TaskDetails.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Services\EmailService.cs" />

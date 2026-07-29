@@ -70,7 +70,7 @@ namespace Project_Board.Faculty
                 conn.Open();
                 if (e.CommandName == "Accept")
                 {
-                    string update = "UPDATE Groups SET Status = 'Active' WHERE GroupId = @GroupId";
+                    string update = "UPDATE Groups SET Status = 'Assigned Mentor' WHERE GroupId = @GroupId";
                     using (SqlCommand cmd = new SqlCommand(update, conn))
                     {
                         cmd.Parameters.AddWithValue("@GroupId", groupId);

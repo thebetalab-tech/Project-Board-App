@@ -9,6 +9,8 @@ namespace Project_Board.Student.Member
     public partial class InvitationManager : System.Web.UI.Page
     {
         protected string UserInitials { get; set; } = "SM";
+        protected string UserName { get; set; } = "Student Member";
+        protected string UserEmail { get; set; } = "member@example.com";
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -17,13 +19,16 @@ namespace Project_Board.Student.Member
                 Response.Redirect("~/Default.aspx");
                 return;
             }
+
+            UserName = Session["FullName"]?.ToString() ?? "Student Member";
+            UserEmail = Session["Email"]?.ToString() ?? "member@example.com";
+            if (!string.IsNullOrEmpty(UserName))
+            {
+                UserInitials = UserName.Substring(0, 1).ToUpper();
+            }
+
             if (!IsPostBack)
             {
-                string fullName = Session["FullName"]?.ToString() ?? "Student Member";
-                if (!string.IsNullOrEmpty(fullName))
-                {
-                    UserInitials = fullName.Substring(0, 1).ToUpper();
-                }
                 LoadInvitations();
             }
         }
@@ -98,7 +103,7 @@ namespace Project_Board.Student.Member
                     }
                 }
 
-                // Send email to Leader (Scenarios 9 & 11)
+                // Send email to Leader
                 try
                 {
                     bool isAccepted = e.CommandName == "Accept";
@@ -119,7 +124,6 @@ namespace Project_Board.Student.Member
                                 string leaderEmail = rdr["LeaderEmail"].ToString();
                                 string memberName = Session["FullName"]?.ToString() ?? "Student Member";
 
-                                // 11. Leader gets mail back that member joins or rejects
                                 Project_Board.Services.EmailService.SendMemberResponseToLeader(
                                     leaderEmail,
                                     leaderName,
@@ -128,7 +132,6 @@ namespace Project_Board.Student.Member
                                     isAccepted
                                 );
 
-                                // 9. Leader gets mail when member joins group
                                 if (isAccepted)
                                 {
                                     Project_Board.Services.EmailService.SendMemberJoinedNotification(

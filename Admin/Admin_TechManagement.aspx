@@ -36,7 +36,7 @@
                 <a href='<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>' class="nav-link active">
                     <i class="fa-solid fa-microchip"></i> Technologies
                 </a>
-                <a href='<%= ResolveUrl("~/Admin/Mentor_TaskManagement.aspx") %>' class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_TaskManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-list-check"></i> Tasks
                 </a>
             </div>
@@ -73,10 +73,6 @@
             </div>
             
             <div class="topbar-actions">
-                <button class="action-btn">
-                    <i class="fa-regular fa-bell"></i>
-                    <span class="notification-badge"></span>
-                </button>
                 <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
                     <i class="fa-solid fa-user"></i>
                 </a>
