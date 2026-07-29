@@ -267,7 +267,7 @@
                                                 <%# Eval("JoinStatus") %>
                                             </span>
                                         </td>
-                                    </tr>
+                                    </tr>   
                                 </ItemTemplate>
                             </asp:Repeater>
                         </tbody>

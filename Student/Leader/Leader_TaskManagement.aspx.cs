@@ -571,6 +571,45 @@ namespace Project_Board.Student.Leader
                     aCmd.Parameters.AddWithValue("@TaskId", taskId);
                     aCmd.ExecuteNonQuery();
                 }
+
+                // Send status update email notification to Member
+                try
+                {
+                    string infoSql = @"
+                        SELECT t.TaskTitle, uTo.Email AS MemberEmail, uTo.FullName AS MemberName, uBy.FullName AS LeaderName
+                        FROM Task t
+                        INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                        INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
+                        WHERE t.TaskId = @TaskId";
+
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@TaskId", taskId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string taskTitle = rdr["TaskTitle"].ToString();
+                                string memberEmail = rdr["MemberEmail"].ToString();
+                                string memberName = rdr["MemberName"].ToString();
+                                string leaderName = rdr["LeaderName"].ToString();
+
+                                Project_Board.Services.EmailService.SendTaskStatusUpdatedNotification(
+                                    memberEmail,
+                                    memberName,
+                                    leaderName,
+                                    taskTitle,
+                                    status,
+                                    feedback
+                                );
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Email Error] {ex.Message}");
+                }
             }
 
             lblMessage.Text = "Member task status and appeal review successfully updated!";

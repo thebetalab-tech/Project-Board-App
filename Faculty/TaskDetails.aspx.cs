@@ -162,9 +162,37 @@ namespace Project_Board.Faculty
         {
             int reviewerId = Convert.ToInt32(Session["UserId"]);
             string remarks = txtRemarks.Text.Trim();
+            string facultyName = Session["FullName"]?.ToString() ?? "Faculty Mentor";
+
+            string taskTitle = "";
+            string assignedToEmail = "";
+            string assignedToName = "";
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
+                conn.Open();
+
+                // Fetch task details for email notification
+                string infoSql = @"
+                    SELECT t.TaskTitle, uTo.Email AS AssignedToEmail, uTo.FullName AS AssignedToName
+                    FROM Task t
+                    INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                    WHERE t.TaskId = @TaskId";
+
+                using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                {
+                    infoCmd.Parameters.AddWithValue("@TaskId", CurrentTaskId);
+                    using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                    {
+                        if (rdr.Read())
+                        {
+                            taskTitle = rdr["TaskTitle"].ToString();
+                            assignedToEmail = rdr["AssignedToEmail"].ToString();
+                            assignedToName = rdr["AssignedToName"].ToString();
+                        }
+                    }
+                }
+
                 using (SqlCommand cmd = new SqlCommand("sp_crud_tasks", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -173,16 +201,31 @@ namespace Project_Board.Faculty
                     cmd.Parameters.AddWithValue("@Status", status);
                     cmd.Parameters.AddWithValue("@FeedbackText", remarks);
 
-                    conn.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
 
-            lblMessage.Text = message;
-            lblMessage.CssClass = "alert alert-success";
-            lblMessage.Visible = true;
+            // Send notification email to assigned leader/member
+            if (!string.IsNullOrEmpty(assignedToEmail))
+            {
+                try
+                {
+                    Project_Board.Services.EmailService.SendTaskStatusUpdatedNotification(
+                        assignedToEmail,
+                        assignedToName,
+                        facultyName,
+                        taskTitle,
+                        status,
+                        remarks
+                    );
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Email Error] {ex.Message}");
+                }
+            }
 
-            LoadTaskDetails();
+            Response.Redirect("~/Faculty/TaskManagement.aspx");
         }
 
         private void ReviewAppeal(string appealStatus, string message)
@@ -190,11 +233,38 @@ namespace Project_Board.Faculty
             int reviewerId = Convert.ToInt32(Session["UserId"]);
             int appealId = ViewState["CurrentAppealId"] != null ? Convert.ToInt32(ViewState["CurrentAppealId"]) : 0;
             string remarks = txtRemarks.Text.Trim();
+            string facultyName = Session["FullName"]?.ToString() ?? "Faculty Mentor";
 
             if (appealId == 0) return;
 
+            string taskTitle = "";
+            string assignedToEmail = "";
+            string assignedToName = "";
+
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
+                conn.Open();
+
+                string infoSql = @"
+                    SELECT t.TaskTitle, uTo.Email AS AssignedToEmail, uTo.FullName AS AssignedToName
+                    FROM Task t
+                    INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                    WHERE t.TaskId = @TaskId";
+
+                using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                {
+                    infoCmd.Parameters.AddWithValue("@TaskId", CurrentTaskId);
+                    using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                    {
+                        if (rdr.Read())
+                        {
+                            taskTitle = rdr["TaskTitle"].ToString();
+                            assignedToEmail = rdr["AssignedToEmail"].ToString();
+                            assignedToName = rdr["AssignedToName"].ToString();
+                        }
+                    }
+                }
+
                 using (SqlCommand cmd = new SqlCommand("sp_crud_appeals", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -204,16 +274,31 @@ namespace Project_Board.Faculty
                     cmd.Parameters.AddWithValue("@ReviewerId", reviewerId);
                     cmd.Parameters.AddWithValue("@Remarks", remarks);
 
-                    conn.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
 
-            lblMessage.Text = message;
-            lblMessage.CssClass = "alert alert-success";
-            lblMessage.Visible = true;
+            if (!string.IsNullOrEmpty(assignedToEmail))
+            {
+                try
+                {
+                    string mappedStatus = appealStatus == "Accepted" ? "Completed" : "Revision Needed";
+                    Project_Board.Services.EmailService.SendTaskStatusUpdatedNotification(
+                        assignedToEmail,
+                        assignedToName,
+                        facultyName,
+                        taskTitle,
+                        mappedStatus,
+                        remarks
+                    );
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Email Error] {ex.Message}");
+                }
+            }
 
-            LoadTaskDetails();
+            Response.Redirect("~/Faculty/TaskManagement.aspx");
         }
     }
 }

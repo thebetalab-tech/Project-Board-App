@@ -424,5 +424,40 @@ namespace Project_Board.Services
             SendEmailAsync(toEmail, "Welcome to Project Board - Account Credentials", html);
         }
         #endregion
+
+        #region 14. Task Status Updated Notification (Completed / Revision Needed)
+        public static void SendTaskStatusUpdatedNotification(string toEmail, string recipientName, string reviewerName, string taskTitle, string status, string feedbackText)
+        {
+            bool isCompleted = status.Equals("Completed", StringComparison.OrdinalIgnoreCase);
+            string title = isCompleted ? "Task Approved & Marked Completed" : "Task Revision Requested";
+            string badgeText = isCompleted ? "Task Completed" : "Revision Needed";
+            string badgeColor = isCompleted ? "#10b981" : "#ef4444";
+
+            StringBuilder body = new StringBuilder();
+            body.Append($"<p>Hello <strong>{WebUtility.HtmlEncode(recipientName)}</strong>,</p>");
+            if (isCompleted)
+            {
+                body.Append($"<p>Your task report for <strong>{WebUtility.HtmlEncode(taskTitle)}</strong> has been reviewed and <strong style='color:#10b981;'>Approved</strong> by <strong>{WebUtility.HtmlEncode(reviewerName)}</strong>!</p>");
+            }
+            else
+            {
+                body.Append($"<p>Your task <strong>{WebUtility.HtmlEncode(taskTitle)}</strong> was reviewed by <strong>{WebUtility.HtmlEncode(reviewerName)}</strong> and requires <strong style='color:#ef4444;'>Revision</strong>.</p>");
+            }
+
+            body.Append("<div class='info-box'>");
+            body.Append($"<div class='info-row'><span class='info-label'>Task Title:</span><span class='info-value'>{WebUtility.HtmlEncode(taskTitle)}</span></div>");
+            body.Append($"<div class='info-row'><span class='info-label'>Reviewed By:</span><span class='info-value'>{WebUtility.HtmlEncode(reviewerName)}</span></div>");
+            body.Append($"<div class='info-row'><span class='info-label'>Status:</span><span class='info-value'>{WebUtility.HtmlEncode(status)}</span></div>");
+            if (!string.IsNullOrEmpty(feedbackText))
+            {
+                body.Append($"<div class='info-row'><span class='info-label'>Feedback Remarks:</span><span class='info-value'>{WebUtility.HtmlEncode(feedbackText)}</span></div>");
+            }
+            body.Append("</div>");
+            body.Append("<p>Please log in to your Project Board dashboard to view full details.</p>");
+
+            string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
+            SendEmailAsync(toEmail, $"Task Status Update: {taskTitle} ({status})", html);
+        }
+        #endregion
     }
 }

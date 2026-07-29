@@ -137,6 +137,7 @@ namespace Project_Board.Student.Member
                     // Load Roster Members
                     string memSql = @"
                         SELECT u.UserId, u.FullName, u.Email, u.EnrollmentNo, u.IsLeader,
+                               ISNULL(gm.JoinStatus, 'Accepted') AS JoinStatus,
                                CASE WHEN g.LeaderId = u.UserId THEN 'Leader' ELSE 'Member' END AS Role
                         FROM Users u
                         LEFT JOIN GroupMembers gm ON u.UserId = gm.UserId AND gm.GroupId = @GroupId AND (gm.JoinStatus = 'Accepted' OR gm.JoinStatus = 'accepted')

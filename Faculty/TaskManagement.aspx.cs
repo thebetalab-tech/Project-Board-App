@@ -208,6 +208,50 @@ namespace Project_Board.Faculty
 
                     cmd.ExecuteNonQuery();
                 }
+
+                // Send email to assigned Group Leader
+                try
+                {
+                    string infoSql = @"
+                        SELECT u.FullName AS LeaderName, u.Email AS LeaderEmail, g.GroupName, f.FullName AS FacultyName
+                        FROM Users u
+                        CROSS JOIN Users f
+                        INNER JOIN Groups g ON g.GroupId = @GroupId
+                        WHERE u.UserId = @LeaderId AND f.UserId = @FacultyId";
+
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@LeaderId", assignedTo);
+                        infoCmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                        infoCmd.Parameters.AddWithValue("@GroupId", groupId);
+
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string leaderName = rdr["LeaderName"].ToString();
+                                string leaderEmail = rdr["LeaderEmail"].ToString();
+                                string groupName = rdr["GroupName"].ToString();
+                                string facultyName = rdr["FacultyName"].ToString();
+
+                                Project_Board.Services.EmailService.SendFacultyTaskAssignedToLeader(
+                                    leaderEmail,
+                                    leaderName,
+                                    facultyName,
+                                    groupName,
+                                    title,
+                                    description,
+                                    points,
+                                    dueDate?.ToString("dd MMM yyyy")
+                                );
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Email Error] {ex.Message}");
+                }
             }
 
             lblMessage.Text = "Task created and assigned successfully!";
