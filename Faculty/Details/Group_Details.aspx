@@ -77,7 +77,7 @@
                     <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-envelope"></i> Mentor Requests
                     </a>
-                    <a href='<%= ResolveUrl("~/Admin/Mentor_TaskManagement.aspx") %>' class="nav-link">
+                    <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-list-check"></i> Tasks
                     </a>
                 </div>

@@ -11,11 +11,7 @@ namespace Project_Board.Student.Member
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         protected global::System.Web.UI.WebControls.Panel pnlNoProject;
         protected global::System.Web.UI.WebControls.Panel pnlProjectDetails;
-        protected global::System.Web.UI.WebControls.Label lblProjectTitle;
-        protected global::System.Web.UI.WebControls.Label lblProjectType;
-        protected global::System.Web.UI.WebControls.Label lblProjectStatus;
         protected global::System.Web.UI.WebControls.Label lblGroupName;
-        protected global::System.Web.UI.WebControls.Label lblSubmittedAt;
-        protected global::System.Web.UI.WebControls.Label lblFunctionality;
+        protected global::System.Web.UI.WebControls.Repeater rptMemberProposals;
     }
 }

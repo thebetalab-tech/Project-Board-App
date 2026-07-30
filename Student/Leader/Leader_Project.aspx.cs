@@ -4,6 +4,9 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Collections.Generic;
+using System.Linq;
+using Project_Board.Services;
 
 namespace Project_Board.Student.Leader
 {
@@ -35,7 +38,7 @@ namespace Project_Board.Student.Leader
 
             if (!IsPostBack)
             {
-                LoadProjectDetails();
+                LoadProposals();
             }
         }
 
@@ -58,43 +61,115 @@ namespace Project_Board.Student.Leader
             }
         }
 
-        private void LoadProjectDetails()
+        private void LoadProposals()
         {
             if (CurrentGroupId == 0) return;
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
-                string query = "SELECT * FROM Projects WHERE GroupId = @GroupId";
+                conn.Open();
+                string query = "SELECT * FROM Projects WHERE GroupId = @GroupId ORDER BY SubmittedAt DESC";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
-                    conn.Open();
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dtProjects = new DataTable();
+                        da.Fill(dtProjects);
+
+                        dtProjects.Columns.Add("Keywords", typeof(string));
+
+                        foreach (DataRow row in dtProjects.Rows)
+                        {
+                            int projId = Convert.ToInt32(row["ProjectId"]);
+                            string kwQuery = "SELECT Keyword FROM ProjectKeywords WHERE ProjectId = @ProjectId";
+                            using (SqlCommand kwCmd = new SqlCommand(kwQuery, conn))
+                            {
+                                kwCmd.Parameters.AddWithValue("@ProjectId", projId);
+                                List<string> kwList = new List<string>();
+                                using (SqlDataReader rdr = kwCmd.ExecuteReader())
+                                {
+                                    while (rdr.Read())
+                                    {
+                                        kwList.Add(rdr["Keyword"].ToString());
+                                    }
+                                }
+                                row["Keywords"] = string.Join(", ", kwList);
+                            }
+                        }
+
+                        rptProposals.DataSource = dtProjects;
+                        rptProposals.DataBind();
+                    }
+                }
+            }
+        }
+
+        protected void txtProjectTitle_TextChanged(object sender, EventArgs e)
+        {
+            CheckTitleSimilarity(txtProjectTitle.Text.Trim());
+        }
+
+        private bool CheckTitleSimilarity(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title) || title.Length < 3)
+            {
+                pnlWarning.Visible = false;
+                return false;
+            }
+
+            string normInput = title.ToLower().Trim();
+            var inputTokens = normInput.Split(new[] { ' ', '-', '_', ',', '.' }, StringSplitOptions.RemoveEmptyEntries)
+                                      .Where(w => w.Length >= 3)
+                                      .ToList();
+
+            List<string> matches = new List<string>();
+
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                conn.Open();
+                string sql = "SELECT ProjectTitle, Status FROM Projects";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        if (rdr.Read())
+                        while (rdr.Read())
                         {
-                            pnlExistingProject.Visible = true;
-                            lblProjectTitle.Text = rdr["ProjectTitle"].ToString();
-                            lblProjectType.Text = rdr["ProjectType"].ToString();
-                            lblProjectStatus.Text = rdr["Status"].ToString();
-                            lblFunctionality.Text = rdr["Functionality"].ToString();
-                            lblSubmittedAt.Text = Convert.ToDateTime(rdr["SubmittedAt"]).ToString("MMM dd, yyyy hh:mm tt");
+                            string pTitle = rdr["ProjectTitle"].ToString();
+                            string pStatus = rdr["Status"].ToString();
+                            string normPTitle = pTitle.ToLower().Trim();
 
-                            // Prefill form for editing
-                            txtProjectTitle.Text = rdr["ProjectTitle"].ToString();
-                            if (ddlProjectType.Items.FindByValue(rdr["ProjectType"].ToString()) != null)
+                            if (normPTitle.Contains(normInput) || normInput.Contains(normPTitle))
                             {
-                                ddlProjectType.SelectedValue = rdr["ProjectType"].ToString();
+                                matches.Add($"\"{pTitle}\" ({pStatus})");
+                                continue;
                             }
-                            txtFunctionality.Text = rdr["Functionality"].ToString();
-                            btnSubmitProject.Text = "Update Project Proposal";
-                        }
-                        else
-                        {
-                            pnlExistingProject.Visible = false;
+
+                            var pTokens = normPTitle.Split(new[] { ' ', '-', '_', ',', '.' }, StringSplitOptions.RemoveEmptyEntries)
+                                                   .Where(w => w.Length >= 3)
+                                                   .ToList();
+                            int sharedCount = inputTokens.Count(t => pTokens.Contains(t));
+                            if (sharedCount > 0 && (sharedCount >= 2 || (inputTokens.Count <= 2 && sharedCount >= 1)))
+                            {
+                                matches.Add($"\"{pTitle}\" ({pStatus})");
+                            }
                         }
                     }
                 }
+            }
+
+            if (matches.Count > 0)
+            {
+                lblWarningMessage.Text = "<strong>Warning: Similar project title(s) already exist in the system:</strong><br/>" +
+                                        string.Join("<br/>", matches.Distinct()) +
+                                        "<br/><em>Please make sure your project proposal is distinct and unique.</em>";
+                pnlWarning.Visible = true;
+                return true;
+            }
+            else
+            {
+                pnlWarning.Visible = false;
+                return false;
             }
         }
 
@@ -110,72 +185,139 @@ namespace Project_Board.Student.Leader
 
             string title = txtProjectTitle.Text.Trim();
             string type = ddlProjectType.SelectedValue;
+            string keywordsInput = txtKeywords.Text.Trim();
             string functionality = txtFunctionality.Text.Trim();
 
             if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(functionality))
             {
-                lblMessage.Text = "Please fill in all project fields.";
+                lblMessage.Text = "Please fill in all required project fields (Title and Overview).";
                 lblMessage.CssClass = "alert alert-danger";
                 lblMessage.Visible = true;
                 return;
             }
 
+            bool hasSimilar = CheckTitleSimilarity(title);
+
             string normalizedTitle = title.ToLower().Trim();
 
+            int newProjectId = 0;
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 conn.Open();
-                // Check if project exists for group
-                string checkSql = "SELECT ProjectId FROM Projects WHERE GroupId = @GroupId";
-                int existingProjectId = 0;
-                using (SqlCommand checkCmd = new SqlCommand(checkSql, conn))
+                string insertSql = @"
+                    INSERT INTO Projects (GroupId, ProjectType, ProjectTitle, NormalizedTitle, Functionality, Status, SubmittedAt)
+                    OUTPUT INSERTED.ProjectId
+                    VALUES (@GroupId, @Type, @Title, @NormTitle, @Func, 'Pending', GETDATE())";
+
+                using (SqlCommand cmd = new SqlCommand(insertSql, conn))
                 {
-                    checkCmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
-                    object res = checkCmd.ExecuteScalar();
-                    if (res != null && res != DBNull.Value) existingProjectId = Convert.ToInt32(res);
+                    cmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
+                    cmd.Parameters.AddWithValue("@Type", type);
+                    cmd.Parameters.AddWithValue("@Title", title);
+                    cmd.Parameters.AddWithValue("@NormTitle", normalizedTitle);
+                    cmd.Parameters.AddWithValue("@Func", functionality);
+
+                    object res = cmd.ExecuteScalar();
+                    if (res != null && res != DBNull.Value)
+                    {
+                        newProjectId = Convert.ToInt32(res);
+                    }
                 }
 
-                if (existingProjectId > 0)
+                if (newProjectId > 0 && !string.IsNullOrWhiteSpace(keywordsInput))
                 {
-                    // Update existing
-                    string updateSql = @"
-                        UPDATE Projects 
-                        SET ProjectTitle = @Title, NormalizedTitle = @NormTitle, ProjectType = @Type, Functionality = @Func, SubmittedAt = GETDATE()
-                        WHERE ProjectId = @ProjectId";
-                    using (SqlCommand uCmd = new SqlCommand(updateSql, conn))
+                    string[] keywords = keywordsInput.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string kw in keywords)
                     {
-                        uCmd.Parameters.AddWithValue("@Title", title);
-                        uCmd.Parameters.AddWithValue("@NormTitle", normalizedTitle);
-                        uCmd.Parameters.AddWithValue("@Type", type);
-                        uCmd.Parameters.AddWithValue("@Func", functionality);
-                        uCmd.Parameters.AddWithValue("@ProjectId", existingProjectId);
-                        uCmd.ExecuteNonQuery();
+                        string cleanKw = kw.Trim();
+                        if (!string.IsNullOrEmpty(cleanKw))
+                        {
+                            string kwInsert = "INSERT INTO ProjectKeywords (ProjectId, Keyword) VALUES (@ProjectId, @Keyword)";
+                            using (SqlCommand kwCmd = new SqlCommand(kwInsert, conn))
+                            {
+                                kwCmd.Parameters.AddWithValue("@ProjectId", newProjectId);
+                                kwCmd.Parameters.AddWithValue("@Keyword", cleanKw.Length > 30 ? cleanKw.Substring(0, 30) : cleanKw);
+                                kwCmd.ExecuteNonQuery();
+                            }
+                        }
                     }
-                    lblMessage.Text = "Project proposal updated successfully!";
                 }
-                else
+
+                string facultyQuery = @"
+                    SELECT u.Email, u.FullName, g.GroupName
+                    FROM Groups g
+                    INNER JOIN Users u ON g.MentorId = u.UserId
+                    WHERE g.GroupId = @GroupId";
+
+                using (SqlCommand fCmd = new SqlCommand(facultyQuery, conn))
                 {
-                    // Insert new
-                    string insertSql = @"
-                        INSERT INTO Projects (GroupId, ProjectType, ProjectTitle, NormalizedTitle, Functionality, Status, SubmittedAt)
-                        VALUES (@GroupId, @Type, @Title, @NormTitle, @Func, 'Pending', GETDATE())";
-                    using (SqlCommand iCmd = new SqlCommand(insertSql, conn))
+                    fCmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
+                    using (SqlDataReader fRdr = fCmd.ExecuteReader())
                     {
-                        iCmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
-                        iCmd.Parameters.AddWithValue("@Type", type);
-                        iCmd.Parameters.AddWithValue("@Title", title);
-                        iCmd.Parameters.AddWithValue("@NormTitle", normalizedTitle);
-                        iCmd.Parameters.AddWithValue("@Func", functionality);
-                        iCmd.ExecuteNonQuery();
+                        if (fRdr.Read())
+                        {
+                            string facultyEmail = fRdr["Email"].ToString();
+                            string facultyName = fRdr["FullName"].ToString();
+                            string groupName = fRdr["GroupName"].ToString();
+
+                            EmailService.SendProjectProposalToFaculty(
+                                facultyEmail,
+                                facultyName,
+                                UserName,
+                                groupName,
+                                title,
+                                type,
+                                keywordsInput,
+                                functionality
+                            );
+                        }
                     }
-                    lblMessage.Text = "Project proposal submitted successfully for Faculty review!";
                 }
             }
 
+            lblMessage.Text = hasSimilar 
+                ? "Project proposal submitted successfully for Faculty review (Note: Similar project title warning noted)."
+                : "Project proposal submitted successfully for Faculty review!";
             lblMessage.CssClass = "alert alert-success";
             lblMessage.Visible = true;
 
-            LoadProjectDetails();
+            txtProjectTitle.Text = "";
+            txtKeywords.Text = "";
+            txtFunctionality.Text = "";
+
+            LoadProposals();
+        }
+
+        protected void rptProposals_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName == "DeleteProposal")
+            {
+                int projectId = Convert.ToInt32(e.CommandArgument);
+                using (SqlConnection conn = new SqlConnection(ConnString))
+                {
+                    conn.Open();
+                    string delKw = "DELETE FROM ProjectKeywords WHERE ProjectId = @ProjectId";
+                    using (SqlCommand kwCmd = new SqlCommand(delKw, conn))
+                    {
+                        kwCmd.Parameters.AddWithValue("@ProjectId", projectId);
+                        kwCmd.ExecuteNonQuery();
+                    }
+
+                    string delProj = "DELETE FROM Projects WHERE ProjectId = @ProjectId AND GroupId = @GroupId AND Status = 'Pending'";
+                    using (SqlCommand pCmd = new SqlCommand(delProj, conn))
+                    {
+                        pCmd.Parameters.AddWithValue("@ProjectId", projectId);
+                        pCmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
+                        pCmd.ExecuteNonQuery();
+                    }
+                }
+
+                lblMessage.Text = "Project proposal withdrawn successfully.";
+                lblMessage.CssClass = "alert alert-success";
+                lblMessage.Visible = true;
+
+                LoadProposals();
+            }
         }
     }
 }

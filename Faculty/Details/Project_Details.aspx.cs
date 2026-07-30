@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using Project_Board.Services;
 
 namespace Project_Board.Faculty.Details
 {
@@ -49,7 +50,6 @@ namespace Project_Board.Faculty.Details
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                // Verify the project belongs to a group mentored by this faculty and get details
                 string queryDetails = @"
                     SELECT p.ProjectTitle, p.ProjectType, p.Functionality, p.Status, p.SubmittedAt, g.GroupName
                     FROM Projects p
@@ -75,6 +75,23 @@ namespace Project_Board.Faculty.Details
                             
                             litSubmittedAt.Text = Convert.ToDateTime(reader["SubmittedAt"]).ToString("MMM dd, yyyy hh:mm tt");
                             litFunctionality.Text = reader["Functionality"].ToString().Replace("\n", "<br/>");
+
+                            // Set button visibility based on current status
+                            if (status.Equals("Approved", StringComparison.OrdinalIgnoreCase))
+                            {
+                                btnApprove.Visible = false;
+                                btnReject.Visible = true;
+                            }
+                            else if (status.Equals("Rejected", StringComparison.OrdinalIgnoreCase))
+                            {
+                                btnApprove.Visible = true;
+                                btnReject.Visible = false;
+                            }
+                            else
+                            {
+                                btnApprove.Visible = true;
+                                btnReject.Visible = true;
+                            }
                         }
                         else
                         {
@@ -84,7 +101,6 @@ namespace Project_Board.Faculty.Details
                     }
                 }
 
-                // Get keywords
                 string queryKeywords = @"
                     SELECT Keyword
                     FROM ProjectKeywords
@@ -102,6 +118,72 @@ namespace Project_Board.Faculty.Details
                     }
                 }
             }
+        }
+
+        protected void btnApprove_Click(object sender, EventArgs e)
+        {
+            UpdateProjectStatus("Approved");
+        }
+
+        protected void btnReject_Click(object sender, EventArgs e)
+        {
+            UpdateProjectStatus("Rejected");
+        }
+
+        private void UpdateProjectStatus(string newStatus)
+        {
+            if (!int.TryParse(Request.QueryString["ProjectId"], out int projectId)) return;
+
+            string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                conn.Open();
+                string update = "UPDATE Projects SET Status = @Status WHERE ProjectId = @ProjectId";
+                using (SqlCommand cmd = new SqlCommand(update, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Status", newStatus);
+                    cmd.Parameters.AddWithValue("@ProjectId", projectId);
+                    cmd.ExecuteNonQuery();
+                }
+
+                string infoQuery = @"
+                    SELECT p.ProjectTitle, g.GroupName, u.Email AS LeaderEmail, u.FullName AS LeaderName
+                    FROM Projects p
+                    INNER JOIN Groups g ON p.GroupId = g.GroupId
+                    INNER JOIN Users u ON g.LeaderId = u.UserId
+                    WHERE p.ProjectId = @ProjectId";
+
+                using (SqlCommand iCmd = new SqlCommand(infoQuery, conn))
+                {
+                    iCmd.Parameters.AddWithValue("@ProjectId", projectId);
+                    using (SqlDataReader rdr = iCmd.ExecuteReader())
+                    {
+                        if (rdr.Read())
+                        {
+                            string projectTitle = rdr["ProjectTitle"].ToString();
+                            string groupName = rdr["GroupName"].ToString();
+                            string leaderEmail = rdr["LeaderEmail"].ToString();
+                            string leaderName = rdr["LeaderName"].ToString();
+                            string facultyName = Session["FullName"]?.ToString() ?? "Faculty Mentor";
+
+                            EmailService.SendProjectStatusNotificationToLeader(
+                                leaderEmail,
+                                leaderName,
+                                facultyName,
+                                groupName,
+                                projectTitle,
+                                newStatus
+                            );
+                        }
+                    }
+                }
+            }
+
+            lblMessage.Text = $"Project has been successfully marked as '{newStatus}'. Notification email sent to Leader.";
+            lblMessage.CssClass = "form-message success";
+            lblMessage.Visible = true;
+
+            LoadProjectDetails(projectId.ToString());
         }
 
         private void ShowError(string message)

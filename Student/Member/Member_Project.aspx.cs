@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Web.UI;
+using System.Collections.Generic;
 
 namespace Project_Board.Student.Member
 {
@@ -31,11 +32,11 @@ namespace Project_Board.Student.Member
 
             if (!IsPostBack)
             {
-                LoadMemberProject();
+                LoadMemberProjects();
             }
         }
 
-        private void LoadMemberProject()
+        private void LoadMemberProjects()
         {
             int userId = Convert.ToInt32(Session["UserId"]);
 
@@ -43,7 +44,6 @@ namespace Project_Board.Student.Member
             {
                 conn.Open();
 
-                // Identify Group
                 string groupSql = @"
                     SELECT TOP 1 g.GroupId, g.GroupName 
                     FROM Groups g
@@ -71,22 +71,43 @@ namespace Project_Board.Student.Member
                 {
                     lblGroupName.Text = groupName;
 
-                    string projSql = "SELECT * FROM Projects WHERE GroupId = @GroupId";
+                    string projSql = "SELECT * FROM Projects WHERE GroupId = @GroupId ORDER BY SubmittedAt DESC";
                     using (SqlCommand pCmd = new SqlCommand(projSql, conn))
                     {
                         pCmd.Parameters.AddWithValue("@GroupId", groupId);
-                        using (SqlDataReader pRdr = pCmd.ExecuteReader())
+                        using (SqlDataAdapter da = new SqlDataAdapter(pCmd))
                         {
-                            if (pRdr.Read())
+                            DataTable dtProjects = new DataTable();
+                            da.Fill(dtProjects);
+
+                            if (dtProjects.Rows.Count > 0)
                             {
                                 pnlProjectDetails.Visible = true;
                                 pnlNoProject.Visible = false;
 
-                                lblProjectTitle.Text = pRdr["ProjectTitle"].ToString();
-                                lblProjectType.Text = pRdr["ProjectType"].ToString();
-                                lblProjectStatus.Text = pRdr["Status"].ToString();
-                                lblFunctionality.Text = pRdr["Functionality"].ToString();
-                                lblSubmittedAt.Text = Convert.ToDateTime(pRdr["SubmittedAt"]).ToString("MMM dd, yyyy hh:mm tt");
+                                dtProjects.Columns.Add("Keywords", typeof(string));
+
+                                foreach (DataRow row in dtProjects.Rows)
+                                {
+                                    int projId = Convert.ToInt32(row["ProjectId"]);
+                                    string kwQuery = "SELECT Keyword FROM ProjectKeywords WHERE ProjectId = @ProjectId";
+                                    using (SqlCommand kwCmd = new SqlCommand(kwQuery, conn))
+                                    {
+                                        kwCmd.Parameters.AddWithValue("@ProjectId", projId);
+                                        List<string> kwList = new List<string>();
+                                        using (SqlDataReader rdr = kwCmd.ExecuteReader())
+                                        {
+                                            while (rdr.Read())
+                                            {
+                                                kwList.Add(rdr["Keyword"].ToString());
+                                            }
+                                        }
+                                        row["Keywords"] = string.Join(", ", kwList);
+                                    }
+                                }
+
+                                rptMemberProposals.DataSource = dtProjects;
+                                rptMemberProposals.DataBind();
                             }
                             else
                             {

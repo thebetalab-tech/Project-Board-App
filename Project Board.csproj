@@ -143,6 +143,7 @@
     <Content Include="JoinGroup.aspx" />
     <Content Include="login-signup.css" />
     <Content Include="Logout.aspx" />
+    <Content Include="NotFoundPage.aspx" />
     <Content Include="Scripts\main\login-signup.js" />
     <Content Include="SignUp.aspx" />
     <Content Include="Site.Master" />
@@ -232,6 +233,13 @@
     </Compile>
     <Compile Include="Admin\Admin_TaskManagement.aspx.designer.cs">
       <DependentUpon>Admin_TaskManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NotFoundPage.aspx.cs">
+      <DependentUpon>NotFoundPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NotFoundPage.aspx.designer.cs">
+      <DependentUpon>NotFoundPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Student\Leader\Leader_Project.aspx.cs">
       <DependentUpon>Leader_Project.aspx</DependentUpon>

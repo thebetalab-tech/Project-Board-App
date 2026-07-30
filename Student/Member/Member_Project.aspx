@@ -16,14 +16,45 @@
             font-weight: 600;
             display: inline-block;
         }
-        .badge-success { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-        .badge-warning { background: rgba(234, 179, 8, 0.15); color: #eab308; }
-        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .badge-success, .status-approved { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+        .badge-warning, .status-pending { background: rgba(234, 179, 8, 0.15); color: #eab308; }
+        .badge-danger, .status-rejected { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+        .tag-pill {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--c-accent, #3b82f6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .proposal-card {
+            background: var(--c-surface, #ffffff);
+            border: 1px solid var(--c-border, #e2e8f0);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .proposal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--c-border);
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .proposal-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--c-text);
         }
     </style>
 </head>
@@ -92,48 +123,54 @@
             <div class="dashboard-container">
                 <div class="page-header">
                     <div class="page-title">
-                        <h1>Team Project Details</h1>
-                        <p>View your team's project proposal and approval status.</p>
+                        <h1>Team Project Proposals</h1>
+                        <p>View your team's project proposals and approval status.</p>
                     </div>
                 </div>
 
                 <!-- UNASSIGNED / NO PROJECT PANEL -->
-                <asp:Panel ID="pnlNoProject" runat="server" CssClass="stat-card" style="padding:2rem; text-align:center;">
+                <asp:Panel ID="pnlNoProject" runat="server" CssClass="stat-card" style="padding:2.5rem; text-align:center;">
                     <i class="fa-solid fa-folder-minus" style="font-size:3rem; color:var(--c-text-dim); margin-bottom:1rem; display:block;"></i>
                     <h2 style="margin-bottom:0.5rem;">No Project Proposal Submitted Yet</h2>
-                    <p style="color:var(--c-text-dim);">Your Team Leader has not submitted a project proposal for faculty approval yet.</p>
+                    <p style="color:var(--c-text-dim);">Your Team Leader has not submitted a project proposal for faculty review yet.</p>
                 </asp:Panel>
 
                 <!-- PROJECT DETAILS PANEL -->
-                <asp:Panel ID="pnlProjectDetails" runat="server" CssClass="stat-card" Visible="false">
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--c-border); padding-bottom:0.75rem; margin-bottom:1rem;">
-                        <h3><i class="fa-solid fa-folder-check" style="color:var(--c-accent); margin-right:0.5rem;"></i> Group Project Overview</h3>
-                        <span class="badge-status badge-warning"><asp:Label ID="lblProjectStatus" runat="server"></asp:Label></span>
+                <asp:Panel ID="pnlProjectDetails" runat="server" Visible="false">
+                    <div style="margin-bottom:1.5rem;">
+                        <h3 style="color:var(--c-text-dim); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.05em;">Group Name</h3>
+                        <p style="font-size:1.4rem; font-weight:700; color:var(--c-text);"><asp:Label ID="lblGroupName" runat="server"></asp:Label></p>
                     </div>
 
-                    <div class="form-grid">
-                        <div>
-                            <label style="font-size:0.75rem; font-weight:700; color:var(--c-text-dim); text-transform:uppercase;">Project Title</label>
-                            <p style="font-size:1.1rem; font-weight:600; color:var(--c-text); margin-top:0.2rem;"><asp:Label ID="lblProjectTitle" runat="server"></asp:Label></p>
-                        </div>
-                        <div>
-                            <label style="font-size:0.75rem; font-weight:700; color:var(--c-text-dim); text-transform:uppercase;">Group Name</label>
-                            <p style="font-size:1.1rem; font-weight:600; color:var(--c-text); margin-top:0.2rem;"><asp:Label ID="lblGroupName" runat="server"></asp:Label></p>
-                        </div>
-                        <div>
-                            <label style="font-size:0.75rem; font-weight:700; color:var(--c-text-dim); text-transform:uppercase;">Project Type</label>
-                            <p style="font-size:1rem; font-weight:600; color:var(--c-text); margin-top:0.2rem;"><asp:Label ID="lblProjectType" runat="server"></asp:Label></p>
-                        </div>
-                        <div>
-                            <label style="font-size:0.75rem; font-weight:700; color:var(--c-text-dim); text-transform:uppercase;">Submission Date</label>
-                            <p style="font-size:1rem; font-weight:500; color:var(--c-text); margin-top:0.2rem;"><asp:Label ID="lblSubmittedAt" runat="server"></asp:Label></p>
-                        </div>
-                    </div>
+                    <asp:Repeater ID="rptMemberProposals" runat="server">
+                        <ItemTemplate>
+                            <div class="proposal-card">
+                                <div class="proposal-header">
+                                    <div>
+                                        <span class="proposal-title"><%# Eval("ProjectTitle") %></span>
+                                        <span class="badge-status badge-info" style="margin-left:0.5rem; background:rgba(99,102,241,0.15); color:#6366f1;">
+                                            <%# Eval("ProjectType") %>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class='badge-status status-<%# Eval("Status").ToString().ToLower() %>'>
+                                            <%# Eval("Status") %>
+                                        </span>
+                                    </div>
+                                </div>
 
-                    <div style="margin-top:1.25rem;">
-                        <label style="font-size:0.75rem; font-weight:700; color:var(--c-text-dim); text-transform:uppercase;">Project Functionalities & Features</label>
-                        <p style="color:var(--c-text); background:var(--c-bg); padding:0.8rem; border-radius:8px; border:1px solid var(--c-border); margin-top:0.3rem;"><asp:Label ID="lblFunctionality" runat="server"></asp:Label></p>
-                    </div>
+                                <%# !string.IsNullOrWhiteSpace(Eval("Keywords")?.ToString()) ? "<div style='margin-bottom:0.75rem;'>" + string.Join("", Eval("Keywords").ToString().Split(',').Select(k => "<span class=\"tag-pill\"><i class=\"fa-solid fa-tag\" style=\"font-size:0.7rem; margin-right:0.3rem;\"></i>" + k.Trim() + "</span>")) + "</div>" : "" %>
+
+                                <div style="font-size:0.9rem; color:var(--c-text); background:var(--c-bg); padding:0.8rem; border-radius:8px; border:1px solid var(--c-border); line-height:1.5;">
+                                    <%# Eval("Functionality") %>
+                                </div>
+
+                                <div style="font-size:0.78rem; color:var(--c-text-dim); margin-top:0.75rem;">
+                                    Submitted on: <%# Convert.ToDateTime(Eval("SubmittedAt")).ToString("MMM dd, yyyy hh:mm tt") %>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </asp:Panel>
 
             </div>

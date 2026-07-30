@@ -177,7 +177,14 @@
 
                 <!-- MENTORED GROUP TASKS LIST -->
                 <div class="stat-card">
-                    <h3><i class="fa-solid fa-tasks" style="color:var(--c-accent); margin-right:0.5rem;"></i> Mentored Group Tasks</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1rem; border-bottom:1px solid var(--c-border); padding-bottom:0.75rem;">
+                        <h3><i class="fa-solid fa-tasks" style="color:var(--c-accent); margin-right:0.5rem;"></i> Mentored Group Tasks</h3>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <label style="font-size:0.85rem; font-weight:600; color:var(--c-text);">Filter by Group:</label>
+                            <asp:DropDownList ID="ddlFilterGroup" runat="server" CssClass="form-control" style="width: auto; min-width: 220px;" AutoPostBack="true" OnSelectedIndexChanged="ddlFilterGroup_SelectedIndexChanged">
+                            </asp:DropDownList>
+                        </div>
+                    </div>
                     <table class="data-table">
                         <thead>
                             <tr>

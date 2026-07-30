@@ -459,5 +459,66 @@ namespace Project_Board.Services
             SendEmailAsync(toEmail, $"Task Status Update: {taskTitle} ({status})", html);
         }
         #endregion
+
+        #region 15. Leader Submits Project Proposal -> Faculty Gets Mail
+        public static void SendProjectProposalToFaculty(string toEmail, string facultyName, string leaderName, string groupName, string projectTitle, string projectType, string keywords, string functionality)
+        {
+            string title = "New Project Proposal Submitted";
+            string badgeText = "Project Proposal";
+            string badgeColor = "#3b82f6";
+
+            StringBuilder body = new StringBuilder();
+            body.Append($"<p>Hello <strong>{WebUtility.HtmlEncode(facultyName)}</strong>,</p>");
+            body.Append($"<p>Group Leader <strong>{WebUtility.HtmlEncode(leaderName)}</strong> from group <strong>{WebUtility.HtmlEncode(groupName)}</strong> has submitted a new project proposal for your review.</p>");
+            body.Append("<div class='info-box'>");
+            body.Append($"<div class='info-row'><span class='info-label'>Project Title:</span><span class='info-value'>{WebUtility.HtmlEncode(projectTitle)}</span></div>");
+            body.Append($"<div class='info-row'><span class='info-label'>Project Type:</span><span class='info-value'>{WebUtility.HtmlEncode(projectType)}</span></div>");
+            if (!string.IsNullOrWhiteSpace(keywords))
+            {
+                body.Append($"<div class='info-row'><span class='info-label'>Keywords:</span><span class='info-value'>{WebUtility.HtmlEncode(keywords)}</span></div>");
+            }
+            body.Append($"<div class='info-row'><span class='info-label'>Group Name:</span><span class='info-value'>{WebUtility.HtmlEncode(groupName)}</span></div>");
+            if (!string.IsNullOrWhiteSpace(functionality))
+            {
+                body.Append($"<div class='info-row'><span class='info-label'>Overview:</span><span class='info-value'>{WebUtility.HtmlEncode(functionality)}</span></div>");
+            }
+            body.Append("</div>");
+            body.Append("<p>Please log in to your faculty portal to review and approve or reject this proposal.</p>");
+
+            string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
+            SendEmailAsync(toEmail, $"New Project Proposal: {projectTitle} ({groupName})", html);
+        }
+        #endregion
+
+        #region 16. Faculty Approves / Rejects Proposal -> Leader Gets Mail
+        public static void SendProjectStatusNotificationToLeader(string toEmail, string leaderName, string facultyName, string groupName, string projectTitle, string status)
+        {
+            bool isApproved = status.Equals("Approved", StringComparison.OrdinalIgnoreCase);
+            string title = isApproved ? "Project Proposal Approved!" : "Project Proposal Update";
+            string badgeText = isApproved ? "Approved" : status;
+            string badgeColor = isApproved ? "#10b981" : (status.Equals("Rejected", StringComparison.OrdinalIgnoreCase) ? "#ef4444" : "#f59e0b");
+
+            StringBuilder body = new StringBuilder();
+            body.Append($"<p>Hello <strong>{WebUtility.HtmlEncode(leaderName)}</strong>,</p>");
+            if (isApproved)
+            {
+                body.Append($"<p>Great news! Faculty mentor <strong>{WebUtility.HtmlEncode(facultyName)}</strong> has <strong style='color:#10b981;'>Approved</strong> your project proposal <strong>{WebUtility.HtmlEncode(projectTitle)}</strong> for group <strong>{WebUtility.HtmlEncode(groupName)}</strong>.</p>");
+            }
+            else
+            {
+                body.Append($"<p>Faculty mentor <strong>{WebUtility.HtmlEncode(facultyName)}</strong> has updated the status of your project proposal <strong>{WebUtility.HtmlEncode(projectTitle)}</strong> to <strong>{WebUtility.HtmlEncode(status)}</strong>.</p>");
+            }
+
+            body.Append("<div class='info-box'>");
+            body.Append($"<div class='info-row'><span class='info-label'>Project Title:</span><span class='info-value'>{WebUtility.HtmlEncode(projectTitle)}</span></div>");
+            body.Append($"<div class='info-row'><span class='info-label'>Status:</span><span class='info-value'>{WebUtility.HtmlEncode(status)}</span></div>");
+            body.Append($"<div class='info-row'><span class='info-label'>Faculty Mentor:</span><span class='info-value'>{WebUtility.HtmlEncode(facultyName)}</span></div>");
+            body.Append("</div>");
+            body.Append("<p>Log in to your leader dashboard to view your active projects and details.</p>");
+
+            string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
+            SendEmailAsync(toEmail, $"Project Proposal Update: {projectTitle} ({status})", html);
+        }
+        #endregion
     }
 }

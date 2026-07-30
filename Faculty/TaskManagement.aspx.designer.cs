@@ -17,6 +17,7 @@ namespace Project_Board.Faculty
         protected global::System.Web.UI.WebControls.TextBox txtDueDate;
         protected global::System.Web.UI.WebControls.Button btnCreateTask;
         protected global::System.Web.UI.WebControls.Label lblMessage;
+        protected global::System.Web.UI.WebControls.DropDownList ddlFilterGroup;
         protected global::System.Web.UI.WebControls.Repeater rptTasks;
         protected global::System.Web.UI.WebControls.Label lblNoTasks;
     }

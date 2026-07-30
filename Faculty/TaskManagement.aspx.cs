@@ -46,6 +46,12 @@ namespace Project_Board.Faculty
             ddlAssignee.Items.Clear();
             ddlAssignee.Items.Add(new ListItem("-- Select Student / Leader --", ""));
 
+            if (ddlFilterGroup != null)
+            {
+                ddlFilterGroup.Items.Clear();
+                ddlFilterGroup.Items.Add(new ListItem("All Mentored Groups", "0"));
+            }
+
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 string query = @"
@@ -64,7 +70,12 @@ namespace Project_Board.Faculty
                         while (rdr.Read())
                         {
                             string text = $"{rdr["GroupName"]} (Leader: {rdr["LeaderName"]})";
-                            ddlGroups.Items.Add(new ListItem(text, rdr["GroupId"].ToString()));
+                            string gId = rdr["GroupId"].ToString();
+                            ddlGroups.Items.Add(new ListItem(text, gId));
+                            if (ddlFilterGroup != null)
+                            {
+                                ddlFilterGroup.Items.Add(new ListItem(rdr["GroupName"].ToString(), gId));
+                            }
                         }
                     }
                 }
@@ -76,6 +87,11 @@ namespace Project_Board.Faculty
                 lblMessage.CssClass = "alert alert-warning";
                 lblMessage.Visible = true;
             }
+        }
+
+        protected void ddlFilterGroup_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadTasks();
         }
 
         protected void ddlGroups_SelectedIndexChanged(object sender, EventArgs e)
@@ -117,6 +133,12 @@ namespace Project_Board.Faculty
         private void LoadTasks()
         {
             int facultyId = Convert.ToInt32(Session["UserId"]);
+            int selectedGroupId = 0;
+            if (ddlFilterGroup != null && int.TryParse(ddlFilterGroup.SelectedValue, out int gid))
+            {
+                selectedGroupId = gid;
+            }
+
             DataTable dt = new DataTable();
 
             using (SqlConnection conn = new SqlConnection(ConnString))
@@ -129,11 +151,13 @@ namespace Project_Board.Faculty
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
                     WHERE g.MentorId = @FacultyId
+                      AND (@GroupId = 0 OR t.GroupId = @GroupId)
                     ORDER BY t.CreatedAt DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                    cmd.Parameters.AddWithValue("@GroupId", selectedGroupId);
                     conn.Open();
                     using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                     {

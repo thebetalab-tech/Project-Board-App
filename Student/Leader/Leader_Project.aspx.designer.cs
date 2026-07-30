@@ -9,16 +9,14 @@ namespace Project_Board.Student.Leader
     public partial class Leader_Project
     {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.WebControls.Label lblMessage;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pnlWarning;
+        protected global::System.Web.UI.WebControls.Label lblWarningMessage;
         protected global::System.Web.UI.WebControls.TextBox txtProjectTitle;
+        protected global::System.Web.UI.WebControls.TextBox txtKeywords;
         protected global::System.Web.UI.WebControls.DropDownList ddlProjectType;
         protected global::System.Web.UI.WebControls.TextBox txtFunctionality;
         protected global::System.Web.UI.WebControls.Button btnSubmitProject;
-        protected global::System.Web.UI.WebControls.Label lblMessage;
-        protected global::System.Web.UI.WebControls.Panel pnlExistingProject;
-        protected global::System.Web.UI.WebControls.Label lblProjectTitle;
-        protected global::System.Web.UI.WebControls.Label lblProjectType;
-        protected global::System.Web.UI.WebControls.Label lblProjectStatus;
-        protected global::System.Web.UI.WebControls.Label lblFunctionality;
-        protected global::System.Web.UI.WebControls.Label lblSubmittedAt;
+        protected global::System.Web.UI.WebControls.Repeater rptProposals;
     }
 }
