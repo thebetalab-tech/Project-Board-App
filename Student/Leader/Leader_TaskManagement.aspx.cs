@@ -2,8 +2,8 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
-using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.UI;
 
 namespace Project_Board.Student.Leader
 {
@@ -12,8 +12,7 @@ namespace Project_Board.Student.Leader
         protected string UserInitials { get; set; } = "TL";
         protected string UserName { get; set; } = "Student Leader";
         protected string UserEmail { get; set; } = "leader@example.com";
-        protected string GroupName { get; set; } = "My Group";
-        protected int CurrentGroupId { get; set; } = 0;
+        protected string GroupName { get; set; } = "Group Workspace";
 
         protected int TotalMentorTasks { get; set; } = 0;
         protected int PendingMentorTasks { get; set; } = 0;
@@ -22,6 +21,7 @@ namespace Project_Board.Student.Leader
 
         protected int TotalMemberTasks { get; set; } = 0;
         protected int MemberTasksCompleted { get; set; } = 0;
+        protected int CurrentGroupId { get; set; } = 0;
 
         private string ConnString => ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
@@ -34,24 +34,27 @@ namespace Project_Board.Student.Leader
             }
 
             UserName = Session["FullName"]?.ToString() ?? "Student Leader";
-            UserEmail = Session["Email"]?.ToString() ?? "";
+            UserEmail = Session["Email"]?.ToString() ?? "leader@example.com";
             if (!string.IsNullOrEmpty(UserName))
             {
                 UserInitials = UserName.Substring(0, 1).ToUpper();
             }
 
-            LoadGroupInfo();
-
             if (!IsPostBack)
             {
-                LoadGroupMembers();
+                LoadCurrentGroupId();
                 LoadMentorTasks();
+                LoadGroupMembers();
+                LoadParentTasksDropdown();
                 LoadMemberTasks();
-                LoadMentorTasksForDropdown(CurrentGroupId);
+            }
+            else
+            {
+                LoadCurrentGroupId();
             }
         }
 
-        private void LoadGroupInfo()
+        private void LoadCurrentGroupId()
         {
             int leaderId = Convert.ToInt32(Session["UserId"]);
             using (SqlConnection conn = new SqlConnection(ConnString))
@@ -61,12 +64,12 @@ namespace Project_Board.Student.Leader
                 {
                     cmd.Parameters.AddWithValue("@LeaderId", leaderId);
                     conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        if (reader.Read())
+                        if (rdr.Read())
                         {
-                            CurrentGroupId = Convert.ToInt32(reader["GroupId"]);
-                            GroupName = reader["GroupName"].ToString();
+                            CurrentGroupId = Convert.ToInt32(rdr["GroupId"]);
+                            GroupName = rdr["GroupName"].ToString();
                         }
                     }
                 }
@@ -79,16 +82,13 @@ namespace Project_Board.Student.Leader
             ddlMembers.Items.Clear();
             ddlMembers.Items.Add(new ListItem("-- Select Team Member --", ""));
 
-            if (CurrentGroupId == 0) return;
-
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 string query = @"
-                    SELECT u.UserId, u.FullName 
+                    SELECT gm.UserId, u.FullName, u.Email, u.EnrollmentNo
                     FROM GroupMembers gm
                     INNER JOIN Users u ON gm.UserId = u.UserId
-                    WHERE gm.GroupId = @GroupId AND gm.JoinStatus = 'Accepted' AND u.UserId <> @LeaderId
-                    ORDER BY u.FullName";
+                    WHERE gm.GroupId = @GroupId AND gm.JoinStatus = 'Accepted' AND gm.UserId != @LeaderId";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -99,22 +99,23 @@ namespace Project_Board.Student.Leader
                     {
                         while (reader.Read())
                         {
-                            ddlMembers.Items.Add(new ListItem(reader["FullName"].ToString(), reader["UserId"].ToString()));
+                            string text = $"{reader["FullName"]} ({reader["EnrollmentNo"]})";
+                            ddlMembers.Items.Add(new ListItem(text, reader["UserId"].ToString()));
                         }
                     }
                 }
             }
         }
 
-        private void LoadMentorTasksForDropdown(int groupId)
+        private void LoadParentTasksDropdown()
         {
+            int leaderId = Convert.ToInt32(Session["UserId"]);
             ddlParentTask.Items.Clear();
-            ddlParentTask.Items.Add(new ListItem("None (Independent Task)", ""));
-
-            if (groupId == 0) return;
+            ddlParentTask.Items.Add(new ListItem("-- None (Standalone Task) --", ""));
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
+                int groupId = CurrentGroupId;
                 using (SqlCommand cmd = new SqlCommand("sp_select_tasks", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -252,7 +253,7 @@ namespace Project_Board.Student.Leader
                     }
                 }
 
-                ScriptManager.RegisterStartupScript(this, GetType(), "OpenReportMentorModal", "openModal('reportMentorModal');", true);
+                ScriptManager.RegisterStartupScript(this, GetType(), "OpenMentorReportModal", "openModal('mentorReportModal');", true);
             }
         }
 
@@ -261,11 +262,21 @@ namespace Project_Board.Student.Leader
             if (string.IsNullOrEmpty(hfReportTaskId.Value)) return;
 
             int taskId = Convert.ToInt32(hfReportTaskId.Value);
-            string status = "Appealed";
+            string status = ddlUpdateStatus != null && !string.IsNullOrEmpty(ddlUpdateStatus.SelectedValue) ? ddlUpdateStatus.SelectedValue : "Appealed";
             string reportText = txtLeaderReportText.Text.Trim();
+            int leaderId = Convert.ToInt32(Session["UserId"]);
+
+            if (string.IsNullOrEmpty(reportText))
+            {
+                lblMessage.Text = "Please provide report details before submitting to mentor.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
+                conn.Open();
                 using (SqlCommand cmd = new SqlCommand("sp_crud_tasks", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -273,9 +284,30 @@ namespace Project_Board.Student.Leader
                     cmd.Parameters.AddWithValue("@TaskId", taskId);
                     cmd.Parameters.AddWithValue("@Status", status);
                     cmd.Parameters.AddWithValue("@ReportText", reportText);
-
-                    conn.Open();
                     cmd.ExecuteNonQuery();
+                }
+
+                // Sync Appeals table for Mentor
+                string appealSql = @"
+                    IF EXISTS (SELECT 1 FROM Appeals WHERE TaskId = @TaskId AND StudentId = @StudentId)
+                    BEGIN
+                        UPDATE Appeals 
+                        SET Reason = @ReportText, Status = 'Pending Review', CreatedAt = GETDATE() 
+                        WHERE TaskId = @TaskId AND StudentId = @StudentId;
+                    END
+                    ELSE
+                    BEGIN
+                        INSERT INTO Appeals (TaskId, StudentId, GroupId, Reason, Status, CreatedAt)
+                        VALUES (@TaskId, @StudentId, @GroupId, @ReportText, 'Pending Review', GETDATE());
+                    END";
+
+                using (SqlCommand aCmd = new SqlCommand(appealSql, conn))
+                {
+                    aCmd.Parameters.AddWithValue("@TaskId", taskId);
+                    aCmd.Parameters.AddWithValue("@StudentId", leaderId);
+                    aCmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
+                    aCmd.Parameters.AddWithValue("@ReportText", reportText);
+                    aCmd.ExecuteNonQuery();
                 }
 
                 // Send email to Faculty Mentor (Scenario 6)
@@ -283,7 +315,7 @@ namespace Project_Board.Student.Leader
                 {
                     string infoSql = @"
                         SELECT t.TaskTitle, g.GroupName, u.FullName AS FacultyName, u.Email AS FacultyEmail
-                        FROM Tasks t
+                        FROM Task t
                         INNER JOIN Groups g ON t.GroupId = g.GroupId
                         INNER JOIN Users u ON t.AssignedBy = u.UserId
                         WHERE t.TaskId = @TaskId";
@@ -502,9 +534,11 @@ namespace Project_Board.Student.Leader
             int taskId = Convert.ToInt32(hfReviewMemberTaskId.Value);
             string status = ddlLeaderStatusUpdate.SelectedValue;
             string feedback = txtLeaderFeedback.Text.Trim();
+            int leaderId = Convert.ToInt32(Session["UserId"]);
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
+                conn.Open();
                 using (SqlCommand cmd = new SqlCommand("sp_crud_tasks", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -513,12 +547,72 @@ namespace Project_Board.Student.Leader
                     cmd.Parameters.AddWithValue("@Status", status);
                     cmd.Parameters.AddWithValue("@FeedbackText", (object)feedback ?? DBNull.Value);
 
-                    conn.Open();
                     cmd.ExecuteNonQuery();
+                }
+
+                // Sync Appeals table record
+                string appealSql = @"
+                    UPDATE Appeals 
+                    SET Status = CASE 
+                        WHEN @Status = 'Completed' THEN 'Accepted'
+                        WHEN @Status IN ('Revision Needed', 'Failed') THEN 'Rejected'
+                        ELSE Status
+                    END,
+                    ReviewerId = @LeaderId,
+                    Remarks = @FeedbackText,
+                    ReviewedAt = GETDATE()
+                    WHERE TaskId = @TaskId;";
+
+                using (SqlCommand aCmd = new SqlCommand(appealSql, conn))
+                {
+                    aCmd.Parameters.AddWithValue("@Status", status);
+                    aCmd.Parameters.AddWithValue("@LeaderId", leaderId);
+                    aCmd.Parameters.AddWithValue("@FeedbackText", string.IsNullOrEmpty(feedback) ? (object)DBNull.Value : feedback);
+                    aCmd.Parameters.AddWithValue("@TaskId", taskId);
+                    aCmd.ExecuteNonQuery();
+                }
+
+                // Send status update email notification to Member
+                try
+                {
+                    string infoSql = @"
+                        SELECT t.TaskTitle, uTo.Email AS MemberEmail, uTo.FullName AS MemberName, uBy.FullName AS LeaderName
+                        FROM Task t
+                        INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                        INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
+                        WHERE t.TaskId = @TaskId";
+
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@TaskId", taskId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string taskTitle = rdr["TaskTitle"].ToString();
+                                string memberEmail = rdr["MemberEmail"].ToString();
+                                string memberName = rdr["MemberName"].ToString();
+                                string leaderName = rdr["LeaderName"].ToString();
+
+                                Project_Board.Services.EmailService.SendTaskStatusUpdatedNotification(
+                                    memberEmail,
+                                    memberName,
+                                    leaderName,
+                                    taskTitle,
+                                    status,
+                                    feedback
+                                );
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Email Error] {ex.Message}");
                 }
             }
 
-            lblMessage.Text = "Member task status and feedback successfully updated!";
+            lblMessage.Text = "Member task status and appeal review successfully updated!";
             lblMessage.CssClass = "alert alert-success";
             lblMessage.Visible = true;
 

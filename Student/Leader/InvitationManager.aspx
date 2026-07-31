@@ -27,6 +27,9 @@
                         <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-users"></i> Team Members
                         </a>
+                        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Project.aspx") %>' class="nav-link">
+                            <i class="fa-solid fa-folder-open"></i> Project Management
+                        </a>
                         <a href='<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>' class="nav-link">
                             <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
                         </a>
@@ -72,10 +75,6 @@
                         <input type="text" placeholder="Search...">
                     </div>
                     <div class="topbar-actions">
-                        <button class="action-btn">
-                            <i class="fa-regular fa-bell"></i>
-                            <span class="notification-badge"></span>
-                        </button>
                         <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
                             <i class="fa-solid fa-user"></i>
                         </a>

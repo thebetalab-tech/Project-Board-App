@@ -4,7 +4,7 @@
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Task Workspace — Project Board</title>
+    <title>Member Dashboard - My Task Workspace</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
     <style>
@@ -111,7 +111,6 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo-icon"><i class="fa-solid fa-user-graduate" style="color: white;"></i></div>
             <h2>Project Board</h2>
         </div>
         
@@ -124,17 +123,15 @@
                 <a href='<%= ResolveUrl("~/Student/Member/Member_Team.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-users"></i> Team & Mentor
                 </a>
+                <a href='<%= ResolveUrl("~/Student/Member/Member_Project.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-folder-open"></i> Project Details
+                </a>
                 <a href='<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-envelope"></i> Invitations
                 </a>
                 <a href='<%= ResolveUrl("~/Student/Member/Member_TaskManagement.aspx") %>' class="nav-link active">
-                    <i class="fa-solid fa-list-check"></i> Tasks
+                    <i class="fa-solid fa-list-check"></i> My Tasks
                 </a>
-                <% if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Leader") { %>
-                <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-user-tie"></i> Leader Panel
-                </a>
-                <% } %>
             </div>
 
             <div class="nav-section">
@@ -167,15 +164,12 @@
                 <input type="text" placeholder="Search...">
             </div>
             <div class="topbar-actions">
-                <button class="action-btn">
-                    <i class="fa-regular fa-bell"></i>
-                    <span class="notification-badge"></span>
-                </button>
                 <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
                     <i class="fa-solid fa-user"></i>
                 </a>
             </div>
         </header>
+
         <div class="dashboard-container">
             <div class="view-section active">
                 <div class="page-header">
@@ -184,6 +178,8 @@
                         <p>View tasks assigned to you by your Team Leader and update task progress & reports.</p>
                     </div>
                 </div>
+
+                <asp:Label ID="lblMessage" runat="server" Visible="false" style="display:block; margin-bottom:1.5rem;"></asp:Label>
 
                 <!-- STATS GRID -->
                 <div class="stats-grid">
@@ -220,12 +216,10 @@
                     </div>
                 </div>
 
-                <asp:Label ID="lblMessage" runat="server" Visible="false"></asp:Label>
-
-                <!-- GROUP MENTOR TASKS TABLE -->
-                <div class="data-section" style="margin-bottom: 2rem;">
+                <!-- MENTOR MAIN PROJECT TASKS (GROUP OVERVIEW) -->
+                <div class="data-section" style="margin-top: 1.5rem;">
                     <div class="section-header">
-                        <h2><i class="fa-solid fa-users-viewfinder" style="color:var(--c-accent); margin-right:0.5rem;"></i> Mentor's Tasks (Group Overview)</h2>
+                        <h2><i class="fa-solid fa-layer-group" style="color:var(--c-accent); margin-right:0.5rem;"></i> Mentor's Tasks (Group Overview)</h2>
                     </div>
                     <div class="table-container">
                         <asp:Repeater ID="rptGroupMentorTasks" runat="server">
@@ -273,7 +267,7 @@
                 </div>
 
                 <!-- MEMBER TASKS TABLE -->
-                <div class="data-section">
+                <div class="data-section" style="margin-top: 1.5rem;">
                     <div class="section-header">
                         <h2>My Assigned Tasks</h2>
                     </div>
@@ -319,9 +313,12 @@
                                             : "<span style='color:var(--c-text-muted);'><i class='fa-solid fa-clock'></i> Working</span>" %>
                                     </td>
                                     <td>
-                                        <asp:LinkButton ID="btnReport" runat="server" CommandName="ReportToLeader" CommandArgument='<%# Eval("TaskId") %>' CssClass="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem;">
+                                        <asp:LinkButton ID="btnReport" runat="server" CommandName="ReportToLeader" CommandArgument='<%# Eval("TaskId") %>' Visible='<%# Eval("Status").ToString() != "Completed" %>' CssClass="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem;">
                                             <i class="fa-solid fa-flag"></i> Appeal Completion
                                         </asp:LinkButton>
+                                        <button type="button" disabled="disabled" class="btn-primary" visible='<%# Eval("Status").ToString() == "Completed" %>' runat="server" style="padding:0.4rem 0.8rem; font-size:0.8rem; opacity:0.5; cursor:not-allowed; background-color:#64748b; border:1px solid #64748b;">
+                                            <i class="fa-solid fa-flag"></i> Appeal Completion
+                                        </button>
                                     </td>
                                 </tr>
                             </ItemTemplate>
