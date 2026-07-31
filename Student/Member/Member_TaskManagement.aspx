@@ -335,53 +335,7 @@
         </div>
     </main>
 
-    <!-- UPDATE STATUS & REPORT MODAL -->
-    <div id="reportModal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-flag" style="color:var(--c-accent); margin-right:0.5rem;"></i> Appeal Completion to Leader</h3>
-                <button type="button" class="close-btn" onclick="closeModal('reportModal')">&times;</button>
-            </div>
-            <div>
-                <asp:HiddenField ID="hfReportTaskId" runat="server" />
-                <h4 style="margin-bottom:0.4rem; font-size:1.1rem;"><asp:Label ID="lblModalTaskTitle" runat="server"></asp:Label></h4>
-                <p style="font-size:0.85rem; color:var(--c-text-muted); margin-bottom:1.25rem;">
-                    Leader: <strong><asp:Label ID="lblModalLeaderName" runat="server"></asp:Label></strong>
-                </p>
 
-                <asp:Panel ID="pnlModalLeaderFeedback" runat="server" style="margin-bottom:1.25rem;">
-                    <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--c-red);">Leader Revision Request / Feedback</label>
-                    <div class="report-box" style="background-color:rgba(184,41,61,0.05); border-color:rgba(184,41,61,0.2); color:var(--c-red); margin-top:0.3rem;">
-                        <asp:Label ID="lblModalLeaderFeedbackText" runat="server"></asp:Label>
-                    </div>
-                </asp:Panel>
-
-                <div class="form-group">
-                    <label>Message / Reason for Appeal</label>
-                    <asp:TextBox ID="txtMemberReportText" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="Short message for leader..."></asp:TextBox>
-                </div>
-
-                <div class="form-group">
-                    <label>What have you changed?</label>
-                    <asp:TextBox ID="txtMemberChangesMade" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="List the exact files/modules changed..."></asp:TextBox>
-                </div>
-
-                <div class="form-group">
-                    <label>Explanation</label>
-                    <asp:TextBox ID="txtMemberExplanation" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="Provide detailed context on how the requirements were met..."></asp:TextBox>
-                </div>
-
-                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
-                    <asp:CheckBox ID="chkMemberIsCompleted" runat="server" />
-                    <label style="margin: 0; font-size: 0.875rem; font-weight: bold;">Is the task actually completed?</label>
-                </div>
-            </div>
-            <div style="margin-top:1.5rem; text-align:right; display:flex; gap:0.75rem; justify-content:flex-end;">
-                <button type="button" class="btn-primary" style="background-color:var(--c-surface); color:var(--c-text);" onclick="closeModal('reportModal')">Cancel</button>
-                <asp:Button ID="btnSubmitReport" runat="server" Text="Submit Appeal Completion" CssClass="btn-primary" OnClick="btnSubmitReport_Click" />
-            </div>
-        </div>
-    </div>
 
     </form>
 

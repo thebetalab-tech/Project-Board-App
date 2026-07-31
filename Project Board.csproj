@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -170,6 +170,8 @@
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
     <Content Include="Site.Mobile.Master" />
+    <Content Include="Admin\ReviewAppeal.aspx" />
+    <Content Include="Student\Appeal.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\Admin_Dashboard.aspx.cs">
@@ -465,6 +467,20 @@
     </Compile>
     <Compile Include="ViewSwitcher.ascx.designer.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ReviewAppeal.aspx.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ReviewAppeal.aspx.designer.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Appeal.aspx.cs">
+      <DependentUpon>Appeal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Appeal.aspx.designer.cs">
+      <DependentUpon>Appeal.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
