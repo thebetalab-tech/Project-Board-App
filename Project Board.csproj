@@ -172,6 +172,8 @@
     <Content Include="Site.Mobile.Master" />
     <Content Include="Admin\ReviewAppeal.aspx" />
     <Content Include="Student\Appeal.aspx" />
+    <Content Include="Faculty\ReviewAppeal.aspx" />
+    <Content Include="Student\Leader\ReviewAppeal.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\Admin_Dashboard.aspx.cs">
@@ -481,6 +483,20 @@
     </Compile>
     <Compile Include="Student\Appeal.aspx.designer.cs">
       <DependentUpon>Appeal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\ReviewAppeal.aspx.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\ReviewAppeal.aspx.designer.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Leader\ReviewAppeal.aspx.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\ReviewAppeal.aspx.designer.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

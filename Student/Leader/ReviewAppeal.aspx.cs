@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Web.UI;
 
-namespace Project_Board.Admin
+namespace Project_Board.Student.Leader
 {
     public partial class ReviewAppeal : Page
     {
@@ -205,7 +205,7 @@ namespace Project_Board.Admin
             }
             else
             {
-                Response.Redirect("~/Admin/Admin_TaskManagement.aspx");
+                Response.Redirect("~/Student/Leader/Leader_TaskManagement.aspx");
             }
         }
 
@@ -218,7 +218,7 @@ namespace Project_Board.Admin
             }
             else
             {
-                Response.Redirect("~/Admin/Admin_TaskManagement.aspx");
+                Response.Redirect("~/Student/Leader/Leader_TaskManagement.aspx");
             }
         }
     }

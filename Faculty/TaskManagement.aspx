@@ -213,6 +213,9 @@
                                             <a href='<%# ResolveUrl("~/Faculty/TaskDetails.aspx?TaskId=" + Eval("TaskId")) %>' class="btn-primary" style="padding:0.3rem 0.7rem; font-size:0.8rem; text-decoration:none;">
                                                 <i class="fa-solid fa-eye"></i> Details
                                             </a>
+                                            <a href='<%# ResolveUrl("~/Faculty/ReviewAppeal.aspx?TaskId=" + Eval("TaskId")) %>' class="btn-primary" style="padding:0.3rem 0.7rem; font-size:0.8rem; text-decoration:none; background-color: var(--c-accent); margin-left: 0.5rem;" title="Review Appeal">
+                                                <i class="fa-solid fa-gavel"></i> Review Appeal
+                                            </a>
                                         </td>
                                     </tr>
                                 </ItemTemplate>

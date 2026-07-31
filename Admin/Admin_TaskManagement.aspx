@@ -226,6 +226,9 @@
                                             <a href='<%# ResolveUrl("~/Faculty/TaskDetails.aspx?TaskId=" + Eval("TaskId")) %>' class="btn-primary" style="padding:0.3rem 0.6rem; font-size:0.75rem; text-decoration:none; margin-right:0.3rem;">
                                                 <i class="fa-solid fa-eye"></i> View
                                             </a>
+                                            <a href='<%# ResolveUrl("~/Admin/ReviewAppeal.aspx?TaskId=" + Eval("TaskId")) %>' class="btn-primary" style="padding:0.3rem 0.6rem; font-size:0.75rem; text-decoration:none; margin-right:0.3rem; background-color: var(--c-accent);" title="Review Appeal">
+                                                <i class="fa-solid fa-gavel"></i> Appeal
+                                            </a>
                                             <asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="btn-delete" CommandName="DeleteTask" CommandArgument='<%# Eval("TaskId") %>' OnClientClick="return confirm('Are you sure you want to delete this task?');" />
                                         </td>
                                     </tr>

@@ -350,7 +350,7 @@ namespace Project_Board.Student.Leader
 
             if (e.CommandName == "ViewMemberReport")
             {
-                Response.Redirect($"~/Admin/ReviewAppeal.aspx?TaskId={taskId}");
+                Response.Redirect($"~/Student/Leader/ReviewAppeal.aspx?TaskId={taskId}");
             }
             else if (e.CommandName == "DeleteMemberTask")
             {
