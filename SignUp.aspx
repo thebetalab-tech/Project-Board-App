@@ -215,6 +215,15 @@
                                 <span class="verify-hint">Enter the 6-digit code sent to your email</span>
                             </div>
 
+                            <div class="resend-otp-area" id="resendOtpArea">
+                                <span class="resend-timer" id="resendTimer">Resend code in <strong id="resendCountdown">01:00</strong></span>
+                                <asp:LinkButton ID="btnResendOtp" runat="server" ClientIDMode="Static"
+                                    CssClass="resend-otp-link resend-otp-link--disabled" OnClick="btnResendOtp_Click"
+                                    CausesValidation="false">
+                                    Resend Code
+                                </asp:LinkButton>
+                            </div>
+
                             <asp:LinkButton ID="btnVerifyAndRegister" runat="server" ClientIDMode="Static" CssClass="login-btn"
                                 OnClick="btnVerifyAndRegister_Click" style="margin-top: 10px;">
                                 <span class="btn-text">Verify &amp; Create Account</span>
@@ -258,6 +267,57 @@
         </div>
 
         <script src="Scripts/main/login-signup.js?v=20260723_v3"></script>
+        <script>
+            // OTP Resend Timer
+            (function () {
+                var COOLDOWN = 60; // seconds
+                var timerSpan = document.getElementById('resendTimer');
+                var countdownEl = document.getElementById('resendCountdown');
+                var resendBtn = document.getElementById('btnResendOtp');
+
+                if (!timerSpan || !countdownEl || !resendBtn) return; // not on verify panel
+
+                var remaining = COOLDOWN;
+
+                function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+                function updateDisplay() {
+                    var mins = Math.floor(remaining / 60);
+                    var secs = remaining % 60;
+                    countdownEl.textContent = pad(mins) + ':' + pad(secs);
+                }
+
+                function enableResend() {
+                    timerSpan.style.display = 'none';
+                    resendBtn.style.display = 'inline';
+                    resendBtn.classList.remove('resend-otp-link--disabled');
+                    resendBtn.style.pointerEvents = 'auto';
+                    resendBtn.style.opacity = '1';
+                }
+
+                function startTimer() {
+                    remaining = COOLDOWN;
+                    timerSpan.style.display = 'inline';
+                    resendBtn.style.display = 'none';
+                    resendBtn.classList.add('resend-otp-link--disabled');
+                    resendBtn.style.pointerEvents = 'none';
+                    resendBtn.style.opacity = '0.4';
+                    updateDisplay();
+
+                    var interval = setInterval(function () {
+                        remaining--;
+                        if (remaining <= 0) {
+                            clearInterval(interval);
+                            enableResend();
+                        } else {
+                            updateDisplay();
+                        }
+                    }, 1000);
+                }
+
+                startTimer();
+            })();
+        </script>
     </body>
 
     </html>

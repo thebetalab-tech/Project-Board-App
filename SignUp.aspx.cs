@@ -259,6 +259,44 @@ namespace Project_Board
             pnlVerifyCode.Visible = false;
         }
 
+        // Resend OTP: generate a new code and re-send the verification email
+        protected void btnResendOtp_Click(object sender, EventArgs e)
+        {
+            lblMessage.Text = string.Empty;
+            lblMessage.CssClass = "form-message";
+
+            string emailValue = Session["SignupEmail"]?.ToString();
+            string fullNameValue = Session["SignupFullName"]?.ToString();
+
+            if (string.IsNullOrEmpty(emailValue) || string.IsNullOrEmpty(fullNameValue))
+            {
+                ShowMessage("Session expired. Please fill in the signup form again.", false);
+                pnlSignupForm.Visible = true;
+                pnlVerifyCode.Visible = false;
+                return;
+            }
+
+            // Generate a new code and store it
+            string newCode = GenerateRandomCode();
+            Session["SignupVerifyCode"] = newCode;
+
+            try
+            {
+                SendVerificationEmail(emailValue, fullNameValue, newCode);
+                ShowMessage("A new verification code has been sent to your email.", true);
+            }
+            catch (Exception mailEx)
+            {
+                System.Diagnostics.Debug.WriteLine("Mail resend failed: " + mailEx.Message);
+                ShowMessage("Failed to resend verification email: " + mailEx.Message, false);
+            }
+
+            // Keep the verify panel visible and refresh the masked email
+            litVerifyEmail.Text = MaskEmail(emailValue);
+            pnlSignupForm.Visible = false;
+            pnlVerifyCode.Visible = true;
+        }
+
         // --- Helper Methods ---
 
         /// <summary>

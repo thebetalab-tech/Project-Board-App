@@ -2057,3 +2057,42 @@ body.theme-light {
 .verify-back-link:hover {
     color: var(--white);
 }
+
+/* --- Resend OTP Timer --- */
+.resend-otp-area {
+    text-align: center;
+    margin-top: 14px;
+    min-height: 24px;
+}
+
+.resend-timer {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+}
+
+.resend-timer strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.resend-otp-link {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color var(--transition-fast), opacity var(--transition-fast);
+    display: none;
+}
+
+.resend-otp-link:hover {
+    color: var(--white);
+    text-decoration: underline;
+}
+
+.resend-otp-link--disabled {
+    pointer-events: none;
+    opacity: 0.4;
+    cursor: default;
+}

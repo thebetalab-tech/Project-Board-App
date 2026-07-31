@@ -108,6 +108,15 @@ namespace Project_Board
         protected global::System.Web.UI.WebControls.LinkButton btnVerifyAndRegister;
 
         /// <summary>
+        /// btnResendOtp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnResendOtp;
+
+        /// <summary>
         /// btnBackToSignup control.
         /// </summary>
         /// <remarks>
