@@ -67,7 +67,7 @@ namespace Project_Board
                 if (groupId == 0)
                 {
                     // User has not created a group yet, redirect to OnBoarding.aspx
-                    Response.Redirect("OnBoarding.aspx");
+                    Response.Redirect("~/OnBoarding.aspx");
                     return;
                 }
 
@@ -204,6 +204,45 @@ namespace Project_Board
                         cmdUpdate.Parameters.AddWithValue("@MentorId", selectedMentorId);
                         cmdUpdate.Parameters.AddWithValue("@GroupId", groupId);
                         cmdUpdate.ExecuteNonQuery();
+                    }
+
+                    // Send email to chosen Faculty Mentor (Scenario 7)
+                    try
+                    {
+                        string infoSql = @"
+                            SELECT u.FullName AS FacultyName, u.Email AS FacultyEmail, g.GroupName, ISNULL(t.TechName, 'General') AS TechName
+                            FROM Users u
+                            INNER JOIN Groups g ON g.GroupId = @GroupId
+                            LEFT JOIN Technologies t ON g.TechId = t.TechId
+                            WHERE u.UserId = @FacultyId";
+                        using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                        {
+                            infoCmd.Parameters.AddWithValue("@GroupId", groupId);
+                            infoCmd.Parameters.AddWithValue("@FacultyId", selectedMentorId);
+                            using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                            {
+                                if (rdr.Read())
+                                {
+                                    string facultyName = rdr["FacultyName"].ToString();
+                                    string facultyEmail = rdr["FacultyEmail"].ToString();
+                                    string groupName = rdr["GroupName"].ToString();
+                                    string techName = rdr["TechName"].ToString();
+                                    string leaderName = Session["FullName"]?.ToString() ?? "Group Leader";
+
+                                    Project_Board.Services.EmailService.SendMentorSelectionRequest(
+                                        facultyEmail,
+                                        facultyName,
+                                        leaderName,
+                                        groupName,
+                                        techName
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
                     }
                 }
 

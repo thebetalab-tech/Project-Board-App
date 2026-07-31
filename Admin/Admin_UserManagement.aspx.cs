@@ -15,7 +15,7 @@ namespace Project_Board.Admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["role"] == null || Session["role"].ToString() != "Admin")
+            if (Session["Role"] == null || Session["Role"].ToString() != "Admin")
             {
                 Response.Redirect("~/Default.aspx");
                 return;
@@ -85,6 +85,28 @@ namespace Project_Board.Admin
             {
                 try
                 {
+                    conn.Open();
+
+                    // Check if active user exists
+                    string checkSql = "SELECT COUNT(1) FROM Users WHERE Email = @Email AND IsActive = 1";
+                    using (SqlCommand checkCmd = new SqlCommand(checkSql, conn))
+                    {
+                        checkCmd.Parameters.AddWithValue("@Email", email);
+                        if (Convert.ToInt32(checkCmd.ExecuteScalar()) > 0)
+                        {
+                            ShowModalWithMessage("A user with this email already exists.", true);
+                            return;
+                        }
+                    }
+
+                    // Clean up any old soft-deleted user record with the same email
+                    string cleanupSql = "DELETE FROM Users WHERE Email = @Email AND IsActive = 0";
+                    using (SqlCommand cleanupCmd = new SqlCommand(cleanupSql, conn))
+                    {
+                        cleanupCmd.Parameters.AddWithValue("@Email", email);
+                        cleanupCmd.ExecuteNonQuery();
+                    }
+
                     string query = @"INSERT INTO Users (FullName, Email, PasswordHash, EnrollmentNo, Role, IsLeader, IsActive, CreatedAt) 
                                      VALUES (@FullName, @Email, @PasswordHash, @EnrollmentNo, @Role, @IsLeader, 1, GETDATE())";
                     using (SqlCommand insertCmd = new SqlCommand(query, conn))
@@ -98,9 +120,17 @@ namespace Project_Board.Admin
                         insertCmd.Parameters.AddWithValue("@Role", role);
                         insertCmd.Parameters.AddWithValue("@IsLeader", 0);
 
-                        conn.Open();
                         insertCmd.ExecuteNonQuery();
                         
+                        // Send email notification with login credentials to new user
+                        Project_Board.Services.EmailService.SendAdminCreatedUserNotification(
+                            email,
+                            fullName,
+                            role,
+                            enrollment,
+                            password
+                        );
+
                         // Reset form and reload data
                         txtFullName.Text = string.Empty;
                         txtEmail.Text = string.Empty;
@@ -139,21 +169,86 @@ namespace Project_Board.Admin
                 
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
-                    string query = "UPDATE Users SET IsActive = 0 WHERE UserId = @UserId";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    conn.Open();
+
+                    // Fetch target user details before deletion for email notification
+                    string targetName = string.Empty;
+                    string targetEmail = string.Empty;
+                    string targetRole = string.Empty;
+
+                    string getUserSql = "SELECT FullName, Email, Role FROM Users WHERE UserId = @UserId";
+                    using (SqlCommand getCmd = new SqlCommand(getUserSql, conn))
+                    {
+                        getCmd.Parameters.AddWithValue("@UserId", userId);
+                        using (SqlDataReader rdr = getCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                targetName = rdr["FullName"]?.ToString() ?? "User";
+                                targetEmail = rdr["Email"]?.ToString() ?? string.Empty;
+                                targetRole = rdr["Role"]?.ToString() ?? "User";
+                            }
+                        }
+                    }
+
+                    string deleteCascadeQuery = @"
+                        IF OBJECT_ID('Task', 'U') IS NOT NULL
+                        BEGIN
+                            DELETE FROM Task WHERE ParentTaskId IN (SELECT TaskId FROM Task WHERE AssignedTo = @UserId OR AssignedBy = @UserId);
+                            DELETE FROM Task WHERE AssignedTo = @UserId OR AssignedBy = @UserId;
+                        END;
+                        IF OBJECT_ID('Tasks', 'U') IS NOT NULL
+                        BEGIN
+                            DELETE FROM Tasks WHERE ParentTaskId IN (SELECT TaskId FROM Tasks WHERE AssignedTo = @UserId OR AssignedBy = @UserId);
+                            DELETE FROM Tasks WHERE AssignedTo = @UserId OR AssignedBy = @UserId;
+                        END;
+
+                        DELETE FROM GroupMembers WHERE UserId = @UserId;
+                        DELETE FROM GroupMentorRejections WHERE FacultyId = @UserId;
+                        DELETE FROM Faculty WHERE FacultyId = @UserId;
+                        UPDATE Groups SET MentorId = NULL, Status = 'Forming' WHERE MentorId = @UserId;
+
+                        DECLARE @GroupIds TABLE (GroupId INT);
+                        INSERT INTO @GroupIds SELECT GroupId FROM Groups WHERE LeaderId = @UserId;
+
+                        IF OBJECT_ID('ProjectKeywords', 'U') IS NOT NULL
+                            DELETE FROM ProjectKeywords WHERE ProjectId IN (SELECT ProjectId FROM Projects WHERE GroupId IN (SELECT GroupId FROM @GroupIds));
+
+                        IF OBJECT_ID('Projects', 'U') IS NOT NULL
+                            DELETE FROM Projects WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+
+                        IF OBJECT_ID('Task', 'U') IS NOT NULL
+                            DELETE FROM Task WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+
+                        IF OBJECT_ID('Tasks', 'U') IS NOT NULL
+                            DELETE FROM Tasks WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+
+                        DELETE FROM GroupMentorRejections WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+                        DELETE FROM GroupMembers WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+                        DELETE FROM Groups WHERE LeaderId = @UserId;
+
+                        DELETE FROM Users WHERE UserId = @UserId;";
+
+                    using (SqlCommand cmd = new SqlCommand(deleteCascadeQuery, conn))
                     {
                         cmd.CommandType = CommandType.Text;
                         cmd.Parameters.AddWithValue("@UserId", userId);
 
                         try
                         {
-                            conn.Open();
                             cmd.ExecuteNonQuery();
+
+                            // Send email notification to deleted user
+                            if (!string.IsNullOrEmpty(targetEmail))
+                            {
+                                Project_Board.Services.EmailService.SendAccountDeletedNotification(targetEmail, targetName, targetRole);
+                            }
+
                             LoadUsers();
                         }
                         catch (Exception ex)
                         {
-                            System.Diagnostics.Debug.WriteLine("Error deleting user: " + ex.Message);
+                            System.Diagnostics.Debug.WriteLine("Error deleting user completely: " + ex.Message);
                         }
                     }
                 }

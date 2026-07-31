@@ -21,6 +21,11 @@ namespace Project_Board
 
         protected void loginBtn_Click(object sender, EventArgs e)
         {
+            // Reset error states
+            lblLoginIDError.Text = string.Empty;
+            lblPasswordError.Text = string.Empty;
+            lblError.Text = string.Empty;
+
             // Using direct control access instead of Request.Form because MasterPages alter the name attribute
             string loginId = txtLoginID.Text.Trim();
             string password = txtPassword.Text;
@@ -42,11 +47,22 @@ namespace Project_Board
 
             loginId = loginId?.Trim();
 
-            // Basic Validation
-            if (string.IsNullOrEmpty(loginId) || string.IsNullOrEmpty(password))
+            // Field-level Validation
+            bool isValid = true;
+            if (string.IsNullOrEmpty(loginId))
             {
-                string keys = string.Join(", ", Request.Form.AllKeys);
-                lblError.Text = "Please enter both login ID and password. (Debug Keys: " + keys + ")";
+                lblLoginIDError.Text = "Please enter your Email or Enrollment number.";
+                isValid = false;
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                lblPasswordError.Text = "Please enter your password.";
+                isValid = false;
+            }
+
+            if (!isValid)
+            {
                 return;
             }
 
@@ -62,7 +78,7 @@ namespace Project_Board
                     // The query looks up the user by Email or EnrollmentNo
                     string query = @"SELECT UserId, FullName, Email, PasswordHash, Role, IsLeader 
                                      FROM Users 
-                                     WHERE Email = @LoginId OR EnrollmentNo = @LoginId";
+                                     WHERE (Email = @LoginId OR EnrollmentNo = @LoginId) AND IsActive = 1";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -82,6 +98,7 @@ namespace Project_Board
                                     Session["UserId"] = reader["UserId"].ToString();
                                     Session["FullName"] = reader["FullName"].ToString();
                                     Session["Role"] = reader["Role"].ToString();
+                                    Session["UserRole"] = reader["Role"].ToString();
                                     Session["Email"] = reader["Email"].ToString();
                                     Session["UserEmail"] = reader["Email"].ToString();
                                     Session["IsLeader"] = reader["IsLeader"].ToString();
@@ -91,13 +108,13 @@ namespace Project_Board
                                 }
                                 else
                                 {
-                                    lblError.Text = "Invalid credentials. Please check your password.";
+                                    lblPasswordError.Text = "Invalid credentials. Please check your password.";
                                 }
                             }
                             else
                             {
                                 // FAILED: Invalid credentials or inactive account
-                                lblError.Text = "Invalid credentials or account is inactive.";
+                                lblLoginIDError.Text = "Invalid credentials or account is inactive.";
                             }
                         }
                     }
@@ -118,20 +135,20 @@ namespace Project_Board
             {
                 if(Session["IsLeader"] != null && Session["IsLeader"].ToString() == "True")
                 {
-                    Response.Redirect("Student/Leader/Dashboard.aspx", false);           
+                    Response.Redirect("~/Student/Leader/Dashboard.aspx", false);           
                 }
                 else
                 {
-                    Response.Redirect("Student/Member/Dashboard.aspx", false);
+                    Response.Redirect("~/Student/Member/Dashboard.aspx", false);
                 }
             }
             else if (role == "Faculty")
             {
-                Response.Redirect("Faculty/Dashboard.aspx", false);
+                Response.Redirect("~/Faculty/Dashboard.aspx", false);
             }
             else if (role == "Admin")
             {
-                Response.Redirect("Admin/Admin_Dashboard.aspx", false);
+                Response.Redirect("~/Admin/Admin_Dashboard.aspx", false);
             }
         }
 

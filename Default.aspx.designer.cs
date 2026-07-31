@@ -15,6 +15,15 @@ namespace Project_Board
     {
 
         /// <summary>
+        /// lblError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblError;
+
+        /// <summary>
         /// txtLoginID control.
         /// </summary>
         /// <remarks>
@@ -22,6 +31,11 @@ namespace Project_Board
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtLoginID;
+
+        /// <summary>
+        /// lblLoginIDError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblLoginIDError;
 
         /// <summary>
         /// txtPassword control.
@@ -33,6 +47,11 @@ namespace Project_Board
         protected global::System.Web.UI.WebControls.TextBox txtPassword;
 
         /// <summary>
+        /// lblPasswordError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblPasswordError;
+
+        /// <summary>
         /// loginBtn control.
         /// </summary>
         /// <remarks>
@@ -40,13 +59,5 @@ namespace Project_Board
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton loginBtn;
-        /// <summary>
-        /// lblError control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblError;
     }
 }

@@ -21,29 +21,32 @@
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Main Menu</div>
-                <a href="<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>" class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-chart-pie"></i> Overview
                 </a>
-                <a href="<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>" class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-users"></i> Users Management
                 </a>
-                <a href="<%= ResolveUrl("~/Admin/Admin_GroupsManagement.aspx") %>" class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_GroupsManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-user-group"></i> Groups
                 </a>
-                <a href="<%= ResolveUrl("~/Admin/Admin_ProjectsManagement.aspx") %>" class="nav-link active">
+                <a href='<%= ResolveUrl("~/Admin/Admin_ProjectsManagement.aspx") %>' class="nav-link active">
                     <i class="fa-solid fa-folder-open"></i> Projects
                 </a>
-                <a href="<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>" class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-microchip"></i> Technologies
+                </a>
+                <a href='<%= ResolveUrl("~/Admin/Admin_TaskManagement.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-list-check"></i> Tasks
                 </a>
             </div>
 
             <div class="nav-section">
                 <div class="nav-section-title">Preferences</div>
-                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="nav-link">
+                <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-user"></i> Profile
                 </a>
-                <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="nav-link">
+                <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                 </a>
             </div>
@@ -70,10 +73,9 @@
             </div>
             
             <div class="topbar-actions">
-                <button class="action-btn">
-                    <i class="fa-regular fa-bell"></i>
-                    <span class="notification-badge"></span>
-                </button>
+                <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
+                    <i class="fa-solid fa-user"></i>
+                </a>
             </div>
         </header>
 
@@ -122,7 +124,7 @@
                                         </td>
                                         <td><%# Eval("GroupName") %></td>
                                         <td>
-                                            <%# Eval("KeywordHtml") %>
+                                            <%# HttpUtility.HtmlDecode(Eval("KeywordHtml")?.ToString() ?? "") %>
                                         </td>
                                         <td><span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span></td>
                                         <td>
@@ -148,7 +150,7 @@
         </div>
     </main>
 
-    <script src="<%= ResolveUrl("~/Admin/admin.js") %>"></script>
+    <script src='<%= ResolveUrl("~/Admin/admin.js") %>'></script>
     </form>
 </body>
 </html>

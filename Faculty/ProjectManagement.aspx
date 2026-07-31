@@ -11,6 +11,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Premium editorial theme -->
     <link runat="server" rel="stylesheet" href="~/Admin/admin.css?v=639200797339857035" />
+    <style>
+        .tag-pill {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--c-accent, #3b82f6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 0.25rem;
+            margin-top: 0.25rem;
+        }
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -23,25 +37,28 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
-                    <a href="<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>" class="nav-link">
+                    <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Dashboard
                     </a>
-                    <a href="<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>" class="nav-link">
+                    <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-users-gear"></i> Group Management
                     </a>
-                    <a href="<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>" class="nav-link active">
+                    <a href='<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>' class="nav-link active">
                         <i class="fa-solid fa-folder-tree"></i> Project Management
                     </a>
-                    <a href="<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>" class="nav-link">
+                    <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-envelope"></i> Mentor Requests
+                    </a>
+                    <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-list-check"></i> Tasks
                     </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
-                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="nav-link">
+                    <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-user"></i> Profile
                     </a>
-                    <a href="<%= ResolveUrl("~/Logout.aspx") %>" class="nav-link">
+                    <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </div>
@@ -65,7 +82,7 @@
                     <input type="text" placeholder="Search...">
                 </div>
                 <div class="topbar-actions">
-                    <a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="action-btn" title="Profile">
+                    <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 </div>
@@ -74,14 +91,14 @@
             <div class="dashboard-container">
                 <div class="page-header">
                     <div class="page-title">
-                        <h1>Project Management</h1>
-                        <p>Welcome to the Project Management section.</p>
+                        <h1>Project Proposals Management</h1>
+                        <p>Review, approve, or decline group project proposals.</p>
                     </div>
                 </div>
                 
-                                <div class="data-section">
+                <div class="data-section">
                     <div class="section-header">
-                        <h2>Group Projects</h2>
+                        <h2>Group Project Proposals</h2>
                     </div>
                     
                     <asp:Label ID="lblMessage" runat="server" Visible="false" CssClass="form-message"></asp:Label>
@@ -90,7 +107,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Project Title</th>
+                                    <th>Project Title & Keywords</th>
                                     <th>Group Name</th>
                                     <th>Type</th>
                                     <th>Submitted On</th>
@@ -102,7 +119,10 @@
                                 <asp:Repeater ID="rptProjects" runat="server" OnItemCommand="rptProjects_ItemCommand">
                                     <ItemTemplate>
                                         <tr>
-                                            <td><strong><%# Eval("ProjectTitle") %></strong></td>
+                                            <td>
+                                                <strong style="font-size: 1rem;"><%# Eval("ProjectTitle") %></strong>
+                                                <%# !string.IsNullOrWhiteSpace(Eval("Keywords")?.ToString()) ? "<div style='margin-top:0.25rem;'>" + string.Join("", Eval("Keywords").ToString().Split(',').Select(k => "<span class=\"tag-pill\">" + k.Trim() + "</span>")) + "</div>" : "" %>
+                                            </td>
                                             <td><%# Eval("GroupName") %></td>
                                             <td><%# Eval("ProjectType") %></td>
                                             <td><%# Convert.ToDateTime(Eval("SubmittedAt")).ToString("MMM dd, yyyy") %></td>
@@ -110,24 +130,22 @@
                                                 <span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span>
                                             </td>
                                             <td>
-                                                <div class="table-actions" runat="server" visible='<%# Eval("Status").ToString() == "Pending" %>'>
-                                                    <asp:LinkButton ID="btnApprove" runat="server" CommandName="Approve" CommandArgument='<%# Eval("ProjectId") %>' CssClass="icon-btn" title="Approve Project">
-                                                        <i class="fa-solid fa-check" style="color: var(--c-green);"></i>
+                                                <div class="table-actions" style="display:flex; gap:0.5rem;">
+                                                    <asp:LinkButton ID="btnApprove" runat="server" CommandName="Approve" CommandArgument='<%# Eval("ProjectId") %>' CssClass="icon-btn" title="Approve Project" Visible='<%# Eval("Status").ToString() != "Approved" %>'>
+                                                        <i class="fa-solid fa-check" style="color: var(--c-green, #22c55e);"></i>
                                                     </asp:LinkButton>
-                                                    <asp:LinkButton ID="btnReject" runat="server" CommandName="Reject" CommandArgument='<%# Eval("ProjectId") %>' CssClass="icon-btn delete" title="Reject Project">
-                                                        <i class="fa-solid fa-xmark"></i>
+                                                    <asp:LinkButton ID="btnReject" runat="server" CommandName="Reject" CommandArgument='<%# Eval("ProjectId") %>' CssClass="icon-btn delete" title="Reject Project" Visible='<%# Eval("Status").ToString() != "Rejected" %>'>
+                                                        <i class="fa-solid fa-xmark" style="color: #ef4444;"></i>
                                                     </asp:LinkButton>
-                                                </div>
-                                                <div class="table-actions" runat="server" visible='<%# Eval("Status").ToString() != "Pending" %>'>
                                                     <a href='<%# ResolveUrl("~/Faculty/Details/Project_Details.aspx?ProjectId=" + Eval("ProjectId")) %>' class="icon-btn" title="View Details">
-                                                        <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
+                                                        <i class="fa-solid fa-eye" style="color: var(--c-primary, #3b82f6);"></i>
                                                     </a>
                                                 </div>
                                             </td>
                                         </tr>
                                     </ItemTemplate>
                                     <FooterTemplate>
-                                        <%# rptProjects.Items.Count == 0 ? "<tr><td colspan='6' style='text-align:center; padding: 2rem; color: var(--c-text-muted);'>No projects submitted by your groups yet.</td></tr>" : "" %>
+                                        <%# rptProjects.Items.Count == 0 ? "<tr><td colspan='6' style='text-align:center; padding: 2rem; color: var(--c-text-muted);'>No project proposals submitted by your groups yet.</td></tr>" : "" %>
                                     </FooterTemplate>
                                 </asp:Repeater>
                             </tbody>
@@ -135,13 +153,10 @@
                     </div>
                 </div>
             </div>
-            </div>
         </main>
     </form>
     
     <!-- Mobile toggle script -->
-    <script src="<%= ResolveUrl("~/Admin/admin.js") %>"></script>
+    <script src='<%= ResolveUrl("~/Admin/admin.js") %>'></script>
 </body>
 </html>
-
-

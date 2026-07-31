@@ -117,8 +117,43 @@ BEGIN
     END
     ELSE IF @Action = 'DELETE'
     BEGIN
-        -- Soft Delete
-        UPDATE Users SET IsActive = 0 WHERE UserId = @UserId;
+        -- Complete Cascade Hard Delete
+        IF OBJECT_ID('Task', 'U') IS NOT NULL
+        BEGIN
+            DELETE FROM Task WHERE ParentTaskId IN (SELECT TaskId FROM Task WHERE AssignedTo = @UserId OR AssignedBy = @UserId);
+            DELETE FROM Task WHERE AssignedTo = @UserId OR AssignedBy = @UserId;
+        END;
+        IF OBJECT_ID('Tasks', 'U') IS NOT NULL
+        BEGIN
+            DELETE FROM Tasks WHERE ParentTaskId IN (SELECT TaskId FROM Tasks WHERE AssignedTo = @UserId OR AssignedBy = @UserId);
+            DELETE FROM Tasks WHERE AssignedTo = @UserId OR AssignedBy = @UserId;
+        END;
+
+        DELETE FROM GroupMembers WHERE UserId = @UserId;
+        DELETE FROM GroupMentorRejections WHERE FacultyId = @UserId;
+        DELETE FROM Faculty WHERE FacultyId = @UserId;
+        UPDATE Groups SET MentorId = NULL, Status = 'Forming' WHERE MentorId = @UserId;
+
+        DECLARE @GroupIds TABLE (GroupId INT);
+        INSERT INTO @GroupIds SELECT GroupId FROM Groups WHERE LeaderId = @UserId;
+
+        IF OBJECT_ID('ProjectKeywords', 'U') IS NOT NULL
+            DELETE FROM ProjectKeywords WHERE ProjectId IN (SELECT ProjectId FROM Projects WHERE GroupId IN (SELECT GroupId FROM @GroupIds));
+
+        IF OBJECT_ID('Projects', 'U') IS NOT NULL
+            DELETE FROM Projects WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+
+        IF OBJECT_ID('Task', 'U') IS NOT NULL
+            DELETE FROM Task WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+
+        IF OBJECT_ID('Tasks', 'U') IS NOT NULL
+            DELETE FROM Tasks WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+
+        DELETE FROM GroupMentorRejections WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+        DELETE FROM GroupMembers WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
+        DELETE FROM Groups WHERE LeaderId = @UserId;
+
+        DELETE FROM Users WHERE UserId = @UserId;
     END
 END
 GO

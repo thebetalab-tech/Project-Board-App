@@ -48,7 +48,6 @@
                         <h2 class="form-title">Welcome Back</h2>
                         <p class="form-subtitle">Sign in to continue to your dashboard</p>
                     </div>
-                    <asp:Label ID="lblError" runat="server" ForeColor="#ff4d4d" CssClass="error-message" EnableViewState="false"></asp:Label>
                     <div class="login-form" id="loginForm">
 
                         <div class="input-group" id="emailGroup">
@@ -62,6 +61,7 @@
                                 <asp:TextBox ID="txtLoginID" runat="server" ClientIDMode="Static" CssClass="form-input"
                                     placeholder="Enter your Email Or Enrollment"></asp:TextBox>
                             </div>
+                            <asp:Label ID="lblLoginIDError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
                         </div>
 
                         <div class="input-group" id="passwordGroup">
@@ -90,11 +90,15 @@
                                     </svg>
                                 </button>
                             </div>
+                            <asp:Label ID="lblPasswordError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
                         </div>
 
                         <div class="form-options">
-                            <a href="<%= ResolveUrl("~/User/forget_password.aspx") %>" class="forgot-link" id="forgotPassword">Forgot Password?</a>
+                            <a href='<%= ResolveUrl("~/User/forget_password.aspx") %>' class="forgot-link"
+                                id="forgotPassword">Forgot Password?</a>
                         </div>
+
+                        <asp:Label ID="lblError" runat="server" ForeColor="#ff4d4d" CssClass="field-error-text" style="margin-bottom: 12px;" EnableViewState="false"></asp:Label>
 
                         <asp:LinkButton ID="loginBtn" runat="server" ClientIDMode="Static" CssClass="login-btn"
                             OnClick="loginBtn_Click">
@@ -122,7 +126,7 @@
 
                     <div class="form-footer">
                         <p class="footer-text">Don't have an account?</p>
-                        <a href="<%= ResolveUrl("~/SignUp.aspx") %>" class="register-btn" id="registerBtn">
+                        <a href='<%= ResolveUrl("~/SignUp.aspx") %>' class="register-btn" id="registerBtn">
                             <span>Register Now</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
                                 height="16">

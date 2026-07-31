@@ -368,7 +368,7 @@
                 </asp:Panel>
 
                 <div class="form-footer" style="margin-top: 24px; display: flex; justify-content: center; flex-direction: column; align-items: center;">
-                    <a href="<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>" class="dashboard-link">
+                    <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class="dashboard-link">
                         <span>Go to Dashboard</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                             <line x1="5" y1="12" x2="19" y2="12" />
@@ -379,6 +379,6 @@
             </div>
         </div>
     </form>
-    <script src="<%= ResolveUrl("~/Scripts/main/login-signup.js?v=20260723_v3") %>"></script>
+    <script src='<%= ResolveUrl("~/Scripts/main/login-signup.js?v=20260723_v3") %>'></script>
 </body>
 </html>

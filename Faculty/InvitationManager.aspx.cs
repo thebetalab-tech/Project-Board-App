@@ -70,7 +70,7 @@ namespace Project_Board.Faculty
                 conn.Open();
                 if (e.CommandName == "Accept")
                 {
-                    string update = "UPDATE Groups SET Status = 'Active' WHERE GroupId = @GroupId";
+                    string update = "UPDATE Groups SET Status = 'Assigned Mentor' WHERE GroupId = @GroupId";
                     using (SqlCommand cmd = new SqlCommand(update, conn))
                     {
                         cmd.Parameters.AddWithValue("@GroupId", groupId);
@@ -96,6 +96,43 @@ namespace Project_Board.Faculty
                         cmd.ExecuteNonQuery();
                     }
                     ShowMessage("Mentor request rejected.", false);
+                }
+
+                // Send email to Leader (Scenario 8)
+                try
+                {
+                    bool isAccepted = e.CommandName == "Accept";
+                    string infoSql = @"
+                        SELECT g.GroupName, u.FullName AS LeaderName, u.Email AS LeaderEmail
+                        FROM Groups g
+                        INNER JOIN Users u ON g.LeaderId = u.UserId
+                        WHERE g.GroupId = @GroupId";
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@GroupId", groupId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string groupName = rdr["GroupName"].ToString();
+                                string leaderName = rdr["LeaderName"].ToString();
+                                string leaderEmail = rdr["LeaderEmail"].ToString();
+                                string facultyName = Session["FullName"]?.ToString() ?? "Faculty Mentor";
+
+                                Project_Board.Services.EmailService.SendMentorDecisionNotification(
+                                    leaderEmail,
+                                    leaderName,
+                                    facultyName,
+                                    groupName,
+                                    isAccepted
+                                );
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
             }
             LoadRequests();

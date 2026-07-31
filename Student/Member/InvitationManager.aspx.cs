@@ -9,6 +9,8 @@ namespace Project_Board.Student.Member
     public partial class InvitationManager : System.Web.UI.Page
     {
         protected string UserInitials { get; set; } = "SM";
+        protected string UserName { get; set; } = "Student Member";
+        protected string UserEmail { get; set; } = "member@example.com";
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -17,13 +19,16 @@ namespace Project_Board.Student.Member
                 Response.Redirect("~/Default.aspx");
                 return;
             }
+
+            UserName = Session["FullName"]?.ToString() ?? "Student Member";
+            UserEmail = Session["Email"]?.ToString() ?? "member@example.com";
+            if (!string.IsNullOrEmpty(UserName))
+            {
+                UserInitials = UserName.Substring(0, 1).ToUpper();
+            }
+
             if (!IsPostBack)
             {
-                string fullName = Session["FullName"]?.ToString() ?? "Student Member";
-                if (!string.IsNullOrEmpty(fullName))
-                {
-                    UserInitials = fullName.Substring(0, 1).ToUpper();
-                }
                 LoadInvitations();
             }
         }
@@ -96,6 +101,53 @@ namespace Project_Board.Student.Member
                         cmd.Parameters.AddWithValue("@UserId", userId);
                         cmd.ExecuteNonQuery();
                     }
+                }
+
+                // Send email to Leader
+                try
+                {
+                    bool isAccepted = e.CommandName == "Accept";
+                    string infoSql = @"
+                        SELECT g.GroupName, u.FullName AS LeaderName, u.Email AS LeaderEmail
+                        FROM Groups g
+                        INNER JOIN Users u ON g.LeaderId = u.UserId
+                        WHERE g.GroupId = @GroupId";
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@GroupId", groupId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string groupName = rdr["GroupName"].ToString();
+                                string leaderName = rdr["LeaderName"].ToString();
+                                string leaderEmail = rdr["LeaderEmail"].ToString();
+                                string memberName = Session["FullName"]?.ToString() ?? "Student Member";
+
+                                Project_Board.Services.EmailService.SendMemberResponseToLeader(
+                                    leaderEmail,
+                                    leaderName,
+                                    memberName,
+                                    groupName,
+                                    isAccepted
+                                );
+
+                                if (isAccepted)
+                                {
+                                    Project_Board.Services.EmailService.SendMemberJoinedNotification(
+                                        leaderEmail,
+                                        leaderName,
+                                        memberName,
+                                        groupName
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
             }
             LoadInvitations();

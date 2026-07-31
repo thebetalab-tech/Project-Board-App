@@ -47,9 +47,19 @@ namespace Project_Board
         protected global::System.Web.UI.WebControls.TextBox fullName;
 
         /// <summary>
+        /// lblFullNameError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblFullNameError;
+
+        /// <summary>
         /// loginId control.
         /// </summary>
         protected global::System.Web.UI.WebControls.TextBox loginId;
+
+        /// <summary>
+        /// lblEmailError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblEmailError;
 
         /// <summary>
         /// enrollment control.
@@ -57,14 +67,29 @@ namespace Project_Board
         protected global::System.Web.UI.WebControls.TextBox enrollment;
 
         /// <summary>
+        /// lblEnrollmentError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblEnrollmentError;
+
+        /// <summary>
         /// password control.
         /// </summary>
         protected global::System.Web.UI.WebControls.TextBox password;
 
         /// <summary>
+        /// lblPasswordError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblPasswordError;
+
+        /// <summary>
         /// confirmPassword control.
         /// </summary>
         protected global::System.Web.UI.WebControls.TextBox confirmPassword;
+
+        /// <summary>
+        /// lblConfirmPasswordError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblConfirmPasswordError;
 
         /// <summary>
         /// loginBtn control.
@@ -99,6 +124,11 @@ namespace Project_Board
         protected global::System.Web.UI.WebControls.TextBox txtVerifyCode;
 
         /// <summary>
+        /// lblCodeError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblCodeError;
+
+        /// <summary>
         /// btnVerifyAndRegister control.
         /// </summary>
         /// <remarks>
@@ -106,6 +136,15 @@ namespace Project_Board
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnVerifyAndRegister;
+
+        /// <summary>
+        /// btnResendOtp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnResendOtp;
 
         /// <summary>
         /// btnBackToSignup control.

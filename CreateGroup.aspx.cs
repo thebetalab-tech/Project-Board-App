@@ -30,7 +30,7 @@ namespace Project_Board
 
             if (!isLeader)
             {
-                Response.Redirect("OnBoarding.aspx", true);
+                Response.Redirect("~/OnBoarding.aspx", true);
                 return;
             }
 
@@ -139,7 +139,7 @@ namespace Project_Board
             }
 
             // Redirect on success
-            Response.Redirect("MentorSelection.aspx", true);
+            Response.Redirect("~/MentorSelection.aspx", true);
         }
     }
 }

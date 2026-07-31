@@ -55,6 +55,9 @@
                         <h4><%= Session["FullName"] ?? "Student Leader" %></h4>
                         <p><%= Session["Email"] ?? "leader@example.com" %></p>
                     </div>
+                    <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
                 </div>
             </div>
         </aside>

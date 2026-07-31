@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -120,6 +120,7 @@
     <Content Include="Admin\Admin_UserManagement.aspx" />
     <Content Include="Admin\Details\Group_Details.aspx" />
     <Content Include="Admin\Details\Project_Details.aspx" />
+    <Content Include="Admin\Mentor_TaskManagement.aspx" />
     <Content Include="assets\background video.mp4" />
     <Content Include="assets\bg.png" />
     <Content Include="Content\Site.css" />
@@ -130,6 +131,10 @@
     <Content Include="Faculty\GroupManagement.aspx" />
     <Content Include="Faculty\InvitationManager.aspx" />
     <Content Include="Faculty\ProjectManagement.aspx" />
+    <Content Include="Faculty\TaskManagement.aspx" />
+    <Content Include="Faculty\TaskDetails.aspx" />
+    <Content Include="Admin\Admin_TaskManagement.aspx" />
+    <Content Include="DB\Appeals.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Admin\groups.html" />
@@ -138,6 +143,7 @@
     <Content Include="JoinGroup.aspx" />
     <Content Include="login-signup.css" />
     <Content Include="Logout.aspx" />
+    <Content Include="NotFoundPage.aspx" />
     <Content Include="Scripts\main\login-signup.js" />
     <Content Include="SignUp.aspx" />
     <Content Include="Site.Master" />
@@ -150,8 +156,13 @@
     <Content Include="Student\Leader\InvitationManager.aspx" />
     <Content Include="Student\Leader\Leader_Members.aspx" />
     <Content Include="Student\Leader\Leader_Mentor.aspx" />
+    <Content Include="Student\Leader\Leader_Project.aspx" />
+    <Content Include="Student\Leader\Leader_TaskManagement.aspx" />
+    <Content Include="Student\Leader\Project_Management.aspx" />
     <Content Include="Student\Member\Dashboard.aspx" />
     <Content Include="Student\Member\InvitationManager.aspx" />
+    <Content Include="Student\Member\Member_Project.aspx" />
+    <Content Include="Student\Member\Member_TaskManagement.aspx" />
     <Content Include="Student\Member\Member_Team.aspx" />
     <Content Include="styles\login-signup.css" />
     <Content Include="User\forget_password.aspx" />
@@ -159,6 +170,10 @@
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
     <Content Include="Site.Mobile.Master" />
+    <Content Include="Admin\ReviewAppeal.aspx" />
+    <Content Include="Student\Appeal.aspx" />
+    <Content Include="Faculty\ReviewAppeal.aspx" />
+    <Content Include="Student\Leader\ReviewAppeal.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\Admin_Dashboard.aspx.cs">
@@ -210,7 +225,57 @@
     <Compile Include="Admin\Details\Project_Details.aspx.designer.cs">
       <DependentUpon>Project_Details.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\Mentor_TaskManagement.aspx.cs">
+      <DependentUpon>Mentor_TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Mentor_TaskManagement.aspx.designer.cs">
+      <DependentUpon>Mentor_TaskManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Admin_TaskManagement.aspx.cs">
+      <DependentUpon>Admin_TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Admin_TaskManagement.aspx.designer.cs">
+      <DependentUpon>Admin_TaskManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NotFoundPage.aspx.cs">
+      <DependentUpon>NotFoundPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NotFoundPage.aspx.designer.cs">
+      <DependentUpon>NotFoundPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Leader\Leader_Project.aspx.cs">
+      <DependentUpon>Leader_Project.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\Leader_Project.aspx.designer.cs">
+      <DependentUpon>Leader_Project.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Member\Member_Project.aspx.cs">
+      <DependentUpon>Member_Project.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Member\Member_Project.aspx.designer.cs">
+      <DependentUpon>Member_Project.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\TaskManagement.aspx.cs">
+      <DependentUpon>TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\TaskManagement.aspx.designer.cs">
+      <DependentUpon>TaskManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\TaskDetails.aspx.cs">
+      <DependentUpon>TaskDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\TaskDetails.aspx.designer.cs">
+      <DependentUpon>TaskDetails.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Services\EmailService.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -334,6 +399,20 @@
     <Compile Include="Student\Leader\InvitationManager.aspx.designer.cs">
       <DependentUpon>InvitationManager.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Student\Leader\Leader_TaskManagement.aspx.cs">
+      <DependentUpon>Leader_TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\Leader_TaskManagement.aspx.designer.cs">
+      <DependentUpon>Leader_TaskManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Leader\Project_Management.aspx.cs">
+      <DependentUpon>Project_Management.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\Project_Management.aspx.designer.cs">
+      <DependentUpon>Project_Management.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Student\Member\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -355,6 +434,13 @@
     </Compile>
     <Compile Include="Student\Member\InvitationManager.aspx.designer.cs">
       <DependentUpon>InvitationManager.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Member\Member_TaskManagement.aspx.cs">
+      <DependentUpon>Member_TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Member\Member_TaskManagement.aspx.designer.cs">
+      <DependentUpon>Member_TaskManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="Student\Member\Member_Team.aspx.cs">
       <DependentUpon>Member_Team.aspx</DependentUpon>
@@ -383,6 +469,34 @@
     </Compile>
     <Compile Include="ViewSwitcher.ascx.designer.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ReviewAppeal.aspx.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ReviewAppeal.aspx.designer.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Appeal.aspx.cs">
+      <DependentUpon>Appeal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Appeal.aspx.designer.cs">
+      <DependentUpon>Appeal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Faculty\ReviewAppeal.aspx.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Faculty\ReviewAppeal.aspx.designer.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Leader\ReviewAppeal.aspx.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\ReviewAppeal.aspx.designer.cs">
+      <DependentUpon>ReviewAppeal.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
