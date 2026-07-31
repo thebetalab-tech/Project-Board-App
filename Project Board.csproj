@@ -152,6 +152,7 @@
     <Content Include="Student\Leader\Leader_Members.aspx" />
     <Content Include="Student\Leader\Leader_Mentor.aspx" />
     <Content Include="Student\Leader\Leader_TaskManagement.aspx" />
+    <Content Include="Student\Leader\Project_Management.aspx" />
     <Content Include="Student\Member\Dashboard.aspx" />
     <Content Include="Student\Member\InvitationManager.aspx" />
     <Content Include="Student\Member\Member_TaskManagement.aspx" />
@@ -351,6 +352,13 @@
     </Compile>
     <Compile Include="Student\Leader\Leader_TaskManagement.aspx.designer.cs">
       <DependentUpon>Leader_TaskManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Leader\Project_Management.aspx.cs">
+      <DependentUpon>Project_Management.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\Project_Management.aspx.designer.cs">
+      <DependentUpon>Project_Management.aspx</DependentUpon>
     </Compile>
     <Compile Include="Student\Member\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
