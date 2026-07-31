@@ -193,10 +193,13 @@ namespace Project_Board.Student.Member
             int memberId = Convert.ToInt32(Session["UserId"]);
             string status = "Appealed";
             string reportText = txtMemberReportText.Text.Trim();
+            string changesMade = txtMemberChangesMade.Text.Trim();
+            string explanation = txtMemberExplanation.Text.Trim();
+            bool isCompleted = chkMemberIsCompleted.Checked;
 
             if (string.IsNullOrEmpty(reportText))
             {
-                lblMessage.Text = "Please provide appeal completion details before submitting.";
+                lblMessage.Text = "Please provide appeal message before submitting.";
                 lblMessage.CssClass = "alert alert-danger";
                 lblMessage.Visible = true;
                 return;
@@ -238,13 +241,13 @@ namespace Project_Board.Student.Member
                     IF EXISTS (SELECT 1 FROM Appeals WHERE TaskId = @TaskId AND StudentId = @StudentId)
                     BEGIN
                         UPDATE Appeals 
-                        SET Reason = @Reason, Status = 'Pending Review', CreatedAt = GETDATE() 
+                        SET Reason = @Reason, ChangesMade = @ChangesMade, Explanation = @Explanation, IsCompleted = @IsCompleted, Status = 'Pending Review', CreatedAt = GETDATE() 
                         WHERE TaskId = @TaskId AND StudentId = @StudentId;
                     END
                     ELSE
                     BEGIN
-                        INSERT INTO Appeals (TaskId, StudentId, GroupId, Reason, Status, CreatedAt)
-                        VALUES (@TaskId, @StudentId, @GroupId, @Reason, 'Pending Review', GETDATE());
+                        INSERT INTO Appeals (TaskId, StudentId, GroupId, Reason, ChangesMade, Explanation, IsCompleted, Status, CreatedAt)
+                        VALUES (@TaskId, @StudentId, @GroupId, @Reason, @ChangesMade, @Explanation, @IsCompleted, 'Pending Review', GETDATE());
                     END";
 
                 using (SqlCommand appealCmd = new SqlCommand(upsertAppealSql, conn))
@@ -253,6 +256,9 @@ namespace Project_Board.Student.Member
                     appealCmd.Parameters.AddWithValue("@StudentId", memberId);
                     appealCmd.Parameters.AddWithValue("@GroupId", groupId);
                     appealCmd.Parameters.AddWithValue("@Reason", reportText);
+                    appealCmd.Parameters.AddWithValue("@ChangesMade", changesMade);
+                    appealCmd.Parameters.AddWithValue("@Explanation", explanation);
+                    appealCmd.Parameters.AddWithValue("@IsCompleted", isCompleted);
                     appealCmd.ExecuteNonQuery();
                 }
 
@@ -286,8 +292,10 @@ namespace Project_Board.Student.Member
                                 string leaderName = rdr["LeaderName"].ToString();
                                 string leaderEmail = rdr["LeaderEmail"].ToString();
                                 string memberName = Session["FullName"]?.ToString() ?? "Student Member";
+                                string groupName = "Your Group"; // Member context
 
                                 Project_Board.Services.EmailService.SendMemberReportSubmitted(leaderEmail, leaderName, memberName, taskTitle, reportText);
+                                Project_Board.Services.EmailService.SendTaskAppealSubmittedEmail(leaderEmail, leaderName, memberName, groupName, taskTitle);
                             }
                         }
                     }

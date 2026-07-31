@@ -16,9 +16,13 @@ namespace Project_Board.Student.Leader
         protected global::System.Web.UI.WebControls.Label lblMentorModalTaskTitle;
         protected global::System.Web.UI.WebControls.DropDownList ddlUpdateStatus;
         protected global::System.Web.UI.WebControls.TextBox txtLeaderReportText;
+        protected global::System.Web.UI.WebControls.TextBox txtLeaderChangesMade;
+        protected global::System.Web.UI.WebControls.TextBox txtLeaderExplanation;
+        protected global::System.Web.UI.WebControls.CheckBox chkLeaderIsCompleted;
         protected global::System.Web.UI.WebControls.Button btnSubmitReportToMentor;
         protected global::System.Web.UI.WebControls.DropDownList ddlMembers;
         protected global::System.Web.UI.WebControls.TextBox txtMemberTaskTitle;
+        protected global::System.Web.UI.WebControls.DropDownList ddlTaskCategory;
         protected global::System.Web.UI.WebControls.TextBox txtMemberTaskDueDate;
         protected global::System.Web.UI.WebControls.TextBox txtMemberTaskDescription;
         protected global::System.Web.UI.WebControls.Button btnAssignMemberTask;
@@ -30,6 +34,9 @@ namespace Project_Board.Student.Leader
         protected global::System.Web.UI.WebControls.Label lblViewMemberModalDesc;
         protected global::System.Web.UI.WebControls.Panel pnlMemberReportContent;
         protected global::System.Web.UI.WebControls.Label lblViewMemberModalReportText;
+        protected global::System.Web.UI.WebControls.Label lblViewMemberModalChangesMade;
+        protected global::System.Web.UI.WebControls.Label lblViewMemberModalExplanation;
+        protected global::System.Web.UI.WebControls.Label lblViewMemberModalIsCompleted;
         protected global::System.Web.UI.WebControls.Label lblViewMemberModalReportDate;
         protected global::System.Web.UI.WebControls.Panel pnlNoMemberReport;
         protected global::System.Web.UI.WebControls.DropDownList ddlParentTask;

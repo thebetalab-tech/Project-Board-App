@@ -354,6 +354,14 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label>Task Category</label>
+                                    <asp:DropDownList ID="ddlTaskCategory" runat="server" CssClass="form-control">
+                                        <asp:ListItem Text="Normal Task" Value="Normal Task"></asp:ListItem>
+                                        <asp:ListItem Text="Project Task" Value="Project Task"></asp:ListItem>
+                                    </asp:DropDownList>
+                                </div>
+
+                                <div class="form-group">
                                     <label>Link to Mentor Task (Optional Subtask)</label>
                                     <asp:DropDownList ID="ddlParentTask" runat="server" CssClass="form-control"></asp:DropDownList>
                                 </div>
@@ -473,8 +481,23 @@
                 </asp:Panel>
 
                 <div class="form-group">
-                    <label>Describe Work Done / Appeal Remarks</label>
-                    <asp:TextBox ID="txtLeaderReportText" runat="server" TextMode="MultiLine" Rows="5" CssClass="form-control" Placeholder="Describe changes made, modules completed, and why this task is ready for approval..."></asp:TextBox>
+                    <label>Message / Reason for Appeal</label>
+                    <asp:TextBox ID="txtLeaderReportText" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="Short message for mentor..."></asp:TextBox>
+                </div>
+                
+                <div class="form-group">
+                    <label>What have you changed?</label>
+                    <asp:TextBox ID="txtLeaderChangesMade" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="List the exact files/modules changed..."></asp:TextBox>
+                </div>
+
+                <div class="form-group">
+                    <label>Explanation</label>
+                    <asp:TextBox ID="txtLeaderExplanation" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="Provide detailed context on how the requirements were met..."></asp:TextBox>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                    <asp:CheckBox ID="chkLeaderIsCompleted" runat="server" />
+                    <label style="margin: 0; font-size: 0.875rem; font-weight: bold;">Is the task actually completed?</label>
                 </div>
             </div>
             <div style="margin-top:1.5rem; text-align:right; display:flex; gap:0.75rem; justify-content:flex-end;">
@@ -508,8 +531,20 @@
                     <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--c-text-dim);">Member's Completion Appeal / Report</label>
 
                     <asp:Panel ID="pnlMemberReportContent" runat="server">
-                        <div class="report-box">
+                        <div class="report-box" style="margin-bottom: 0.5rem;">
+                            <strong>Message/Reason:</strong><br />
                             <asp:Label ID="lblViewMemberModalReportText" runat="server"></asp:Label>
+                        </div>
+                        <div class="report-box" style="margin-bottom: 0.5rem;">
+                            <strong>Changes Made:</strong><br />
+                            <asp:Label ID="lblViewMemberModalChangesMade" runat="server"></asp:Label>
+                        </div>
+                        <div class="report-box" style="margin-bottom: 0.5rem;">
+                            <strong>Explanation:</strong><br />
+                            <asp:Label ID="lblViewMemberModalExplanation" runat="server"></asp:Label>
+                        </div>
+                        <div style="font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem;">
+                            <asp:Label ID="lblViewMemberModalIsCompleted" runat="server"></asp:Label>
                         </div>
                         <p style="font-size:0.75rem; color:var(--c-text-muted); margin-top:0.5rem;">
                             <asp:Label ID="lblViewMemberModalReportDate" runat="server"></asp:Label>

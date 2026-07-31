@@ -26,6 +26,9 @@ namespace Project_Board.Admin
         protected global::System.Web.UI.WebControls.Label lblModalDescription;
         protected global::System.Web.UI.WebControls.Panel pnlReportContent;
         protected global::System.Web.UI.WebControls.Label lblModalReportText;
+        protected global::System.Web.UI.WebControls.Label lblModalChangesMade;
+        protected global::System.Web.UI.WebControls.Label lblModalExplanation;
+        protected global::System.Web.UI.WebControls.Label lblModalIsCompleted;
         protected global::System.Web.UI.WebControls.Label lblModalReportDate;
         protected global::System.Web.UI.WebControls.Panel pnlNoReport;
         protected global::System.Web.UI.WebControls.TextBox txtPointsToCover;

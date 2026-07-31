@@ -357,8 +357,23 @@
                 </asp:Panel>
 
                 <div class="form-group">
-                    <label>Describe what changes you have done / completion details</label>
-                    <asp:TextBox ID="txtMemberReportText" runat="server" TextMode="MultiLine" Rows="5" CssClass="form-control" Placeholder="Detail your work done, submitted links/files, and changes made for your leader..."></asp:TextBox>
+                    <label>Message / Reason for Appeal</label>
+                    <asp:TextBox ID="txtMemberReportText" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="Short message for leader..."></asp:TextBox>
+                </div>
+
+                <div class="form-group">
+                    <label>What have you changed?</label>
+                    <asp:TextBox ID="txtMemberChangesMade" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="List the exact files/modules changed..."></asp:TextBox>
+                </div>
+
+                <div class="form-group">
+                    <label>Explanation</label>
+                    <asp:TextBox ID="txtMemberExplanation" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" Placeholder="Provide detailed context on how the requirements were met..."></asp:TextBox>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                    <asp:CheckBox ID="chkMemberIsCompleted" runat="server" />
+                    <label style="margin: 0; font-size: 0.875rem; font-weight: bold;">Is the task actually completed?</label>
                 </div>
             </div>
             <div style="margin-top:1.5rem; text-align:right; display:flex; gap:0.75rem; justify-content:flex-end;">

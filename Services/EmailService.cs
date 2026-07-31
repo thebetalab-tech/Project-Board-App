@@ -520,5 +520,59 @@ namespace Project_Board.Services
             SendEmailAsync(toEmail, $"Project Proposal Update: {projectTitle} ({status})", html);
         }
         #endregion
+        #region 17. Task Appeal Submitted Notification -> Mentor / Leader Gets Mail
+        public static void SendTaskAppealSubmittedEmail(string toEmail, string reviewerName, string submitterName, string groupName, string taskTitle)
+        {
+            string title = "Task Completion Appeal Submitted";
+            string badgeText = "Appeal Submitted";
+            string badgeColor = "#f59e0b";
+
+            StringBuilder body = new StringBuilder();
+            body.Append($"<p>Hello <strong>{WebUtility.HtmlEncode(reviewerName)}</strong>,</p>");
+            body.Append($"<p><strong>{WebUtility.HtmlEncode(submitterName)}</strong> from group <strong>{WebUtility.HtmlEncode(groupName)}</strong> has submitted an appeal for task completion.</p>");
+            body.Append("<div class='info-box'>");
+            body.Append($"<div class='info-row'><span class='info-label'>Task Title:</span><span class='info-value'>{WebUtility.HtmlEncode(taskTitle)}</span></div>");
+            body.Append($"<div class='info-row'><span class='info-label'>Group Name:</span><span class='info-value'>{WebUtility.HtmlEncode(groupName)}</span></div>");
+            body.Append("</div>");
+            body.Append("<p>Please log in to your dashboard to review the changes and accept or reject the appeal.</p>");
+
+            string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
+            SendEmailAsync(toEmail, $"Task Appeal Submitted by {submitterName} - {taskTitle}", html);
+        }
+        #endregion
+
+        #region 18. Task Appeal Reviewed Notification -> Submitter Gets Mail
+        public static void SendTaskAppealReviewedEmail(string toEmail, string submitterName, string reviewerName, string taskTitle, string status, string dueDate)
+        {
+            bool isAccepted = status.Equals("Accepted", StringComparison.OrdinalIgnoreCase);
+            string title = isAccepted ? "Task Appeal Accepted!" : "Task Appeal Rejected";
+            string badgeText = isAccepted ? "Task Complete" : "Task Pending";
+            string badgeColor = isAccepted ? "#10b981" : "#ef4444";
+
+            StringBuilder body = new StringBuilder();
+            body.Append($"<p>Hello <strong>{WebUtility.HtmlEncode(submitterName)}</strong>,</p>");
+            if (isAccepted)
+            {
+                body.Append($"<p>Great news! Reviewer <strong>{WebUtility.HtmlEncode(reviewerName)}</strong> has <strong style='color:#10b981;'>Accepted</strong> your appeal. The task is now marked as complete.</p>");
+            }
+            else
+            {
+                body.Append($"<p>Reviewer <strong>{WebUtility.HtmlEncode(reviewerName)}</strong> has <strong style='color:#ef4444;'>Rejected</strong> your appeal. The task is still pending.</p>");
+            }
+
+            body.Append("<div class='info-box'>");
+            body.Append($"<div class='info-row'><span class='info-label'>Task Title:</span><span class='info-value'>{WebUtility.HtmlEncode(taskTitle)}</span></div>");
+            body.Append($"<div class='info-row'><span class='info-label'>Status:</span><span class='info-value'>{(isAccepted ? "Task Completed" : "Task Pending")}</span></div>");
+            if (!isAccepted && !string.IsNullOrEmpty(dueDate))
+            {
+                body.Append($"<div class='info-row'><span class='info-label'>Due Date:</span><span class='info-value'>{WebUtility.HtmlEncode(dueDate)}</span></div>");
+            }
+            body.Append("</div>");
+            body.Append("<p>Log in to your dashboard to view the feedback and details.</p>");
+
+            string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
+            SendEmailAsync(toEmail, $"Task Appeal Update: {taskTitle} ({status})", html);
+        }
+        #endregion
     }
 }

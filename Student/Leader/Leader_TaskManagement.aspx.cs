@@ -264,6 +264,9 @@ namespace Project_Board.Student.Leader
             int taskId = Convert.ToInt32(hfReportTaskId.Value);
             string status = ddlUpdateStatus != null && !string.IsNullOrEmpty(ddlUpdateStatus.SelectedValue) ? ddlUpdateStatus.SelectedValue : "Appealed";
             string reportText = txtLeaderReportText.Text.Trim();
+            string changesMade = txtLeaderChangesMade.Text.Trim();
+            string explanation = txtLeaderExplanation.Text.Trim();
+            bool isCompleted = chkLeaderIsCompleted.Checked;
             int leaderId = Convert.ToInt32(Session["UserId"]);
 
             if (string.IsNullOrEmpty(reportText))
@@ -292,13 +295,13 @@ namespace Project_Board.Student.Leader
                     IF EXISTS (SELECT 1 FROM Appeals WHERE TaskId = @TaskId AND StudentId = @StudentId)
                     BEGIN
                         UPDATE Appeals 
-                        SET Reason = @ReportText, Status = 'Pending Review', CreatedAt = GETDATE() 
+                        SET Reason = @ReportText, ChangesMade = @ChangesMade, Explanation = @Explanation, IsCompleted = @IsCompleted, Status = 'Pending Review', CreatedAt = GETDATE() 
                         WHERE TaskId = @TaskId AND StudentId = @StudentId;
                     END
                     ELSE
                     BEGIN
-                        INSERT INTO Appeals (TaskId, StudentId, GroupId, Reason, Status, CreatedAt)
-                        VALUES (@TaskId, @StudentId, @GroupId, @ReportText, 'Pending Review', GETDATE());
+                        INSERT INTO Appeals (TaskId, StudentId, GroupId, Reason, ChangesMade, Explanation, IsCompleted, Status, CreatedAt)
+                        VALUES (@TaskId, @StudentId, @GroupId, @ReportText, @ChangesMade, @Explanation, @IsCompleted, 'Pending Review', GETDATE());
                     END";
 
                 using (SqlCommand aCmd = new SqlCommand(appealSql, conn))
@@ -307,6 +310,9 @@ namespace Project_Board.Student.Leader
                     aCmd.Parameters.AddWithValue("@StudentId", leaderId);
                     aCmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
                     aCmd.Parameters.AddWithValue("@ReportText", reportText);
+                    aCmd.Parameters.AddWithValue("@ChangesMade", changesMade);
+                    aCmd.Parameters.AddWithValue("@Explanation", explanation);
+                    aCmd.Parameters.AddWithValue("@IsCompleted", isCompleted);
                     aCmd.ExecuteNonQuery();
                 }
 
@@ -333,6 +339,7 @@ namespace Project_Board.Student.Leader
                                 string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
 
                                 Project_Board.Services.EmailService.SendLeaderReportSubmitted(facultyEmail, facultyName, leaderName, groupName, taskTitle, reportText);
+                                Project_Board.Services.EmailService.SendTaskAppealSubmittedEmail(facultyEmail, facultyName, leaderName, groupName, taskTitle);
                             }
                         }
                     }
@@ -385,8 +392,32 @@ namespace Project_Board.Student.Leader
                 parentTaskId = Convert.ToInt32(ddlParentTask.SelectedValue);
             }
 
+            string taskCategory = ddlTaskCategory.SelectedValue;
+
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
+                if (taskCategory == "Project Task")
+                {
+                    bool hasProject = false;
+                    using (SqlCommand cmdProject = new SqlCommand("SELECT 1 FROM Projects WHERE GroupId = @GroupId AND Status = 'Approved'", conn))
+                    {
+                        cmdProject.Parameters.AddWithValue("@GroupId", CurrentGroupId);
+                        conn.Open();
+                        hasProject = cmdProject.ExecuteScalar() != null;
+                    }
+                    if (!hasProject)
+                    {
+                        lblMessage.Text = "Cannot assign a Project Task because there is no approved project in this group.";
+                        lblMessage.CssClass = "alert alert-danger";
+                        lblMessage.Visible = true;
+                        return;
+                    }
+                }
+                else
+                {
+                    conn.Open();
+                }
+
                 using (SqlCommand cmd = new SqlCommand("sp_crud_tasks", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -400,8 +431,8 @@ namespace Project_Board.Student.Leader
                     cmd.Parameters.AddWithValue("@ParentTaskId", (object)parentTaskId ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@DueDate", (object)dueDate ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Status", "Working");
+                    cmd.Parameters.AddWithValue("@TaskCategory", taskCategory);
 
-                    conn.Open();
                     cmd.ExecuteNonQuery();
                 }
 
@@ -505,6 +536,37 @@ namespace Project_Board.Student.Leader
                             }
                         }
                     }
+
+                    // Fetch Appeal Data
+                    using (SqlCommand cmdAppeal = new SqlCommand("SELECT Reason, ChangesMade, Explanation, IsCompleted, CreatedAt FROM Appeals WHERE TaskId = @TaskId", conn))
+                    {
+                        cmdAppeal.Parameters.AddWithValue("@TaskId", taskId);
+                        using (SqlDataReader appealReader = cmdAppeal.ExecuteReader())
+                        {
+                            if (appealReader.Read())
+                            {
+                                lblViewMemberModalReportText.Text = appealReader["Reason"] != DBNull.Value ? appealReader["Reason"].ToString() : "";
+                                lblViewMemberModalChangesMade.Text = appealReader["ChangesMade"] != DBNull.Value && !string.IsNullOrEmpty(appealReader["ChangesMade"].ToString()) ? appealReader["ChangesMade"].ToString() : "N/A";
+                                lblViewMemberModalExplanation.Text = appealReader["Explanation"] != DBNull.Value && !string.IsNullOrEmpty(appealReader["Explanation"].ToString()) ? appealReader["Explanation"].ToString() : "N/A";
+                                
+                                bool isCompleted = appealReader["IsCompleted"] != DBNull.Value && Convert.ToBoolean(appealReader["IsCompleted"]);
+                                lblViewMemberModalIsCompleted.Text = isCompleted ? "Task is marked as completed by Member" : "Task is NOT marked as completed";
+                                lblViewMemberModalIsCompleted.ForeColor = isCompleted ? System.Drawing.Color.Green : System.Drawing.Color.Orange;
+
+                                string subDate = appealReader["CreatedAt"] != DBNull.Value 
+                                    ? Convert.ToDateTime(appealReader["CreatedAt"]).ToString("MMM dd, yyyy hh:mm tt") 
+                                    : "";
+                                lblViewMemberModalReportDate.Text = "Submitted at: " + subDate;
+                                pnlMemberReportContent.Visible = true;
+                                pnlNoMemberReport.Visible = false;
+                            }
+                            else
+                            {
+                                pnlMemberReportContent.Visible = false;
+                                pnlNoMemberReport.Visible = true;
+                            }
+                        }
+                    }
                 }
 
                 ScriptManager.RegisterStartupScript(this, GetType(), "OpenViewMemberModal", "openModal('viewMemberModal');", true);
@@ -601,6 +663,14 @@ namespace Project_Board.Student.Leader
                                     taskTitle,
                                     status,
                                     feedback
+                                );
+                                Project_Board.Services.EmailService.SendTaskAppealReviewedEmail(
+                                    memberEmail,
+                                    memberName,
+                                    leaderName,
+                                    taskTitle,
+                                    status == "Completed" ? "Accepted" : "Rejected",
+                                    ""
                                 );
                             }
                         }

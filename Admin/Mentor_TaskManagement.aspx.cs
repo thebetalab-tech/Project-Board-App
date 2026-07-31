@@ -331,23 +331,37 @@ namespace Project_Board.Admin
 
                             txtMentorFeedback.Text = reader["FeedbackText"] != DBNull.Value ? reader["FeedbackText"].ToString() : "";
                             hfReviewTaskId.Value = taskId.ToString();
+                        }
+                    }
+                }
 
-                            string report = reader["ReportText"].ToString();
-                            if (!string.IsNullOrEmpty(report))
-                            {
-                                lblModalReportText.Text = report;
-                                string subDate = reader["ReportSubmittedAt"] != DBNull.Value 
-                                    ? Convert.ToDateTime(reader["ReportSubmittedAt"]).ToString("MMM dd, yyyy hh:mm tt") 
-                                    : "";
-                                lblModalReportDate.Text = "Submitted at: " + subDate;
-                                pnlReportContent.Visible = true;
-                                pnlNoReport.Visible = false;
-                            }
-                            else
-                            {
-                                pnlReportContent.Visible = false;
-                                pnlNoReport.Visible = true;
-                            }
+                // Fetch Appeal Data
+                using (SqlCommand cmdAppeal = new SqlCommand("SELECT Reason, ChangesMade, Explanation, IsCompleted, CreatedAt FROM Appeals WHERE TaskId = @TaskId", conn))
+                {
+                    cmdAppeal.Parameters.AddWithValue("@TaskId", taskId);
+                    using (SqlDataReader appealReader = cmdAppeal.ExecuteReader())
+                    {
+                        if (appealReader.Read())
+                        {
+                            lblModalReportText.Text = appealReader["Reason"] != DBNull.Value ? appealReader["Reason"].ToString() : "";
+                            lblModalChangesMade.Text = appealReader["ChangesMade"] != DBNull.Value && !string.IsNullOrEmpty(appealReader["ChangesMade"].ToString()) ? appealReader["ChangesMade"].ToString() : "N/A";
+                            lblModalExplanation.Text = appealReader["Explanation"] != DBNull.Value && !string.IsNullOrEmpty(appealReader["Explanation"].ToString()) ? appealReader["Explanation"].ToString() : "N/A";
+                            
+                            bool isCompleted = appealReader["IsCompleted"] != DBNull.Value && Convert.ToBoolean(appealReader["IsCompleted"]);
+                            lblModalIsCompleted.Text = isCompleted ? "Task is marked as completed by Leader" : "Task is NOT marked as completed";
+                            lblModalIsCompleted.ForeColor = isCompleted ? System.Drawing.Color.Green : System.Drawing.Color.Orange;
+
+                            string subDate = appealReader["CreatedAt"] != DBNull.Value 
+                                ? Convert.ToDateTime(appealReader["CreatedAt"]).ToString("MMM dd, yyyy hh:mm tt") 
+                                : "";
+                            lblModalReportDate.Text = "Submitted at: " + subDate;
+                            pnlReportContent.Visible = true;
+                            pnlNoReport.Visible = false;
+                        }
+                        else
+                        {
+                            pnlReportContent.Visible = false;
+                            pnlNoReport.Visible = true;
                         }
                     }
                 }
@@ -365,8 +379,11 @@ namespace Project_Board.Admin
             string status = ddlMentorStatusUpdate.SelectedValue;
             string feedback = txtMentorFeedback.Text.Trim();
 
+            int mentorId = Convert.ToInt32(Session["UserId"]);
+
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
+                conn.Open();
                 using (SqlCommand cmd = new SqlCommand("sp_crud_tasks", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -374,9 +391,68 @@ namespace Project_Board.Admin
                     cmd.Parameters.AddWithValue("@TaskId", taskId);
                     cmd.Parameters.AddWithValue("@Status", status);
                     cmd.Parameters.AddWithValue("@FeedbackText", (object)feedback ?? DBNull.Value);
-
-                    conn.Open();
                     cmd.ExecuteNonQuery();
+                }
+
+                // Sync Appeals table record
+                string appealSql = @"
+                    UPDATE Appeals 
+                    SET Status = CASE 
+                        WHEN @Status = 'Completed' THEN 'Accepted'
+                        WHEN @Status IN ('Revision Needed', 'Failed') THEN 'Rejected'
+                        ELSE Status
+                    END,
+                    ReviewerId = @MentorId,
+                    Remarks = @FeedbackText,
+                    ReviewedAt = GETDATE()
+                    WHERE TaskId = @TaskId;";
+
+                using (SqlCommand aCmd = new SqlCommand(appealSql, conn))
+                {
+                    aCmd.Parameters.AddWithValue("@Status", status);
+                    aCmd.Parameters.AddWithValue("@MentorId", mentorId);
+                    aCmd.Parameters.AddWithValue("@FeedbackText", string.IsNullOrEmpty(feedback) ? (object)DBNull.Value : feedback);
+                    aCmd.Parameters.AddWithValue("@TaskId", taskId);
+                    aCmd.ExecuteNonQuery();
+                }
+
+                // Send Email Notification to Leader
+                try
+                {
+                    string infoSql = @"
+                        SELECT t.TaskTitle, uTo.Email AS LeaderEmail, uTo.FullName AS LeaderName, uBy.FullName AS MentorName
+                        FROM Task t
+                        INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                        INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
+                        WHERE t.TaskId = @TaskId";
+
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@TaskId", taskId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string taskTitle = rdr["TaskTitle"].ToString();
+                                string leaderEmail = rdr["LeaderEmail"].ToString();
+                                string leaderName = rdr["LeaderName"].ToString();
+                                string mentorName = rdr["MentorName"].ToString();
+
+                                Project_Board.Services.EmailService.SendTaskAppealReviewedEmail(
+                                    leaderEmail,
+                                    leaderName,
+                                    mentorName,
+                                    taskTitle,
+                                    status == "Completed" ? "Accepted" : "Rejected",
+                                    ""
+                                );
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Email Error] {ex.Message}");
                 }
             }
 

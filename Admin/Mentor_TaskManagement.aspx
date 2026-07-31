@@ -412,8 +412,20 @@
                     <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--c-text-dim);">Leader Progress Report / Appeal</label>
 
                     <asp:Panel ID="pnlReportContent" runat="server">
-                        <div class="report-box">
+                        <div class="report-box" style="margin-bottom: 0.5rem;">
+                            <strong>Message/Reason:</strong><br />
                             <asp:Label ID="lblModalReportText" runat="server"></asp:Label>
+                        </div>
+                        <div class="report-box" style="margin-bottom: 0.5rem;">
+                            <strong>Changes Made:</strong><br />
+                            <asp:Label ID="lblModalChangesMade" runat="server"></asp:Label>
+                        </div>
+                        <div class="report-box" style="margin-bottom: 0.5rem;">
+                            <strong>Explanation:</strong><br />
+                            <asp:Label ID="lblModalExplanation" runat="server"></asp:Label>
+                        </div>
+                        <div style="font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem;">
+                            <asp:Label ID="lblModalIsCompleted" runat="server"></asp:Label>
                         </div>
                         <p style="font-size:0.75rem; color:var(--c-text-muted); margin-top:0.5rem;">
                             <asp:Label ID="lblModalReportDate" runat="server"></asp:Label>
