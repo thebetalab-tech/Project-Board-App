@@ -21,12 +21,23 @@ namespace Project_Board
         {
         }
 
+        private void ResetFieldErrors()
+        {
+            lblFullNameError.Text = string.Empty;
+            lblEmailError.Text = string.Empty;
+            lblEnrollmentError.Text = string.Empty;
+            lblPasswordError.Text = string.Empty;
+            lblConfirmPasswordError.Text = string.Empty;
+            lblCodeError.Text = string.Empty;
+            lblMessage.Text = string.Empty;
+            lblMessage.CssClass = "form-message";
+        }
+
         // Step 1: Validate form and send verification code
         protected void loginBtn_Click(object sender, EventArgs e)
         {
-            // Reset message label state
-            lblMessage.Text = string.Empty;
-            lblMessage.CssClass = "form-message";
+            // Reset error states
+            ResetFieldErrors();
 
             // Grab input values
             string fullNameValue = fullName.Text.Trim();
@@ -35,43 +46,71 @@ namespace Project_Board
             string passwordValue = password.Text;
             string confirmPasswordValue = confirmPassword.Text;
 
-            // --- 1. Form Validation ---
-            if (string.IsNullOrWhiteSpace(fullNameValue) || 
-                string.IsNullOrWhiteSpace(emailValue) || 
-                string.IsNullOrWhiteSpace(passwordValue) || 
-                string.IsNullOrWhiteSpace(confirmPasswordValue))
+            bool isValid = true;
+
+            // --- 1. Field-by-Field Form Validation ---
+            if (string.IsNullOrWhiteSpace(fullNameValue))
             {
-                ShowMessage("Please fill in all required fields.", false);
-                return;
+                lblFullNameError.Text = "Full Name is required.";
+                isValid = false;
+            }
+            else if (fullNameValue.Length > 100)
+            {
+                lblFullNameError.Text = "Full name must be 100 characters or fewer.";
+                isValid = false;
+            }
+            else if (!System.Text.RegularExpressions.Regex.IsMatch(fullNameValue, @"^[a-zA-Z\s'-]+$"))
+            {
+                lblFullNameError.Text = "Full Name can only contain letters and spaces.";
+                isValid = false;
             }
 
-            if (fullNameValue.Length > 100)
+            if (string.IsNullOrWhiteSpace(emailValue))
             {
-                ShowMessage("Full name must be 100 characters or fewer.", false);
-                return;
+                lblEmailError.Text = "Email Address is required.";
+                isValid = false;
+            }
+            else if (emailValue.Length > 100 || !IsValidEmail(emailValue))
+            {
+                lblEmailError.Text = "Enter a valid email address.";
+                isValid = false;
             }
 
-            if (emailValue.Length > 100 || !IsValidEmail(emailValue))
+            if (string.IsNullOrWhiteSpace(enrollmentNoValue))
             {
-                ShowMessage("Enter a valid email address.", false);
-                return;
+                lblEnrollmentError.Text = "Enrollment Number is required.";
+                isValid = false;
+            }
+            else if (enrollmentNoValue.Length > 20)
+            {
+                lblEnrollmentError.Text = "Enrollment number must be 20 characters or fewer.";
+                isValid = false;
             }
 
-            if (!string.IsNullOrWhiteSpace(enrollmentNoValue) && enrollmentNoValue.Length > 20)
+            if (string.IsNullOrWhiteSpace(passwordValue))
             {
-                ShowMessage("Enrollment number must be 20 characters or fewer.", false);
-                return;
+                lblPasswordError.Text = "Password is required.";
+                isValid = false;
+            }
+            else if (passwordValue.Length < 8)
+            {
+                lblPasswordError.Text = "Password must be at least 8 characters long.";
+                isValid = false;
             }
 
-            if (passwordValue.Length < 8)
+            if (string.IsNullOrWhiteSpace(confirmPasswordValue))
             {
-                ShowMessage("Password must be at least 8 characters long.", false);
-                return;
+                lblConfirmPasswordError.Text = "Please confirm your password.";
+                isValid = false;
+            }
+            else if (passwordValue != confirmPasswordValue)
+            {
+                lblConfirmPasswordError.Text = "Passwords do not match.";
+                isValid = false;
             }
 
-            if (passwordValue != confirmPasswordValue)
+            if (!isValid)
             {
-                ShowMessage("Passwords do not match.", false);
                 return;
             }
 
@@ -92,7 +131,7 @@ namespace Project_Board
 
                     if (UserExists(connection, emailValue))
                     {
-                        ShowMessage("An account with this email already exists.", false);
+                        lblEmailError.Text = "An account with this email already exists.";
                         return;
                     }
                 }
@@ -134,14 +173,13 @@ namespace Project_Board
         // Step 2: Verify code and create account
         protected void btnVerifyAndRegister_Click(object sender, EventArgs e)
         {
-            lblMessage.Text = string.Empty;
-            lblMessage.CssClass = "form-message";
+            ResetFieldErrors();
 
             string enteredCode = txtVerifyCode.Text.Trim();
 
             if (string.IsNullOrEmpty(enteredCode))
             {
-                ShowMessage("Please enter the verification code.", false);
+                lblCodeError.Text = "Please enter the verification code.";
                 return;
             }
 
@@ -149,7 +187,7 @@ namespace Project_Board
             string expectedCode = Session["SignupVerifyCode"]?.ToString();
             if (string.IsNullOrEmpty(expectedCode) || enteredCode != expectedCode)
             {
-                ShowMessage("Invalid verification code. Please check the code sent to your email.", false);
+                lblCodeError.Text = "Invalid verification code. Please check the code sent to your email.";
                 return;
             }
 

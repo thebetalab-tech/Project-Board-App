@@ -642,6 +642,44 @@ body {
     color: #ffffff !important;
 }
 
+/* --- Field Error Below Text Fields --- */
+.field-error-text {
+    display: block;
+    color: #ff4d4d;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 6px;
+    padding-left: 4px;
+    line-height: 1.4;
+    animation: fadeInFieldError 0.25s ease-out;
+}
+
+.field-error-text:empty {
+    display: none;
+}
+
+.input-group.error .input-wrapper input {
+    border-color: #ff4d4d !important;
+    background: rgba(255, 77, 77, 0.08) !important;
+    box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.2) !important;
+}
+
+.input-group.error .input-icon {
+    color: #ff4d4d !important;
+}
+
+@keyframes fadeInFieldError {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
 
 
 

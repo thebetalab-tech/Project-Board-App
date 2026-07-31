@@ -57,8 +57,6 @@
                     </div>
 
                     <form id="signupForm" runat="server" class="login-form" autocomplete="off">
-                        <asp:Label ID="lblMessage" runat="server" EnableViewState="false" CssClass="form-message">
-                        </asp:Label>
 
                         <!-- Signup Form Fields -->
                         <asp:Panel ID="pnlSignupForm" runat="server">
@@ -73,6 +71,7 @@
                                     <asp:TextBox ID="fullName" runat="server" ClientIDMode="Static"
                                         placeholder="Enter your full name" required="required"></asp:TextBox>
                                 </div>
+                                <asp:Label ID="lblFullNameError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
                             </div>
 
                             <div class="input-group" id="emailGroup">
@@ -86,6 +85,7 @@
                                     <asp:TextBox ID="loginId" runat="server" ClientIDMode="Static" TextMode="Email"
                                         placeholder="Enter your email" required="required"></asp:TextBox>
                                 </div>
+                                <asp:Label ID="lblEmailError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
                             </div>
 
                             <div class="input-group" id="enrollmentGroup">
@@ -100,6 +100,7 @@
                                     <asp:TextBox ID="enrollment" runat="server" ClientIDMode="Static"
                                         placeholder="Enter your enrollment number" required="required"></asp:TextBox>
                                 </div>
+                                <asp:Label ID="lblEnrollmentError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
                             </div>
 
                             <div class="input-group" id="passwordGroup">
@@ -127,6 +128,7 @@
                                         </svg>
                                     </button>
                                 </div>
+                                <asp:Label ID="lblPasswordError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
                                 <div class="password-strength" id="passwordStrength">
                                     <div class="strength-bars">
                                         <span class="strength-bar" data-index="0"></span>
@@ -171,7 +173,11 @@
                                         </svg>
                                     </button>
                                 </div>
+                                <asp:Label ID="lblConfirmPasswordError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
                             </div>
+
+                            <asp:Label ID="lblMessage" runat="server" EnableViewState="false" CssClass="form-message" style="margin-top: 8px;">
+                            </asp:Label>
 
                             <asp:LinkButton ID="loginBtn" runat="server" ClientIDMode="Static" CssClass="login-btn"
                                 OnClick="loginBtn_Click" style="margin-top: 10px;">
@@ -212,6 +218,7 @@
                                         CssClass="verify-code-input"
                                         placeholder="Enter 6-digit code" MaxLength="6"></asp:TextBox>
                                 </div>
+                                <asp:Label ID="lblCodeError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
                                 <span class="verify-hint">Enter the 6-digit code sent to your email</span>
                             </div>
 

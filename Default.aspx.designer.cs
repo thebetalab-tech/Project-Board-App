@@ -33,6 +33,11 @@ namespace Project_Board
         protected global::System.Web.UI.WebControls.TextBox txtLoginID;
 
         /// <summary>
+        /// lblLoginIDError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblLoginIDError;
+
+        /// <summary>
         /// txtPassword control.
         /// </summary>
         /// <remarks>
@@ -40,6 +45,11 @@ namespace Project_Board
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtPassword;
+
+        /// <summary>
+        /// lblPasswordError control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblPasswordError;
 
         /// <summary>
         /// loginBtn control.

@@ -21,6 +21,11 @@ namespace Project_Board
 
         protected void loginBtn_Click(object sender, EventArgs e)
         {
+            // Reset error states
+            lblLoginIDError.Text = string.Empty;
+            lblPasswordError.Text = string.Empty;
+            lblError.Text = string.Empty;
+
             // Using direct control access instead of Request.Form because MasterPages alter the name attribute
             string loginId = txtLoginID.Text.Trim();
             string password = txtPassword.Text;
@@ -42,10 +47,22 @@ namespace Project_Board
 
             loginId = loginId?.Trim();
 
-            // Basic Validation
-            if (string.IsNullOrEmpty(loginId) || string.IsNullOrEmpty(password))
+            // Field-level Validation
+            bool isValid = true;
+            if (string.IsNullOrEmpty(loginId))
             {
-                lblError.Text = "Please enter both login ID and password.";
+                lblLoginIDError.Text = "Please enter your Email or Enrollment number.";
+                isValid = false;
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                lblPasswordError.Text = "Please enter your password.";
+                isValid = false;
+            }
+
+            if (!isValid)
+            {
                 return;
             }
 
@@ -86,25 +103,18 @@ namespace Project_Board
                                     Session["UserEmail"] = reader["Email"].ToString();
                                     Session["IsLeader"] = reader["IsLeader"].ToString();
 
-                                    // Send Sign-In Email Notification
-                                    Project_Board.Services.EmailService.SendSignInNotification(
-                                        reader["Email"].ToString(),
-                                        reader["FullName"].ToString(),
-                                        reader["Role"].ToString()
-                                    );
-
                                     // Redirect to the appropriate dashboard
                                     RedirectUserBasedOnRole(Session["Role"].ToString());
                                 }
                                 else
                                 {
-                                    lblError.Text = "Invalid credentials. Please check your password.";
+                                    lblPasswordError.Text = "Invalid credentials. Please check your password.";
                                 }
                             }
                             else
                             {
                                 // FAILED: Invalid credentials or inactive account
-                                lblError.Text = "Invalid credentials or account is inactive.";
+                                lblLoginIDError.Text = "Invalid credentials or account is inactive.";
                             }
                         }
                     }
