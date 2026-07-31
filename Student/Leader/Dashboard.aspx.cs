@@ -61,13 +61,8 @@ namespace Project_Board.Student.Leader
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
-                conn.Open();
-                int groupId = 0;
-
-                // Load Leader Group Details
-                string groupQuery = @"
-                    SELECT TOP 1 g.GroupId, g.GroupName, t.TechName, g.MemberNeeded, g.Status AS GroupStatus,
-                           g.MentorId, m.FullName AS MentorName, m.Email AS MentorEmail
+                string query = @"
+                    SELECT g.GroupName, t.TechName, g.GroupId, g.MemberNeeded
                     FROM Groups g
                     LEFT JOIN Technologies t ON g.TechId = t.TechId
                     LEFT JOIN Users m ON g.MentorId = m.UserId
@@ -83,10 +78,9 @@ namespace Project_Board.Student.Leader
                             groupId = Convert.ToInt32(reader["GroupId"]);
                             GroupName = reader["GroupName"].ToString();
                             TechName = reader["TechName"] != DBNull.Value ? reader["TechName"].ToString() : "Not Assigned";
-                            MemberNeeded = reader["MemberNeeded"] != DBNull.Value ? Convert.ToBoolean(reader["MemberNeeded"]) : true;
-                            GroupStatus = reader["GroupStatus"] != DBNull.Value ? reader["GroupStatus"].ToString() : "Forming";
-
-                            if (reader["MentorId"] != DBNull.Value)
+                            int groupId = Convert.ToInt32(reader["GroupId"]);
+                            
+                            if (reader["MemberNeeded"] != DBNull.Value)
                             {
                                 MentorName = reader["MentorName"] != DBNull.Value ? reader["MentorName"].ToString() : "Faculty Mentor";
                                 MentorEmail = reader["MentorEmail"] != DBNull.Value ? reader["MentorEmail"].ToString() : "";
@@ -148,6 +142,31 @@ namespace Project_Board.Student.Leader
                                 else PendingTasks++;
 
                                 if (dueDate.HasValue && dueDate.Value < DateTime.Now && st != "Completed") OverdueTasks++;
+                            }
+                            
+                            reader.Close();
+                            
+                            // Get Stats
+                            string statsQuery = @"
+                                SELECT 
+                                    COUNT(UserId) AS Total,
+                                    SUM(CASE WHEN JoinStatus = 'Pending' THEN 1 ELSE 0 END) AS Pending,
+                                    SUM(CASE WHEN JoinStatus = 'Accepted' THEN 1 ELSE 0 END) AS Accepted
+                                FROM GroupMembers
+                                WHERE GroupId = @GroupId
+                            ";
+                            using (SqlCommand statsCmd = new SqlCommand(statsQuery, conn))
+                            {
+                                statsCmd.Parameters.AddWithValue("@GroupId", groupId);
+                                using (SqlDataReader statsReader = statsCmd.ExecuteReader())
+                                {
+                                    if (statsReader.Read())
+                                    {
+                                        TotalMembers = statsReader["Total"] != DBNull.Value ? Convert.ToInt32(statsReader["Total"]) : 0;
+                                        PendingInvites = statsReader["Pending"] != DBNull.Value ? Convert.ToInt32(statsReader["Pending"]) : 0;
+                                        AcceptedInvites = statsReader["Accepted"] != DBNull.Value ? Convert.ToInt32(statsReader["Accepted"]) : 0;
+                                    }
+                                }
                             }
                         }
                     }

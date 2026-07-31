@@ -31,8 +31,7 @@ CREATE TABLE Groups (
     LeaderId INT FOREIGN KEY REFERENCES Users(UserId),
     TechId INT FOREIGN KEY REFERENCES Technologies(TechId),
     MentorId INT FOREIGN KEY REFERENCES Users(UserId) NULL,
-    Status NVARCHAR(30) DEFAULT 'Forming',
-    MemberNeeded BIT NOT NULL DEFAULT 1
+    Status NVARCHAR(30) DEFAULT 'Forming' 
 );
 
 CREATE TABLE GroupMembers (
