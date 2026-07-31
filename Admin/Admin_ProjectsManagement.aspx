@@ -124,7 +124,7 @@
                                         </td>
                                         <td><%# Eval("GroupName") %></td>
                                         <td>
-                                            <%# Eval("KeywordHtml") %>
+                                            <%# HttpUtility.HtmlDecode(Eval("KeywordHtml")?.ToString() ?? "") %>
                                         </td>
                                         <td><span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span></td>
                                         <td>

@@ -1,41 +1,14 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ReviewAppeal.aspx.cs" Inherits="Project_Board.Admin.ReviewAppeal" %>
+ï»¿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ReviewAppeal.aspx.cs" Inherits="Project_Board.Admin.ReviewAppeal" %>
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Review Appeal — Project Board</title>
+    <title>Review Appeal - Project Board</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
     <style>
-        :root {
-            --c-bg: #ffffff;
-            --c-bg-warm: #fdfbf7;
-            --c-surface: #f4f5f7;
-            --c-border: #e2e8f0;
-            --c-text: #1e293b;
-            --c-text-muted: #64748b;
-            --c-text-dim: #94a3b8;
-            --c-accent: #2563eb;
-            --c-accent-hover: #1d4ed8;
-            --c-accent-glow: rgba(37, 99, 235, 0.15);
-            --c-green: #059669;
-            --c-red: #dc2626;
-            --c-red-bg: #fef2f2;
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --f-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            font-family: var(--f-body);
-            background-color: var(--c-surface);
-            color: var(--c-text);
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
+        .appeal-container {
             width: 100%;
             max-width: 900px;
             background: var(--c-bg);
@@ -43,6 +16,7 @@
             box-shadow: var(--shadow-md);
             padding: 2.5rem;
             border: 1px solid var(--c-border);
+            margin: 0 auto;
         }
 
         .header {
@@ -188,76 +162,181 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div class="container">
-            <div class="header">
-                <h1><i class="fa-solid fa-check-to-slot"></i> Review Appeal</h1>
-                <asp:LinkButton ID="btnBack" runat="server" CssClass="btn-back" OnClick="btnBack_Click"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</asp:LinkButton>
+    <% string currentRole = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? ""; %>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i class="fa-solid fa-graduation-cap" style="color: white;"></i></div>
+            <h2>Project Board</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Main Menu</div>
+                <% if (currentRole == "Leader") { %>
+                    <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chart-pie"></i> Overview
+                    </a>
+                    <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-users"></i> Team Members
+                    </a>
+                    <a href='<%= ResolveUrl("~/Student/Leader/Leader_Project.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-folder-open"></i> Project Management
+                    </a>
+                    <a href='<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
+                    </a>
+                    <a href='<%= ResolveUrl("~/Student/Leader/InvitationManager.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-envelope"></i> Invitations
+                    </a>
+                    <a href='<%= ResolveUrl("~/Student/Leader/Leader_TaskManagement.aspx") %>' class="nav-link active">
+                        <i class="fa-solid fa-list-check"></i> Tasks
+                    </a>
+                <% } else if (currentRole == "Faculty") { %>
+                    <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chart-pie"></i> Overview
+                    </a>
+                    <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-users-rectangle"></i> Managed Groups
+                    </a>
+                    <a href='<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-diagram-project"></i> Project Approvals
+                    </a>
+                    <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-envelope-open-text"></i> Invitations
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Mentor_TaskManagement.aspx") %>' class="nav-link active">
+                        <i class="fa-solid fa-list-check"></i> Task Reviews
+                    </a>
+                <% } else { %>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chart-pie"></i> Dashboard
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-users-gear"></i> User Management
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_GroupsManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-users"></i> Group Management
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_ProjectsManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-folder-open"></i> Project Management
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-microchip"></i> Technology Stack
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_TaskManagement.aspx") %>' class="nav-link active">
+                        <i class="fa-solid fa-list-check"></i> Task Reviews
+                    </a>
+                <% } %>
             </div>
 
-            <asp:Label ID="lblMessage" runat="server" Visible="false"></asp:Label>
-
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3>Task Information</h3>
-                    <p><strong>Title:</strong> <asp:Label ID="lblTaskTitle" runat="server"></asp:Label></p>
-                    <p><strong>Group:</strong> <asp:Label ID="lblGroupName" runat="server"></asp:Label></p>
-                    <p><strong>Status:</strong> <asp:Label ID="lblStatus" runat="server"></asp:Label></p>
-                    <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--c-text-muted);"><asp:Label ID="lblTaskDescription" runat="server"></asp:Label></p>
-                </div>
-                
-                <div class="info-card">
-                    <h3>Requirements / Feedback Given</h3>
-                    <p style="font-size: 0.85rem; color: var(--c-text-muted);"><asp:Label ID="lblRequirements" runat="server"></asp:Label></p>
-                </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Preferences</div>
+                <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-user"></i> Profile
+                </a>
+                <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                </a>
             </div>
+        </nav>
 
-            <asp:Panel ID="pnlAppeal" runat="server" CssClass="report-section">
-                <h4><i class="fa-solid fa-user-graduate" style="color:var(--c-accent); margin-right:0.5rem;"></i> Student Appeal & Report</h4>
-                
-                <strong>Message / Reason:</strong>
-                <div class="report-box"><asp:Label ID="lblReason" runat="server"></asp:Label></div>
-                
-                <strong>Changes Made:</strong>
-                <div class="report-box"><asp:Label ID="lblChangesMade" runat="server"></asp:Label></div>
-                
-                <strong>Explanation:</strong>
-                <div class="report-box"><asp:Label ID="lblExplanation" runat="server"></asp:Label></div>
-
-                <div style="font-weight: 600; margin-top: 1rem;">
-                    <asp:Label ID="lblIsCompleted" runat="server"></asp:Label>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="avatar"><%= (Session["FullName"]?.ToString() ?? "U").Substring(0, 1).ToUpper() %></div>
+                <div class="user-info">
+                    <h4><%= Session["FullName"]?.ToString() ?? "User" %></h4>
+                    <p><%= Session["Email"]?.ToString() ?? "user@example.com" %></p>
                 </div>
-                <div style="font-size: 0.8rem; color: var(--c-text-muted); margin-top: 0.5rem;">
-                    Submitted at: <asp:Label ID="lblCreatedAt" runat="server"></asp:Label>
-                </div>
-            </asp:Panel>
-
-            <asp:Panel ID="pnlNoAppeal" runat="server" CssClass="report-section" Visible="false">
-                <p style="text-align:center; color:var(--c-text-muted); font-style:italic;">No appeal has been submitted for this task.</p>
-            </asp:Panel>
-
-            <div style="border-top: 1px solid var(--c-border); padding-top: 2rem;">
-                <h4 style="margin: 0 0 1.5rem 0; font-size: 1.1rem;"><i class="fa-solid fa-gavel" style="color:var(--c-accent); margin-right:0.5rem;"></i> Your Decision</h4>
-                
-                <div class="form-group">
-                    <label>Update Status</label>
-                    <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="Working" Value="Working"></asp:ListItem>
-                        <asp:ListItem Text="Appealed" Value="Appealed"></asp:ListItem>
-                        <asp:ListItem Text="Completed" Value="Completed"></asp:ListItem>
-                        <asp:ListItem Text="Revision Needed" Value="Revision Needed"></asp:ListItem>
-                        <asp:ListItem Text="Failed" Value="Failed"></asp:ListItem>
-                    </asp:DropDownList>
-                </div>
-
-                <div class="form-group">
-                    <label>Feedback / Remarks</label>
-                    <asp:TextBox ID="txtFeedback" runat="server" TextMode="MultiLine" Rows="4" CssClass="form-control" Placeholder="Provide instructions for revision or remarks upon completion..."></asp:TextBox>
-                </div>
-
-                <asp:Button ID="btnSubmitDecision" runat="server" Text="Save Decision & Feedback" CssClass="btn-submit" OnClick="btnSubmitDecision_Click" />
             </div>
         </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="search-bar" style="visibility: hidden;">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="topbar-actions">
+                <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
+                    <i class="fa-solid fa-user"></i>
+                </a>
+            </div>
+        </header>
+        <div class="dashboard-container">
+            <div class="appeal-container">
+                <div class="header">
+                    <h1><i class="fa-solid fa-check-to-slot"></i> Review Appeal</h1>
+                    <asp:LinkButton ID="btnBack" runat="server" CssClass="btn-back" OnClick="btnBack_Click"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</asp:LinkButton>
+                </div>
+
+                <asp:Label ID="lblMessage" runat="server" Visible="false"></asp:Label>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Task Information</h3>
+                        <p><strong>Title:</strong> <asp:Label ID="lblTaskTitle" runat="server"></asp:Label></p>
+                        <p><strong>Group:</strong> <asp:Label ID="lblGroupName" runat="server"></asp:Label></p>
+                        <p><strong>Status:</strong> <asp:Label ID="lblStatus" runat="server"></asp:Label></p>
+                        <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--c-text-muted);"><asp:Label ID="lblTaskDescription" runat="server"></asp:Label></p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Requirements / Feedback Given</h3>
+                        <p style="font-size: 0.85rem; color: var(--c-text-muted);"><asp:Label ID="lblRequirements" runat="server"></asp:Label></p>
+                    </div>
+                </div>
+
+                <asp:Panel ID="pnlAppeal" runat="server" CssClass="report-section">
+                    <h4><i class="fa-solid fa-user-graduate" style="color:var(--c-accent); margin-right:0.5rem;"></i> Student Appeal & Report</h4>
+                    
+                    <strong>Message / Reason:</strong>
+                    <div class="report-box"><asp:Label ID="lblReason" runat="server"></asp:Label></div>
+                    
+                    <strong>Changes Made:</strong>
+                    <div class="report-box"><asp:Label ID="lblChangesMade" runat="server"></asp:Label></div>
+                    
+                    <strong>Explanation:</strong>
+                    <div class="report-box"><asp:Label ID="lblExplanation" runat="server"></asp:Label></div>
+
+                    <div style="font-weight: 600; margin-top: 1rem;">
+                        <asp:Label ID="lblIsCompleted" runat="server"></asp:Label>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--c-text-muted); margin-top: 0.5rem;">
+                        Submitted at: <asp:Label ID="lblCreatedAt" runat="server"></asp:Label>
+                    </div>
+                </asp:Panel>
+
+                <asp:Panel ID="pnlNoAppeal" runat="server" CssClass="report-section" Visible="false">
+                    <p style="text-align:center; color:var(--c-text-muted); font-style:italic;">No appeal has been submitted for this task.</p>
+                </asp:Panel>
+
+                <div style="border-top: 1px solid var(--c-border); padding-top: 2rem;">
+                    <h4 style="margin: 0 0 1.5rem 0; font-size: 1.1rem;"><i class="fa-solid fa-gavel" style="color:var(--c-accent); margin-right:0.5rem;"></i> Your Decision</h4>
+                    
+                    <div class="form-group">
+                        <label>Update Status</label>
+                        <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control">
+                            <asp:ListItem Text="Working" Value="Working"></asp:ListItem>
+                            <asp:ListItem Text="Appealed" Value="Appealed"></asp:ListItem>
+                            <asp:ListItem Text="Completed" Value="Completed"></asp:ListItem>
+                            <asp:ListItem Text="Revision Needed" Value="Revision Needed"></asp:ListItem>
+                            <asp:ListItem Text="Failed" Value="Failed"></asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Feedback / Remarks</label>
+                        <asp:TextBox ID="txtFeedback" runat="server" TextMode="MultiLine" Rows="4" CssClass="form-control" Placeholder="Provide instructions for revision or remarks upon completion..."></asp:TextBox>
+                    </div>
+
+                    <asp:Button ID="btnSubmitDecision" runat="server" Text="Save Decision & Feedback" CssClass="btn-submit" OnClick="btnSubmitDecision_Click" />
+                </div>
+            </div>
+        </div>
+    </main>
     </form>
+    <script src='<%= ResolveUrl("~/Admin/admin.js") %>'></script>
 </body>
 </html>
-
