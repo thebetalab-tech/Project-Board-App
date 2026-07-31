@@ -223,13 +223,17 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href='<%# ResolveUrl("~/Faculty/TaskDetails.aspx?TaskId=" + Eval("TaskId")) %>' class="btn-primary" style="padding:0.3rem 0.6rem; font-size:0.75rem; text-decoration:none; margin-right:0.3rem;">
-                                                <i class="fa-solid fa-eye"></i> View
-                                            </a>
-                                            <a href='<%# ResolveUrl("~/Admin/ReviewAppeal.aspx?TaskId=" + Eval("TaskId")) %>' class="btn-primary" style="padding:0.3rem 0.6rem; font-size:0.75rem; text-decoration:none; margin-right:0.3rem; background-color: var(--c-accent);" title="Review Appeal">
-                                                <i class="fa-solid fa-gavel"></i> Appeal
-                                            </a>
-                                            <asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="btn-delete" CommandName="DeleteTask" CommandArgument='<%# Eval("TaskId") %>' OnClientClick="return confirm('Are you sure you want to delete this task?');" />
+                                            <div class="table-actions">
+                                                <a href='<%# ResolveUrl("~/Faculty/TaskDetails.aspx?TaskId=" + Eval("TaskId")) %>' class="icon-btn" title="View Details">
+                                                    <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
+                                                </a>
+                                                <a href='<%# ResolveUrl("~/Admin/ReviewAppeal.aspx?TaskId=" + Eval("TaskId")) %>' class="icon-btn" title="Review Appeal">
+                                                    <i class="fa-solid fa-gavel" style="color: var(--c-accent);"></i>
+                                                </a>
+                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn" CommandName="DeleteTask" CommandArgument='<%# Eval("TaskId") %>' OnClientClick="return confirm('Are you sure you want to delete this task?');" title="Delete Task" style="color: var(--c-red);">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </asp:LinkButton>
+                                            </div>
                                         </td>
                                     </tr>
                                 </ItemTemplate>

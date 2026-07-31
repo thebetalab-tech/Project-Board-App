@@ -210,12 +210,14 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href='<%# ResolveUrl("~/Faculty/TaskDetails.aspx?TaskId=" + Eval("TaskId")) %>' class="btn-primary" style="padding:0.3rem 0.7rem; font-size:0.8rem; text-decoration:none;">
-                                                <i class="fa-solid fa-eye"></i> Details
-                                            </a>
-                                            <a href='<%# ResolveUrl("~/Faculty/ReviewAppeal.aspx?TaskId=" + Eval("TaskId")) %>' class="btn-primary" style="padding:0.3rem 0.7rem; font-size:0.8rem; text-decoration:none; background-color: var(--c-accent); margin-left: 0.5rem;" title="Review Appeal">
-                                                <i class="fa-solid fa-gavel"></i> Review Appeal
-                                            </a>
+                                            <div class="table-actions">
+                                                <a href='<%# ResolveUrl("~/Faculty/TaskDetails.aspx?TaskId=" + Eval("TaskId")) %>' class="icon-btn" title="View Details">
+                                                    <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
+                                                </a>
+                                                <a href='<%# ResolveUrl("~/Faculty/ReviewAppeal.aspx?TaskId=" + Eval("TaskId")) %>' class="icon-btn" title="Review Appeal">
+                                                    <i class="fa-solid fa-gavel" style="color: var(--c-accent);"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 </ItemTemplate>
