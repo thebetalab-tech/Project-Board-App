@@ -8,8 +8,8 @@
     <!-- Vector Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Inherit the premium editorial theme -->
-    <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
-    <link runat="server" rel="stylesheet" href="~/User/profile.css?v=20260723" />
+    <link  rel="stylesheet" href="../Admin/admin.css" />
+    <link  rel="stylesheet" href="../User/profile.css?v=20260723" />
 </head>
 <body>
     <form id="form1" runat="server">

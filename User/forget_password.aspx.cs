@@ -15,8 +15,8 @@ namespace Project_Board.User
             ?? ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"]?.ConnectionString;
 
         // Gmail credentials for sending verification emails
-        private const string SMTP_EMAIL = "thebetalab.net@gmail.com";
-        private const string SMTP_APP_PASSWORD = "sfma_pkyj_nitw_bnvn";
+        private static string SMTP_EMAIL => ConfigurationManager.AppSettings["SmtpEmail"];
+        private static string SMTP_APP_PASSWORD => ConfigurationManager.AppSettings["SmtpPassword"];
         private const string SMTP_DISPLAY_NAME = "Project Board";
 
         protected void Page_Load(object sender, EventArgs e)

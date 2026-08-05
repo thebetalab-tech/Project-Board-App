@@ -11,9 +11,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Premium editorial theme -->
-    <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
+    <link  rel="stylesheet" href="../Admin/admin.css" />
     <!-- Forget password specific style -->
-    <link runat="server" rel="stylesheet" href="~/User/forget_password.css?v=2" />
+    <link  rel="stylesheet" href="../User/forget_password.css?v=2" />
     <style>
         html, body {
             height: 100% !important;

@@ -13,8 +13,8 @@ namespace Project_Board
     public partial class SignUp : Page
     {
         // Gmail credentials for sending verification emails (same as forget_password)
-        private const string SMTP_EMAIL = "thebetalab.net@gmail.com";
-        private const string SMTP_APP_PASSWORD = "sfma_pkyj_nitw_bnvn";
+        private static string SMTP_EMAIL => ConfigurationManager.AppSettings["SmtpEmail"];
+        private static string SMTP_APP_PASSWORD => ConfigurationManager.AppSettings["SmtpPassword"];
         private const string SMTP_DISPLAY_NAME = "Project Board";
 
         protected void Page_Load(object sender, EventArgs e)
