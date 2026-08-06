@@ -211,40 +211,30 @@ document.addEventListener('input', (e) => {
    ============================================ */
 function initFormValidation() {
     const form = document.getElementById('loginForm') || document.getElementById('signupForm');
-    
-    // Clear error states on input for any input field
-    const inputGroups = document.querySelectorAll('.input-group');
-    inputGroups.forEach(group => {
-        const input = group.querySelector('input');
-        const errLabel = group.querySelector('.field-error-text');
-        if (input) {
-            input.addEventListener('input', () => {
-                group.classList.remove('error');
-                if (errLabel) {
-                    errLabel.textContent = '';
-                }
-            });
-        }
-    });
+    const loginBtn = document.getElementById('loginBtn');
 
-    // Real-time Full Name validation (letters and spaces only)
-    const fullNameInput = document.getElementById('fullName');
-    const nameGroup = document.getElementById('nameGroup');
-    if (fullNameInput && nameGroup) {
-        const nameErrorLabel = nameGroup.querySelector('.field-error-text');
-        fullNameInput.addEventListener('input', () => {
-            const val = fullNameInput.value;
-            if (val && !/^[a-zA-Z\s'-]*$/.test(val)) {
-                nameGroup.classList.add('error');
-                if (nameErrorLabel) {
-                    nameErrorLabel.textContent = 'Full Name can only contain letters and spaces.';
-                }
-            } else {
-                nameGroup.classList.remove('error');
-                if (nameErrorLabel && nameErrorLabel.textContent === 'Full Name can only contain letters and spaces.') {
-                    nameErrorLabel.textContent = '';
-                }
-            }
+    // Support both Default.aspx (txtLoginID, txtPassword) and SignUp.aspx (loginId, password)
+    const loginIdInput = document.getElementById('loginId') || document.getElementById('txtLoginID');
+    const passwordInput = document.getElementById('password') || document.getElementById('txtPassword');
+    const emailGroup = document.getElementById('emailGroup');
+    const passwordGroup = document.getElementById('passwordGroup');
+
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            // Let ASP.NET handle the submit if it's an asp:LinkButton
+            // e.preventDefault(); 
+        });
+    }
+
+    if (loginIdInput && emailGroup) {
+        loginIdInput.addEventListener('input', () => {
+            emailGroup.classList.remove('error');
+        });
+    }
+
+    if (passwordInput && passwordGroup) {
+        passwordInput.addEventListener('input', () => {
+            passwordGroup.classList.remove('error');
         });
     }
 }

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Appeal.aspx.cs" Inherits="Project_Board.Student.Appeal" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Appeal.aspx.cs" Inherits="Project_Board.Student.Appeal" %>
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Appeal - Project Board</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
+    <link  rel="stylesheet" href="../Admin/admin.css" />
     <style>
         .appeal-container {
             width: 100%;

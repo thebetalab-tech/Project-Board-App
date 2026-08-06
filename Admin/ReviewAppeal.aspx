@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ReviewAppeal.aspx.cs" Inherits="Project_Board.Admin.ReviewAppeal" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ReviewAppeal.aspx.cs" Inherits="Project_Board.Admin.ReviewAppeal" %>
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Appeal - Project Board</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
+    <link  rel="stylesheet" href="../Admin/admin.css" />
     <style>
         .appeal-container {
             width: 100%;

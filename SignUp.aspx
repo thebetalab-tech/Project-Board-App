@@ -57,6 +57,8 @@
                     </div>
 
                     <form id="signupForm" runat="server" class="login-form" autocomplete="off">
+                        <asp:Label ID="lblMessage" runat="server" EnableViewState="false" CssClass="form-message">
+                        </asp:Label>
 
                         <!-- Signup Form Fields -->
                         <asp:Panel ID="pnlSignupForm" runat="server">
@@ -71,7 +73,7 @@
                                     <asp:TextBox ID="fullName" runat="server" ClientIDMode="Static"
                                         placeholder="Enter your full name" required="required"></asp:TextBox>
                                 </div>
-                                <asp:Label ID="lblFullNameError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
+                                <asp:Label ID="lblFullNameError" runat="server" ForeColor="#ff4d4d" CssClass="error-message" EnableViewState="false" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></asp:Label>
                             </div>
 
                             <div class="input-group" id="emailGroup">
@@ -85,7 +87,7 @@
                                     <asp:TextBox ID="loginId" runat="server" ClientIDMode="Static" TextMode="Email"
                                         placeholder="Enter your email" required="required"></asp:TextBox>
                                 </div>
-                                <asp:Label ID="lblEmailError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
+                                <asp:Label ID="lblEmailError" runat="server" ForeColor="#ff4d4d" CssClass="error-message" EnableViewState="false" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></asp:Label>
                             </div>
 
                             <div class="input-group" id="enrollmentGroup">
@@ -100,7 +102,7 @@
                                     <asp:TextBox ID="enrollment" runat="server" ClientIDMode="Static"
                                         placeholder="Enter your enrollment number" required="required"></asp:TextBox>
                                 </div>
-                                <asp:Label ID="lblEnrollmentError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
+                                <asp:Label ID="lblEnrollmentError" runat="server" ForeColor="#ff4d4d" CssClass="error-message" EnableViewState="false" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></asp:Label>
                             </div>
 
                             <div class="input-group" id="passwordGroup">
@@ -128,7 +130,6 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <asp:Label ID="lblPasswordError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
                                 <div class="password-strength" id="passwordStrength">
                                     <div class="strength-bars">
                                         <span class="strength-bar" data-index="0"></span>
@@ -145,6 +146,7 @@
                                         <li data-req="special"><span class="req-icon"></span>One special character (!@#$...)</li>
                                     </ul>
                                 </div>
+                                <asp:Label ID="lblPasswordError" runat="server" ForeColor="#ff4d4d" CssClass="error-message" EnableViewState="false" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></asp:Label>
                             </div>
 
                             <div class="input-group" id="confirmPasswordGroup">
@@ -173,11 +175,8 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <asp:Label ID="lblConfirmPasswordError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
+                                <asp:Label ID="lblConfirmPasswordError" runat="server" ForeColor="#ff4d4d" CssClass="error-message" EnableViewState="false" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></asp:Label>
                             </div>
-
-                            <asp:Label ID="lblMessage" runat="server" EnableViewState="false" CssClass="form-message" style="margin-top: 8px;">
-                            </asp:Label>
 
                             <asp:LinkButton ID="loginBtn" runat="server" ClientIDMode="Static" CssClass="login-btn"
                                 OnClick="loginBtn_Click" style="margin-top: 10px;">
@@ -207,21 +206,17 @@
                             </div>
 
                             <div class="input-group" id="codeGroup">
-                                <label class="input-label">Verification Code</label>
-                                <div class="otp-boxes" id="otpBoxes">
-                                    <input type="text" class="otp-box" data-index="0" maxlength="1" inputmode="numeric" autocomplete="one-time-code" />
-                                    <input type="text" class="otp-box" data-index="1" maxlength="1" inputmode="numeric" />
-                                    <input type="text" class="otp-box" data-index="2" maxlength="1" inputmode="numeric" />
-                                    <input type="text" class="otp-box" data-index="3" maxlength="1" inputmode="numeric" />
-                                    <input type="text" class="otp-box" data-index="4" maxlength="1" inputmode="numeric" />
-                                    <input type="text" class="otp-box" data-index="5" maxlength="1" inputmode="numeric" />
+                                <label for="txtVerifyCode" class="input-label">Verification Code</label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                    </svg>
+                                    <asp:TextBox ID="txtVerifyCode" runat="server" ClientIDMode="Static"
+                                        CssClass="verify-code-input"
+                                        placeholder="Enter 6-digit code" MaxLength="6"></asp:TextBox>
                                 </div>
-<<<<<<< HEAD
-                                <asp:Label ID="lblCodeError" runat="server" CssClass="field-error-text" EnableViewState="false"></asp:Label>
-=======
-                                <asp:TextBox ID="txtVerifyCode" runat="server" ClientIDMode="Static"
-                                    CssClass="verify-code-input" MaxLength="6" style="display:none;"></asp:TextBox>
->>>>>>> ceac607c0293506ce353557ac60ed8dc93063518
                                 <span class="verify-hint">Enter the 6-digit code sent to your email</span>
                             </div>
 
@@ -278,82 +273,6 @@
 
         <script src="Scripts/main/login-signup.js?v=20260723_v3"></script>
         <script>
-            // OTP Boxes Logic
-            (function () {
-                var boxes = document.querySelectorAll('.otp-box');
-                var hiddenField = document.getElementById('txtVerifyCode');
-                var submitBtn = document.getElementById('btnVerifyAndRegister');
-                var autoSubmitted = false;
-
-                if (!boxes.length || !hiddenField || !submitBtn) return;
-
-                function syncHiddenField() {
-                    var code = '';
-                    boxes.forEach(function (b) { code += b.value; });
-                    hiddenField.value = code;
-                    return code;
-                }
-
-                function tryAutoSubmit() {
-                    var code = syncHiddenField();
-                    if (code.length === 6 && /^\d{6}$/.test(code) && !autoSubmitted) {
-                        autoSubmitted = true;
-                        // Brief visual feedback before submitting
-                        boxes.forEach(function (b) { b.classList.add('otp-box--filled'); });
-                        setTimeout(function () {
-                            submitBtn.click();
-                        }, 300);
-                    }
-                }
-
-                boxes.forEach(function (box, idx) {
-                    // Only allow digits
-                    box.addEventListener('input', function (e) {
-                        var val = this.value.replace(/[^0-9]/g, '');
-                        this.value = val.charAt(0) || '';
-                        if (this.value && idx < 5) {
-                            boxes[idx + 1].focus();
-                        }
-                        tryAutoSubmit();
-                    });
-
-                    // Handle backspace navigation
-                    box.addEventListener('keydown', function (e) {
-                        if (e.key === 'Backspace') {
-                            if (!this.value && idx > 0) {
-                                boxes[idx - 1].focus();
-                                boxes[idx - 1].value = '';
-                                syncHiddenField();
-                            }
-                        } else if (e.key === 'ArrowLeft' && idx > 0) {
-                            boxes[idx - 1].focus();
-                        } else if (e.key === 'ArrowRight' && idx < 5) {
-                            boxes[idx + 1].focus();
-                        }
-                    });
-
-                    // Handle paste across all boxes
-                    box.addEventListener('paste', function (e) {
-                        e.preventDefault();
-                        var pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '').substring(0, 6);
-                        for (var i = 0; i < pasted.length && i < 6; i++) {
-                            boxes[i].value = pasted[i];
-                        }
-                        var focusIdx = Math.min(pasted.length, 5);
-                        boxes[focusIdx].focus();
-                        tryAutoSubmit();
-                    });
-
-                    // Select content on focus for easy overwrite
-                    box.addEventListener('focus', function () {
-                        this.select();
-                    });
-                });
-
-                // Auto-focus the first box
-                boxes[0].focus();
-            })();
-
             // OTP Resend Timer
             (function () {
                 var COOLDOWN = 60; // seconds
@@ -361,7 +280,7 @@
                 var countdownEl = document.getElementById('resendCountdown');
                 var resendBtn = document.getElementById('btnResendOtp');
 
-                if (!timerSpan || !countdownEl || !resendBtn) return;
+                if (!timerSpan || !countdownEl || !resendBtn) return; // not on verify panel
 
                 var remaining = COOLDOWN;
 

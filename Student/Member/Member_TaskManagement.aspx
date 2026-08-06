@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Dashboard - My Task Workspace</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link runat="server" rel="stylesheet" href="~/Admin/admin.css" />
+    <link  rel="stylesheet" href="../../Admin/admin.css" />
     <style>
         .badge-status {
             display: inline-flex;

@@ -40,7 +40,7 @@
             <p>We are sorry, but an unexpected error occurred while processing your request.</p>
             <p>Our team has been notified, and we are working to fix it.</p>
             <br />
-            <a href="Default.aspx">Return to Homepage</a>
+            <a href="<%= ResolveUrl("~/Default.aspx") %>">Return to Homepage</a>
         </div>
     </form>
 </body>

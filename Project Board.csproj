@@ -112,6 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Admin\admin.css" />
+    <Content Include="User\profile.css" />
+    <Content Include="User\forget_password.css" />
+    <Content Include="Student\Leader\Task\TaskManagement.aspx" />
     <Content Include="Admin\admin.js" />
     <Content Include="Admin\Admin_Dashboard.aspx" />
     <Content Include="Admin\Admin_GroupsManagement.aspx" />
@@ -505,6 +508,13 @@
     </Compile>
     <Compile Include="Student\Leader\ReviewAppeal.aspx.designer.cs">
       <DependentUpon>ReviewAppeal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Leader\Task\TaskManagement.aspx.cs">
+      <DependentUpon>TaskManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Leader\Task\TaskManagement.aspx.designer.cs">
+      <DependentUpon>TaskManagement.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

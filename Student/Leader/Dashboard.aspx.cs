@@ -58,19 +58,23 @@ namespace Project_Board.Student.Leader
         private void LoadDashboardData()
         {
             int leaderId = Convert.ToInt32(Session["UserId"]);
+            int groupId = 0;
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 string query = @"
-                    SELECT g.GroupName, t.TechName, g.GroupId, g.MemberNeeded
+                    SELECT g.GroupName, t.TechName, g.GroupId, g.MemberNeeded,
+                           m.FullName AS MentorName, m.Email AS MentorEmail,
+                           g.Status AS GroupStatus
                     FROM Groups g
                     LEFT JOIN Technologies t ON g.TechId = t.TechId
                     LEFT JOIN Users m ON g.MentorId = m.UserId
                     WHERE g.LeaderId = @LeaderId";
 
-                using (SqlCommand cmd = new SqlCommand(groupQuery, conn))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@LeaderId", leaderId);
+                    conn.Open();
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
@@ -78,7 +82,7 @@ namespace Project_Board.Student.Leader
                             groupId = Convert.ToInt32(reader["GroupId"]);
                             GroupName = reader["GroupName"].ToString();
                             TechName = reader["TechName"] != DBNull.Value ? reader["TechName"].ToString() : "Not Assigned";
-                            int groupId = Convert.ToInt32(reader["GroupId"]);
+                            GroupStatus = reader["GroupStatus"] != DBNull.Value ? reader["GroupStatus"].ToString() : "Forming";
                             
                             if (reader["MemberNeeded"] != DBNull.Value)
                             {
@@ -143,8 +147,6 @@ namespace Project_Board.Student.Leader
 
                                 if (dueDate.HasValue && dueDate.Value < DateTime.Now && st != "Completed") OverdueTasks++;
                             }
-                            
-                            reader.Close();
                             
                             // Get Stats
                             string statsQuery = @"
