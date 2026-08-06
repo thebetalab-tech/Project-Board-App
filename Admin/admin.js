@@ -91,4 +91,62 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.appendChild(table);
         }
     });
+
+    // Profile Dropdown Toggle
+    const profileTrigger = document.querySelector('.profile-trigger');
+    const profileDropdown = document.querySelector('.profile-dropdown');
+    
+    if (profileTrigger && profileDropdown) {
+        profileTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileTrigger.classList.toggle('active');
+            profileDropdown.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!profileTrigger.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileTrigger.classList.remove('active');
+                profileDropdown.classList.remove('show');
+            }
+        });
+    }
 });
+
+// Generic Password Show/Hide Toggle Logic (for Admin/Profile pages)
+document.addEventListener('click', (e) => {
+    const toggleBtn = e.target.closest('.password-toggle');
+    if (toggleBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const wrapper = toggleBtn.closest('.input-wrapper') || toggleBtn.parentElement;
+        if (!wrapper) return;
+
+        const input = wrapper.querySelector('input');
+        if (!input) return;
+
+        const eyeOpen = toggleBtn.querySelector('.eye-open');
+        const eyeClosed = toggleBtn.querySelector('.eye-closed');
+
+        const currentType = input.getAttribute('type') || input.type;
+        const isPassword = currentType === 'password';
+
+        if (isPassword) {
+            input.type = 'text';
+            input.setAttribute('type', 'text');
+            if (eyeOpen) eyeOpen.style.display = 'none';
+            if (eyeClosed) eyeClosed.style.display = 'block';
+        } else {
+            input.type = 'password';
+            input.setAttribute('type', 'password');
+            if (eyeOpen) eyeOpen.style.display = 'block';
+            if (eyeClosed) eyeClosed.style.display = 'none';
+        }
+
+        toggleBtn.style.transform = 'translateY(-50%) scale(0.8)';
+        setTimeout(() => {
+            toggleBtn.style.transform = '';
+        }, 150);
+    }
+});
+

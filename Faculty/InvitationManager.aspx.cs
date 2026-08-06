@@ -80,22 +80,8 @@ namespace Project_Board.Faculty
                 }
                 else if (e.CommandName == "Reject")
                 {
-                    string update = "UPDATE Groups SET MentorId = NULL, Status = 'Forming' WHERE GroupId = @GroupId";
-                    using (SqlCommand cmd = new SqlCommand(update, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@GroupId", groupId);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    // Log rejection
-                    string reject = "INSERT INTO GroupMentorRejections (GroupId, FacultyId) VALUES (@GroupId, @FacultyId)";
-                    using (SqlCommand cmd = new SqlCommand(reject, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@GroupId", groupId);
-                        cmd.Parameters.AddWithValue("@FacultyId", facultyId);
-                        cmd.ExecuteNonQuery();
-                    }
-                    ShowMessage("Mentor request rejected.", false);
+                    Response.Redirect($"~/Faculty/RejectionForm.aspx?type=Group&id={groupId}");
+                    return;
                 }
 
                 // Send email to Leader (Scenario 8)

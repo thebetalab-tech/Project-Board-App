@@ -90,6 +90,12 @@ namespace Project_Board.Faculty
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 conn.Open();
+                if (e.CommandName == "Reject")
+                {
+                    Response.Redirect($"~/Faculty/RejectionForm.aspx?type=Project&id={projectId}");
+                    return;
+                }
+
                 string newStatus = e.CommandName == "Approve" ? "Approved" : "Rejected";
                 
                 string update = "UPDATE Projects SET Status = @Status WHERE ProjectId = @ProjectId";

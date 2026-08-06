@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Appeal - Project Board</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link  rel="stylesheet" href="../Admin/admin.css" />
+    <link  rel="stylesheet" href="../Admin/admin.css?v=latest_v3" />
     <style>
         .appeal-container {
             width: 100%;
@@ -111,6 +111,8 @@
             color: var(--c-text);
         }
 
+        textarea.form-control { resize: vertical; max-width: 100%; }
+
         .form-control {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -147,7 +149,7 @@
             justify-content: center;
         }
 
-        .btn-submit:hover { background-color: var(--c-accent-hover); }
+        .btn-submit:hover { background-color: var(--c-accent-light); }
 
         .alert {
             padding: 1rem;
@@ -258,11 +260,26 @@
                 <i class="fa-solid fa-search"></i>
                 <input type="text" placeholder="Search...">
             </div>
-            <div class="topbar-actions">
-                <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
-                    <i class="fa-solid fa-user"></i>
-                </a>
-            </div>
+                                <div class="topbar-actions">
+                        <a href="<%= ResolveUrl("~/User/Notifications.aspx") %>" class="notification-btn" title="Notifications">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="notification-badge">0</span>
+                        </a>
+                        <div class="profile-menu-container">
+                            <div class="profile-trigger">
+                                <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
+                                <div class="profile-greeting">
+                                    <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
+                                </div>
+                                <i class="fa-solid fa-chevron-down profile-arrow"></i>
+                            </div>
+                            <div class="profile-dropdown">
+                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-regular fa-user"></i> My Profile</a>
+                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> Change Password</a>
+                                <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
         </header>
         <div class="dashboard-container">
             <div class="appeal-container">
@@ -337,6 +354,6 @@
         </div>
     </main>
     </form>
-    <script src='<%= ResolveUrl("~/Admin/admin.js") %>'></script>
+    <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
 </body>
 </html>

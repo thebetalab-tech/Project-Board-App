@@ -8,7 +8,7 @@
     <!-- Vector Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Inherit the premium editorial theme -->
-    <link  rel="stylesheet" href="Admin/admin.css" />
+    <link  rel="stylesheet" href="Admin/admin.css?v=latest_v3" />
     <link  rel="stylesheet" href="User/profile.css?v=20260723" />
     <style>
         .onboarding-option-card {

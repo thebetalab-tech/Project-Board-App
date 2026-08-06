@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Join a Group — Project Board</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link  rel="stylesheet" href="Admin/admin.css" />
+        <link  rel="stylesheet" href="Admin/admin.css?v=latest_v3" />
     </head>
 
     <body>
@@ -68,9 +68,6 @@
                         <input type="text" placeholder="Search...">
                     </div>
                     <div class="topbar-actions">
-                        <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="action-btn" title="Profile">
-                            <i class="fa-solid fa-user"></i>
-                        </a>
                     </div>
                 </div>
 

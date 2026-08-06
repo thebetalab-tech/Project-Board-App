@@ -145,7 +145,11 @@ namespace Project_Board.Faculty
 
         protected void btnRejectCompletion_Click(object sender, EventArgs e)
         {
-            UpdateTaskStatus("Revision Needed", "Task marked as revision needed.");
+            string idStr = Request.QueryString["TaskId"];
+            if (!string.IsNullOrEmpty(idStr))
+            {
+                Response.Redirect($"~/Faculty/RejectionForm.aspx?type=Task&id={idStr}");
+            }
         }
 
         protected void btnAcceptAppeal_Click(object sender, EventArgs e)
@@ -155,7 +159,11 @@ namespace Project_Board.Faculty
 
         protected void btnRejectAppeal_Click(object sender, EventArgs e)
         {
-            ReviewAppeal("Rejected", "Appeal rejected and task marked as revision needed.");
+            string idStr = Request.QueryString["TaskId"];
+            if (!string.IsNullOrEmpty(idStr))
+            {
+                Response.Redirect($"~/Faculty/RejectionForm.aspx?type=Appeal&id={idStr}");
+            }
         }
 
         private void UpdateTaskStatus(string status, string message)

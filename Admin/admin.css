@@ -721,6 +721,11 @@ tbody tr:hover {
     font-size: 0.875rem;
 }
 
+textarea.form-control {
+    resize: vertical;
+    max-width: 100%;
+}
+
 .form-control {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -892,4 +897,134 @@ tbody tr:hover {
     display: flex;
     width: 100%;
     min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   PROFILE DROPDOWN & NOTIFICATIONS
+   -------------------------------------------------------------------------- */
+.topbar-actions {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Notification Bell */
+.notification-btn {
+    position: relative;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--c-text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+.notification-btn:hover {
+    color: var(--c-accent);
+}
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--c-accent);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid var(--c-bg);
+}
+
+/* Profile Dropdown */
+.profile-menu-container {
+    position: relative;
+}
+
+.profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.profile-trigger:hover {
+    background: var(--c-bg-elevated);
+}
+
+.profile-trigger .avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+}
+
+.profile-greeting {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--c-text);
+}
+.profile-greeting span {
+    color: var(--c-text-muted);
+    font-weight: 400;
+}
+.profile-arrow {
+    color: var(--c-text-muted);
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+.profile-trigger.active .profile-arrow {
+    transform: rotate(180deg);
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    width: 220px;
+    background: #2d3748; /* Dark UI like screenshot */
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: var(--transition);
+    z-index: 100;
+    overflow: hidden;
+}
+.profile-menu-container:hover .profile-dropdown,
+.profile-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.profile-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #e2e8f0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.2s ease;
+}
+.profile-dropdown a i {
+    color: #63b3ed; /* Light blue icons like screenshot */
+    width: 16px;
+    text-align: center;
+}
+.profile-dropdown a:hover {
+    background: #4a5568;
 }
