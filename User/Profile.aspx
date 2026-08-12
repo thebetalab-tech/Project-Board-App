@@ -115,5 +115,6 @@
 
         </div>
     </form>
+    <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v3") %>'></script>
 </body>
 </html>

@@ -94,32 +94,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
-                    
-                    <% if (Session["Role"]?.ToString() == "Admin") { %>
-                        <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-                        <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link"><i class="fa-solid fa-users"></i> Users</a>
-                        <a href='<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>' class="nav-link"><i class="fa-solid fa-microchip"></i> Technologies</a>
-                        <a href='<%= ResolveUrl("~/Admin/Admin_GroupsManagement.aspx") %>' class="nav-link"><i class="fa-solid fa-user-group"></i> Groups</a>
-                        <a href='<%= ResolveUrl("~/Admin/Admin_ProjectsManagement.aspx") %>' class="nav-link"><i class="fa-solid fa-folder-tree"></i> Projects</a>
-                    
-                    <% } else if (Session["Role"]?.ToString() == "Faculty") { %>
-                        <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-                        <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class="nav-link"><i class="fa-solid fa-users-gear"></i> Groups</a>
-                        <a href='<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>' class="nav-link"><i class="fa-solid fa-folder-tree"></i> Projects</a>
-                        <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class="nav-link"><i class="fa-solid fa-envelope"></i> Mentor Requests</a>
-                    
-                    <% } else if (Session["Role"]?.ToString() == "Leader") { %>
-                        <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class="nav-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
-                        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class="nav-link"><i class="fa-solid fa-users"></i> Team Members</a>
-                        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Project.aspx") %>' class="nav-link"><i class="fa-solid fa-folder-open"></i> Project</a>
-                        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>' class="nav-link"><i class="fa-solid fa-chalkboard-user"></i> Mentor Request</a>
-                    
-                    <% } else if (Session["Role"]?.ToString() == "Member") { %>
-                        <a href='<%= ResolveUrl("~/Student/Member/Dashboard.aspx") %>' class="nav-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
-                        <a href='<%= ResolveUrl("~/Student/Member/Member_Team.aspx") %>' class="nav-link"><i class="fa-solid fa-users"></i> My Team</a>
-                        <a href='<%= ResolveUrl("~/Student/Member/Member_Project.aspx") %>' class="nav-link"><i class="fa-solid fa-folder-open"></i> Project</a>
-                    <% } %>
-                    
+                        <a href='<%= ResolveUrl("~/Default.aspx") %>' class="nav-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>

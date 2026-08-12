@@ -217,6 +217,7 @@
                                         CssClass="verify-code-input"
                                         placeholder="Enter 6-digit code" MaxLength="6"></asp:TextBox>
                                 </div>
+                                <asp:Label ID="lblCodeError" runat="server" ForeColor="#ff4d4d" CssClass="error-message" EnableViewState="false" style="font-size: 0.85rem; margin-top: 0.25rem; display: block;"></asp:Label>
                                 <span class="verify-hint">Enter the 6-digit code sent to your email</span>
                             </div>
 
