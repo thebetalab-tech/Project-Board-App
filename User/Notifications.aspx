@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>My Notifications - Project Board</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../Admin/admin.css?v=latest_v3" />
@@ -93,7 +93,8 @@
             </div>
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <div class="nav-section-title">Main Menu</div>
+                    <div class="nav-section-title">Main Menu</div
+                        >
                         <a href='<%= ResolveUrl("~/Default.aspx") %>' class="nav-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
                 </div>
                 <div class="nav-section">
