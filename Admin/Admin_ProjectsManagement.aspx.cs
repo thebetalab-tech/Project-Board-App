@@ -37,6 +37,7 @@ namespace Project_Board.Admin
         private void LoadProjects()
         {
             if (string.IsNullOrEmpty(connString)) return;
+            string filter = ddlReportFilter.SelectedValue;
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
@@ -54,11 +55,21 @@ namespace Project_Board.Admin
                             FOR XML PATH('')
                         ) AS KeywordHtml
                     FROM Projects p
-                    JOIN Groups g ON p.GroupId = g.GroupId
-                    ORDER BY p.SubmittedAt DESC";
+                    JOIN Groups g ON p.GroupId = g.GroupId";
+                
+                if (filter != "All")
+                {
+                    query += " WHERE p.Status = @Status";
+                }
+                
+                query += " ORDER BY p.SubmittedAt DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
+                    if (filter != "All")
+                    {
+                        cmd.Parameters.AddWithValue("@Status", filter);
+                    }
                     try
                     {
                         conn.Open();
@@ -74,6 +85,11 @@ namespace Project_Board.Admin
                     }
                 }
             }
+        }
+
+        protected void ddlReportFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadProjects();
         }
 
         protected void rptProjects_ItemCommand(object source, RepeaterCommandEventArgs e)
@@ -110,6 +126,51 @@ namespace Project_Board.Admin
                         {
                             System.Diagnostics.Debug.WriteLine("Error updating project status: " + ex.Message);
                         }
+                    }
+                }
+            }
+        }
+
+        protected void btnExportReport_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(connString)) return;
+            string filter = ddlReportFilter.SelectedValue;
+            
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string query = @"
+                    SELECT 
+                        p.ProjectTitle AS [Project Title],
+                        p.Functionality AS [Functionality],
+                        g.GroupName AS [Group Name],
+                        p.Status AS [Status],
+                        p.CreatedAt AS [Submitted On]
+                    FROM Projects p
+                    LEFT JOIN Groups g ON p.GroupId = g.GroupId";
+
+                if (filter != "All")
+                {
+                    query += " WHERE p.Status = @Status";
+                }
+                
+                query += " ORDER BY p.CreatedAt DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    if (filter != "All")
+                    {
+                        cmd.Parameters.AddWithValue("@Status", filter);
+                    }
+                    
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        string userName = Session["FullName"]?.ToString() ?? "Admin";
+                        string userEmail = Session["Email"]?.ToString() ?? "admin@example.com";
+                        
+                        Project_Board.Services.ReportService.GeneratePdfReport("Projects Management Report", dt, userName, userEmail, "Status: " + filter, Response);
                     }
                 }
             }

@@ -140,6 +140,7 @@ namespace Project_Board.Faculty
             }
 
             DataTable dt = new DataTable();
+            string filter = ddlReportFilter.SelectedValue;
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
@@ -151,13 +152,24 @@ namespace Project_Board.Faculty
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
                     WHERE g.MentorId = @FacultyId
-                      AND (@GroupId = 0 OR t.GroupId = @GroupId)
-                    ORDER BY t.CreatedAt DESC";
+                      AND (@GroupId = 0 OR t.GroupId = @GroupId)";
+                
+                if (filter != "All")
+                {
+                    query += " AND t.Status = @Status";
+                }
+                
+                query += " ORDER BY t.CreatedAt DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@FacultyId", facultyId);
                     cmd.Parameters.AddWithValue("@GroupId", selectedGroupId);
+                    if (filter != "All")
+                    {
+                        cmd.Parameters.AddWithValue("@Status", filter);
+                    }
+                    
                     conn.Open();
                     using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                     {
@@ -169,6 +181,11 @@ namespace Project_Board.Faculty
             rptTasks.DataSource = dt;
             rptTasks.DataBind();
             lblNoTasks.Visible = dt.Rows.Count == 0;
+        }
+
+        protected void ddlReportFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadTasks();
         }
 
         protected void btnCreateTask_Click(object sender, EventArgs e)
@@ -288,6 +305,61 @@ namespace Project_Board.Faculty
             txtDueDate.Text = "";
 
             LoadTasks();
+        }
+
+        protected void btnExportReport_Click(object sender, EventArgs e)
+        {
+            int facultyId = Convert.ToInt32(Session["UserId"]);
+            string filter = ddlReportFilter.SelectedValue;
+            
+            int selectedGroupId = 0;
+            if (ddlFilterGroup != null && int.TryParse(ddlFilterGroup.SelectedValue, out int gid))
+            {
+                selectedGroupId = gid;
+            }
+
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                string query = @"
+                    SELECT 
+                        t.TaskTitle AS [Task Title],
+                        g.GroupName AS [Group Name],
+                        uTo.FullName AS [Assigned To],
+                        t.DueDate AS [Due Date],
+                        t.Status AS [Status]
+                    FROM Task t
+                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                    WHERE g.MentorId = @FacultyId
+                      AND (@GroupId = 0 OR t.GroupId = @GroupId)";
+
+                if (filter != "All")
+                {
+                    if (filter == "Completed") query += " AND t.Status = 'Completed'";
+                    else if (filter == "In Progress") query += " AND (t.Status = 'Working' OR t.Status = 'Pending')";
+                    else if (filter == "Appealed") query += " AND t.Status = 'Appealed'";
+                }
+                
+                query += " ORDER BY t.CreatedAt DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                    cmd.Parameters.AddWithValue("@GroupId", selectedGroupId);
+                    
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        string userName = Session["FullName"]?.ToString() ?? "Faculty";
+                        string userEmail = Session["Email"]?.ToString() ?? "faculty@example.com";
+                        string groupFilterStr = selectedGroupId == 0 ? "All Groups" : ddlFilterGroup.SelectedItem.Text;
+                        
+                        Project_Board.Services.ReportService.GeneratePdfReport("Mentored Group Tasks", dt, userName, userEmail, $"Group: {groupFilterStr}, Status: {filter}", Response);
+                    }
+                }
+            }
         }
     }
 }

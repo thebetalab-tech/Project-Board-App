@@ -169,7 +169,7 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <% string currentRole = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? ""; %>
+    <% string currentRole = Convert.ToString(Session["Role"] ?? Session["UserRole"]); %>
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
@@ -231,10 +231,10 @@
 
         <div class="sidebar-footer">
             <div class="user-profile">
-                <div class="avatar"><%= (Session["FullName"]?.ToString() ?? "U").Substring(0, 1).ToUpper() %></div>
+                <div class="avatar"><%= (Session["FullName"] != null ? Session["FullName"].ToString() : "U").Substring(0, 1).ToUpper() %></div>
                 <div class="user-info">
-                    <h4><%= Session["FullName"]?.ToString() ?? "User" %></h4>
-                    <p><%= Session["Email"]?.ToString() ?? "user@example.com" %></p>
+                    <h4><%= Session["FullName"] != null ? Session["FullName"].ToString() : "User" %></h4>
+                    <p><%= Session["Email"] != null ? Session["Email"].ToString() : "user@example.com" %></p>
                 </div>
             </div>
         </div>

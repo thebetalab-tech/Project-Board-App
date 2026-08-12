@@ -28,6 +28,9 @@ namespace Project_Board.Admin
         /// </summary>
         protected global::System.Web.UI.WebControls.Repeater rptUsers;
 
+        protected global::System.Web.UI.WebControls.DropDownList ddlReportFilter;
+        protected global::System.Web.UI.WebControls.LinkButton btnExportReport;
+
         /// <summary>
         /// txtFullName control.
         /// </summary>

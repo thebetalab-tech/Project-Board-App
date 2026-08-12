@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Board - Group Management</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Premium editorial theme -->
@@ -98,8 +98,13 @@
                 </div>
                 
                                 <div class="data-section">
-                    <div class="section-header">
+                    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <h2>Actively Mentored Groups</h2>
+                        <div style="display:flex; gap: 10px; align-items:center;">
+                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
+                                <i class="fa-solid fa-file-export"></i> Export Report
+                            </asp:LinkButton>
+                        </div>
                     </div>
                     
                     <div class="table-responsive">

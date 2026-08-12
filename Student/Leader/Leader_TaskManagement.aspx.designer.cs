@@ -48,5 +48,7 @@ namespace Project_Board.Student.Leader
         protected global::System.Web.UI.WebControls.DropDownList ddlLeaderStatusUpdate;
         protected global::System.Web.UI.WebControls.TextBox txtLeaderFeedback;
         protected global::System.Web.UI.WebControls.Button btnUpdateMemberStatusByLeader;
+        protected global::System.Web.UI.WebControls.LinkButton btnExportMentorTasks;
+        protected global::System.Web.UI.WebControls.LinkButton btnExportMemberTasks;
     }
 }

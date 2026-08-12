@@ -106,7 +106,16 @@
                 <div class="data-section">
                     <div class="section-header">
                         <h2>Group Details (Aggregated)</h2>
-                        <button class="btn-secondary"><i class="fa-solid fa-file-export"></i> Export Report</button>
+                        <div style="display:flex; gap: 10px; align-items:center;">
+                            <asp:DropDownList ID="ddlReportFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-select" style="padding: 0.5rem; border: 1px solid var(--c-border); border-radius: 4px; background: var(--c-surface); color: var(--c-text);">
+                                <asp:ListItem Text="All Groups" Value="All"></asp:ListItem>
+                                <asp:ListItem Text="Active Only" Value="Active"></asp:ListItem>
+                                <asp:ListItem Text="Inactive Only" Value="Inactive"></asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
+                                <i class="fa-solid fa-file-export"></i> Export Report
+                            </asp:LinkButton>
+                        </div>
                     </div>
                     <table>
                         <thead>
@@ -125,7 +134,7 @@
                                     <tr>
                                         <td><strong><%# Eval("GroupName") %></strong></td>
                                         <td><%# Eval("LeaderName") %></td>
-                                        <td><%# string.IsNullOrEmpty(Eval("Members")?.ToString()) ? "<span style='color:var(--c-text-muted)'>None</span>" : Eval("Members") %></td>
+                                        <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("Members"))) ? "<span style='color:var(--c-text-muted)'>None</span>" : Eval("Members") %></td>
                                         <td><%# Eval("MentorName") != DBNull.Value ? Eval("MentorName") : "<span style='color:var(--c-text-muted)'>Not Assigned</span>" %></td>
                                         <td>
                                             <span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span>

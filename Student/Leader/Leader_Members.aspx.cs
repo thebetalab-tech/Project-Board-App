@@ -204,5 +204,42 @@ namespace Project_Board.Student.Leader
             }
         }
 
+        protected void btnExportReport_Click(object sender, EventArgs e)
+        {
+            string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                conn.Open();
+                int groupId = GetGroupId(conn);
+                if (groupId == 0) return;
+
+                string query = @"
+                    SELECT 
+                        u.UserId AS [Member ID], 
+                        u.FullName AS [Member Name], 
+                        u.EnrollmentNo AS [Enrollment No.], 
+                        u.Email AS [Email Address], 
+                        gm.JoinStatus AS [Status]
+                    FROM GroupMembers gm 
+                    INNER JOIN Users u ON gm.UserId = u.UserId 
+                    WHERE gm.GroupId = @GroupId AND gm.JoinStatus = 'Accepted' AND u.IsActive = 1";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@GroupId", groupId);
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        string userName = Session["FullName"]?.ToString() ?? "Student Leader";
+                        string userEmail = Session["Email"]?.ToString() ?? "leader@example.com";
+                        
+                        Project_Board.Services.ReportService.GeneratePdfReport("My Team Members Report", dt, userName, userEmail, "Active Group Members", Response);
+                    }
+                }
+            }
+        }
+
     }
 }

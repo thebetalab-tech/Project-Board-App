@@ -109,9 +109,20 @@
                 <div class="data-section">
                     <div class="section-header">
                         <h2>All Users</h2>
-                        <div class="search-bar" style="width: 250px;">
-                            <i class="fa-solid fa-search"></i>
-                            <input type="text" placeholder="Filter users...">
+                        <div style="display:flex; gap: 10px; align-items:center;">
+                            <asp:DropDownList ID="ddlReportFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-control" style="width:auto; padding: 0.5rem;">
+                                <asp:ListItem Text="All Roles" Value="All"></asp:ListItem>
+                                <asp:ListItem Text="Students" Value="Student"></asp:ListItem>
+                                <asp:ListItem Text="Faculty" Value="Faculty"></asp:ListItem>
+                                <asp:ListItem Text="Admins" Value="Admin"></asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
+                                <i class="fa-solid fa-file-export"></i> Export Report
+                            </asp:LinkButton>
+                            <div class="search-bar" style="width: 250px;">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" placeholder="Filter users...">
+                            </div>
                         </div>
                     </div>
                     <table>
@@ -139,7 +150,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td><%# string.IsNullOrEmpty(Eval("EnrollmentNo")?.ToString()) ? "N/A" : Eval("EnrollmentNo") %></td>
+                                        <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("EnrollmentNo"))) ? "N/A" : Eval("EnrollmentNo") %></td>
                                         <td><span class='badge <%# Eval("Role").ToString().ToLower() %>'><%# Eval("Role") %></span></td>
                                         <td>
                                             <%# Convert.ToBoolean(Eval("IsLeader")) ? "<i class='fa-solid fa-crown' style='color: var(--c-yellow);' title='Group Leader'></i> Yes" : "-" %>

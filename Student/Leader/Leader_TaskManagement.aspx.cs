@@ -369,5 +369,77 @@ namespace Project_Board.Student.Leader
                 LoadMemberTasks();
             }
         }
+
+        protected void btnExportMentorTasks_Click(object sender, EventArgs e)
+        {
+            int leaderId = Convert.ToInt32(Session["UserId"]);
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                string query = @"
+                    SELECT 
+                        t.TaskTitle AS [Task Title],
+                        uBy.FullName AS [Assigned By],
+                        t.DueDate AS [Due Date],
+                        t.Status AS [Status]
+                    FROM Task t
+                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                    INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
+                    WHERE t.AssignedTo = @LeaderId AND (t.TaskLevel = 'MentorToLeader' OR t.TaskLevel = 'AdminToAll')
+                    ORDER BY t.CreatedAt DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@LeaderId", leaderId);
+                    
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        string userName = Session["FullName"]?.ToString() ?? "Student Leader";
+                        string userEmail = Session["Email"]?.ToString() ?? "leader@example.com";
+                        
+                        Project_Board.Services.ReportService.GeneratePdfReport("Tasks Received From Mentor", dt, userName, userEmail, "All Mentor Tasks", Response);
+                    }
+                }
+            }
+        }
+
+        protected void btnExportMemberTasks_Click(object sender, EventArgs e)
+        {
+            int leaderId = Convert.ToInt32(Session["UserId"]);
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                string query = @"
+                    SELECT 
+                        t.TaskTitle AS [Task Title],
+                        uTo.FullName AS [Assigned Member],
+                        t.TaskCategory AS [Category],
+                        t.DueDate AS [Due Date],
+                        t.Status AS [Status]
+                    FROM Task t
+                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                    WHERE t.AssignedBy = @LeaderId AND t.TaskLevel = 'LeaderToMember'
+                    ORDER BY t.CreatedAt DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@LeaderId", leaderId);
+                    
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        string userName = Session["FullName"]?.ToString() ?? "Student Leader";
+                        string userEmail = Session["Email"]?.ToString() ?? "leader@example.com";
+                        
+                        Project_Board.Services.ReportService.GeneratePdfReport("Tasks Assigned To Members", dt, userName, userEmail, "All Member Tasks", Response);
+                    }
+                }
+            }
+        }
     }
 }

@@ -110,8 +110,11 @@
                     </div>
 
                     <div class="data-section">
-                        <div class="section-header">
+                        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                             <h2>Active Members</h2>
+                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
+                                <i class="fa-solid fa-file-export"></i> Export Report
+                            </asp:LinkButton>
                         </div>
                         <div class="table-responsive">
                             <table>

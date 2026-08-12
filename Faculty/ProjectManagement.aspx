@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Board - Project Management</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Premium editorial theme -->
@@ -136,7 +136,7 @@
                                         <tr>
                                             <td>
                                                 <strong style="font-size: 1rem;"><%# Eval("ProjectTitle") %></strong>
-                                                <%# !string.IsNullOrWhiteSpace(Eval("Keywords")?.ToString()) ? "<div style='margin-top:0.25rem;'>" + string.Join("", Eval("Keywords").ToString().Split(',').Select(k => "<span class=\"tag-pill\">" + k.Trim() + "</span>")) + "</div>" : "" %>
+                                                <%# !string.IsNullOrWhiteSpace(Convert.ToString(Eval("Keywords"))) ? "<div style='margin-top:0.25rem;'>" + string.Join("", Eval("Keywords").ToString().Split(',').Select(k => "<span class=\"tag-pill\">" + k.Trim() + "</span>")) + "</div>" : "" %>
                                             </td>
                                             <td><%# Eval("GroupName") %></td>
                                             <td><%# Eval("ProjectType") %></td>

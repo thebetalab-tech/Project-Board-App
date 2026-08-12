@@ -61,5 +61,40 @@ namespace Project_Board.Faculty
                 }
             }
         }
+
+        protected void btnExportReport_Click(object sender, EventArgs e)
+        {
+            int facultyId = Convert.ToInt32(Session["UserId"]);
+            string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string query = @"
+                    SELECT 
+                        g.GroupName AS [Group Name], 
+                        u.FullName AS [Leader Name], 
+                        t.TechName AS [Technology],
+                        (SELECT COUNT(*) FROM GroupMembers gm WHERE gm.GroupId = g.GroupId AND gm.JoinStatus = 'Accepted') AS [Team Size]
+                    FROM Groups g
+                    INNER JOIN Users u ON g.LeaderId = u.UserId
+                    INNER JOIN Technologies t ON g.TechId = t.TechId
+                    WHERE g.MentorId = @FacultyId AND g.Status != 'Pending Faculty Approval' AND g.Status != 'Forming'";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        string userName = Session["FullName"]?.ToString() ?? "Faculty";
+                        string userEmail = Session["Email"]?.ToString() ?? "faculty@example.com";
+                        
+                        Project_Board.Services.ReportService.GeneratePdfReport("My Mentored Groups Report", dt, userName, userEmail, "All Active Mentored Groups", Response);
+                    }
+                }
+            }
+        }
     }
 }

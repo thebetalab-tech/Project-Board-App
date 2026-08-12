@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 /* ============================================
    PROJECT BOARD — MINIMAL AUTH & ONBOARDING UI
@@ -7,24 +7,25 @@
    ============================================ */
 
 :root {
-    --c-primary: #0D9488;
-    --c-primary-hover: #0F766E;
+    --c-primary: #7B1E2D;
+    --c-primary-hover: #5C0E1B;
     --c-on-primary: #FFFFFF;
-    --c-secondary: #14B8A6;
-    --c-accent: #EA580C;
-    --c-accent-hover: #C2410C;
+    --c-secondary: #A3293D;
+    --c-accent: #B8293D;
+    --c-accent-hover: #9B1C2E;
     
-    --c-background: #F0FDFA; /* Light teal tinted bg */
+    --c-background: #FCF5F5; /* Warm light background */
     --c-surface: #FFFFFF;
-    --c-foreground: #134E4A; /* Very dark teal for text */
+    --c-foreground: #2D0B10; /* Very dark burgundy for text */
     --c-text-muted: #64748B;
     --c-border: #E2E8F0;
     --c-input-bg: #F8FAFC;
     
     --c-destructive: #DC2626;
-    --c-ring: rgba(13, 148, 136, 0.25);
+    --c-ring: rgba(123, 30, 45, 0.25);
 
-    --f-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --f-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --f-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
     
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -84,21 +85,17 @@ a:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    background: var(--c-primary);
-    color: var(--c-on-primary);
-    border-radius: 12px;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+    color: var(--c-primary);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .auth-brand-title {
-    font-size: 1.75rem;
+    font-family: var(--f-display);
+    font-size: 2rem;
     font-weight: 700;
     color: var(--c-foreground);
-    letter-spacing: -0.025em;
+    letter-spacing: -0.01em;
     margin-bottom: 0.25rem;
 }
 
@@ -121,7 +118,8 @@ a:hover {
 }
 
 .auth-title {
-    font-size: 1.5rem;
+    font-family: var(--f-display);
+    font-size: 1.75rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
 }

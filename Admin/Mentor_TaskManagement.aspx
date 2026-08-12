@@ -141,7 +141,7 @@
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Main Menu</div>
-                <% string currentRole = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? ""; %>
+                <% string currentRole = Convert.ToString(Session["Role"] ?? Session["UserRole"]); %>
                 <% if (currentRole == "Faculty") { %>
                     <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Dashboard

@@ -293,8 +293,11 @@
                 <!-- TAB 1: MENTOR TASKS -->
                 <div id="mentorTasksTab" class="tab-content active">
                     <div class="data-section">
-                        <div class="section-header">
+                        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                             <h2>Tasks From Mentor</h2>
+                            <asp:LinkButton ID="btnExportMentorTasks" runat="server" CssClass="btn-secondary" OnClick="btnExportMentorTasks_Click">
+                                <i class="fa-solid fa-file-export"></i> Export Report
+                            </asp:LinkButton>
                         </div>
                         <div class="table-container">
                             <asp:Repeater ID="rptMentorTasks" runat="server" OnItemCommand="rptMentorTasks_ItemCommand">
@@ -403,8 +406,11 @@
 
                     <!-- MEMBER TASKS GRID -->
                     <div class="data-section">
-                        <div class="section-header">
+                        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                             <h2>Assigned Member Tasks & Progress</h2>
+                            <asp:LinkButton ID="btnExportMemberTasks" runat="server" CssClass="btn-secondary" OnClick="btnExportMemberTasks_Click">
+                                <i class="fa-solid fa-file-export"></i> Export Report
+                            </asp:LinkButton>
                         </div>
                         <div class="table-container">
                             <asp:Repeater ID="rptMemberTasks" runat="server" OnItemCommand="rptMemberTasks_ItemCommand">

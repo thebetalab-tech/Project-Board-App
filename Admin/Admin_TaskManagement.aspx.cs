@@ -91,6 +91,8 @@ namespace Project_Board.Admin
         private void LoadGlobalTasks()
         {
             DataTable dt = new DataTable();
+            string filter = ddlReportFilter.SelectedValue;
+
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 string query = @"
@@ -99,11 +101,21 @@ namespace Project_Board.Admin
                     FROM Task t
                     INNER JOIN Groups g ON t.GroupId = g.GroupId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
-                    INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
-                    ORDER BY t.CreatedAt DESC";
+                    INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId";
+                
+                if (filter != "All")
+                {
+                    query += " WHERE t.Status = @Status";
+                }
+                
+                query += " ORDER BY t.CreatedAt DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
+                    if (filter != "All")
+                    {
+                        cmd.Parameters.AddWithValue("@Status", filter);
+                    }
                     conn.Open();
                     using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                     {
@@ -115,6 +127,11 @@ namespace Project_Board.Admin
             rptAdminTasks.DataSource = dt;
             rptAdminTasks.DataBind();
             lblNoTasks.Visible = dt.Rows.Count == 0;
+        }
+
+        protected void ddlReportFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadGlobalTasks();
         }
 
         protected void btnAdminCreateTask_Click(object sender, EventArgs e)
@@ -191,6 +208,52 @@ namespace Project_Board.Admin
                 lblMessage.Visible = true;
 
                 LoadGlobalTasks();
+            }
+        }
+
+        protected void btnExportReport_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(ConnString)) return;
+            string filter = ddlReportFilter.SelectedValue;
+            
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                string query = @"
+                    SELECT 
+                        t.TaskTitle AS [Task Title],
+                        g.GroupName AS [Group Name],
+                        u_to.FullName AS [Assigned To],
+                        u_by.FullName AS [Assigned By],
+                        t.TaskLevel AS [Level],
+                        t.Status AS [Status],
+                        t.DueDate AS [Due Date]
+                    FROM Tasks t
+                    LEFT JOIN Groups g ON t.GroupId = g.GroupId
+                    LEFT JOIN Users u_to ON t.AssignedTo = u_to.UserId
+                    LEFT JOIN Users u_by ON t.AssignedBy = u_by.UserId";
+
+                if (filter != "All")
+                {
+                    if (filter == "Completed") query += " WHERE t.Status = 'Completed'";
+                    else if (filter == "In Progress") query += " WHERE t.Status = 'Working' OR t.Status = 'Pending'";
+                    else if (filter == "Appealed") query += " WHERE t.Status = 'Appealed'";
+                }
+                
+                query += " ORDER BY t.CreatedAt DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        string userName = Session["FullName"]?.ToString() ?? "Admin";
+                        string userEmail = Session["Email"]?.ToString() ?? "admin@example.com";
+                        
+                        Project_Board.Services.ReportService.GeneratePdfReport("System Tasks Report", dt, userName, userEmail, "Status: " + filter, Response);
+                    }
+                }
             }
         }
     }

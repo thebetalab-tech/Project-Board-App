@@ -38,13 +38,24 @@ namespace Project_Board.Admin
         private void LoadUsers()
         {
             if (string.IsNullOrEmpty(connString)) return;
+            string filter = ddlReportFilter.SelectedValue;
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                string query = "SELECT UserId, FullName, Email, EnrollmentNo, Role, IsLeader FROM Users WHERE IsActive = 1 ORDER BY CreatedAt DESC";
+                string query = "SELECT UserId, FullName, Email, EnrollmentNo, Role, IsLeader FROM Users WHERE IsActive = 1";
+                if (filter != "All")
+                {
+                    query += " AND Role = @Role";
+                }
+                query += " ORDER BY CreatedAt DESC";
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.CommandType = CommandType.Text;
+                    if (filter != "All")
+                    {
+                        cmd.Parameters.AddWithValue("@Role", filter);
+                    }
 
                     try
                     {
@@ -61,6 +72,11 @@ namespace Project_Board.Admin
                     }
                 }
             }
+        }
+
+        protected void ddlReportFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadUsers();
         }
 
         protected void btnAddUser_Click(object sender, EventArgs e)
@@ -286,6 +302,52 @@ namespace Project_Board.Admin
             {
                 byte[] hash = deriveBytes.GetBytes(32);
                 return $"QKDF2$100000${Convert.ToBase64String(salt)}${Convert.ToBase64String(hash)}";
+            }
+        }
+
+        protected void btnExportReport_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(connString)) return;
+            string filter = ddlReportFilter.SelectedValue;
+            
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string query = @"
+                    SELECT 
+                        FullName AS [Name],
+                        Email AS [Email Address],
+                        ISNULL(EnrollmentNo, 'N/A') AS [Enrollment / ID],
+                        Role AS [Role],
+                        CASE WHEN IsLeader = 1 THEN 'Yes' ELSE 'No' END AS [Group Leader],
+                        CreatedAt AS [Joined On]
+                    FROM Users
+                    WHERE IsActive = 1";
+
+                if (filter != "All")
+                {
+                    query += " AND Role = @Role";
+                }
+                
+                query += " ORDER BY Role, FullName";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    if (filter != "All")
+                    {
+                        cmd.Parameters.AddWithValue("@Role", filter);
+                    }
+                    
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        string userName = Session["FullName"]?.ToString() ?? "Admin";
+                        string userEmail = Session["Email"]?.ToString() ?? "admin@example.com";
+                        
+                        Project_Board.Services.ReportService.GeneratePdfReport("System Users Report", dt, userName, userEmail, "Role: " + filter, Response);
+                    }
+                }
             }
         }
     }

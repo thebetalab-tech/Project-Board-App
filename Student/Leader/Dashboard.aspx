@@ -254,6 +254,13 @@
                         <div class="stat-label">Appealed</div>
                     </div>
                 </div>
+                <!-- CHARTS -->
+                <div class="charts-section" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem;">
+                    <div class="stat-card">
+                        <h3>Tasks by Status</h3>
+                        <canvas id="tasksChart" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
 
                 <!-- TEAM MEMBERS LIST -->
                 <div class="stat-card" style="margin-top: 1.5rem;">
@@ -290,6 +297,31 @@
         </main>
     </form>
     <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            };
 
+            // Tasks Chart
+            const tasksData = <%= TasksByStatusJson %>;
+            if(Object.keys(tasksData).length > 0) {
+                new Chart(document.getElementById('tasksChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(tasksData),
+                        datasets: [{
+                            data: Object.values(tasksData),
+                            backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#a855f7']
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+        });
+    </script>
+</body>
 </html>

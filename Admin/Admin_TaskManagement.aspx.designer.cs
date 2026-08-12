@@ -22,5 +22,7 @@ namespace Project_Board.Admin
         protected global::System.Web.UI.WebControls.Label lblMessage;
         protected global::System.Web.UI.WebControls.Repeater rptAdminTasks;
         protected global::System.Web.UI.WebControls.Label lblNoTasks;
+        protected global::System.Web.UI.WebControls.DropDownList ddlReportFilter;
+        protected global::System.Web.UI.WebControls.LinkButton btnExportReport;
     }
 }

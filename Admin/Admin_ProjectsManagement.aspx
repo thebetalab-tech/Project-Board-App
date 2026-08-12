@@ -106,13 +106,16 @@
                 <div class="data-section">
                     <div class="section-header">
                         <h2>All Projects</h2>
-                        <div class="section-actions">
-                            <select class="form-control" style="width:auto; padding: 0.5rem;">
-                                <option>All Status</option>
-                                <option>Pending</option>
-                                <option>Approved</option>
-                                <option>Rejected</option>
-                            </select>
+                        <div class="section-actions" style="display:flex; gap: 10px; align-items:center;">
+                            <asp:DropDownList ID="ddlReportFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-control" style="width:auto; padding: 0.5rem; background: var(--c-surface); color: var(--c-text);">
+                                <asp:ListItem Text="All Status" Value="All"></asp:ListItem>
+                                <asp:ListItem Text="Pending" Value="Pending"></asp:ListItem>
+                                <asp:ListItem Text="Approved" Value="Approved"></asp:ListItem>
+                                <asp:ListItem Text="Rejected" Value="Rejected"></asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
+                                <i class="fa-solid fa-file-export"></i> Export Report
+                            </asp:LinkButton>
                         </div>
                     </div>
                     <table>
@@ -139,7 +142,7 @@
                                         </td>
                                         <td><%# Eval("GroupName") %></td>
                                         <td>
-                                            <%# HttpUtility.HtmlDecode(Eval("KeywordHtml")?.ToString() ?? "") %>
+                                            <%# HttpUtility.HtmlDecode(Convert.ToString(Eval("KeywordHtml"))) %>
                                         </td>
                                         <td><span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span></td>
                                         <td>

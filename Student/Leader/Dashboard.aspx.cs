@@ -23,6 +23,7 @@ namespace Project_Board.Student.Leader
         protected string MentorEmail { get; set; } = "";
         protected string MentorInitials { get; set; } = "FM";
         protected string GroupStatus { get; set; } = "Forming";
+        public string TasksByStatusJson { get; set; } = "{}";
 
         // Task Statistics
         protected int PendingTasks { get; set; } = 0;
@@ -148,6 +149,14 @@ namespace Project_Board.Student.Leader
                                 if (dueDate.HasValue && dueDate.Value < DateTime.Now && st != "Completed") OverdueTasks++;
                             }
                             
+                            var dictTasks = new System.Collections.Generic.Dictionary<string, int>();
+                            dictTasks["Pending"] = PendingTasks;
+                            dictTasks["In Progress"] = InProgressTasks;
+                            dictTasks["Completed"] = CompletedTasks;
+                            dictTasks["Appealed"] = AppealedTasks;
+                            System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
+                            TasksByStatusJson = js.Serialize(dictTasks);
+
                             // Get Stats
                             string statsQuery = @"
                                 SELECT 

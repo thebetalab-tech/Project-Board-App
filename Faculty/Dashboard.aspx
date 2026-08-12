@@ -9,7 +9,7 @@
         <title>Project Board - Faculty Dashboard</title>
         <!-- Fonts -->
         <link
-            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
             rel="stylesheet">
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -137,12 +137,85 @@
                             <div class="stat-label">Pending Requests</div>
                         </div>
                     </div>
+
+                    <div class="charts-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                        <div class="stat-card">
+                            <h3>Groups by Status</h3>
+                            <canvas id="groupsChart" style="max-height: 250px;"></canvas>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Projects by Status</h3>
+                            <canvas id="projectsChart" style="max-height: 250px;"></canvas>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Tasks by Status</h3>
+                            <canvas id="tasksChart" style="max-height: 250px;"></canvas>
+                        </div>
+                    </div>
                 </div>
             </main>
         </form>
 
         <!-- Mobile toggle script -->
         <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
-    </body>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                };
+                
+                // Groups Chart
+                const groupsData = <%= GroupsByStatusJson %>;
+                if(Object.keys(groupsData).length > 0) {
+                    new Chart(document.getElementById('groupsChart'), {
+                        type: 'pie',
+                        data: {
+                            labels: Object.keys(groupsData),
+                            datasets: [{
+                                data: Object.values(groupsData),
+                                backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ef4444']
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                }
 
+                // Projects Chart
+                const projectsData = <%= ProjectsByStatusJson %>;
+                if(Object.keys(projectsData).length > 0) {
+                    new Chart(document.getElementById('projectsChart'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(projectsData),
+                            datasets: [{
+                                data: Object.values(projectsData),
+                                backgroundColor: ['#3b82f6', '#10b981', '#ef4444', '#f59e0b']
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                }
+
+                // Tasks Chart
+                const tasksData = <%= TasksByStatusJson %>;
+                if(Object.keys(tasksData).length > 0) {
+                    new Chart(document.getElementById('tasksChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(tasksData),
+                            datasets: [{
+                                label: 'Tasks',
+                                data: Object.values(tasksData),
+                                backgroundColor: ['#6366f1', '#14b8a6', '#f43f5e', '#8b5cf6']
+                            }]
+                        },
+                        options: { ...chartOptions, plugins: { legend: { display: false } } }
+                    });
+                }
+            });
+        </script>
+    </body>
     </html>

@@ -37,6 +37,7 @@ namespace Project_Board.Admin
         private void LoadGroups()
         {
             if (string.IsNullOrEmpty(connString)) return;
+            string filter = ddlReportFilter.SelectedValue;
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
@@ -56,11 +57,21 @@ namespace Project_Board.Admin
                         ), 1, 2, '') AS Members
                     FROM Groups g
                     JOIN Users l ON g.LeaderId = l.UserId
-                    LEFT JOIN Users m ON g.MentorId = m.UserId
-                    ORDER BY g.GroupName";
+                    LEFT JOIN Users m ON g.MentorId = m.UserId";
+                    
+                if (filter != "All")
+                {
+                    query += " WHERE g.Status = @Status";
+                }
+                
+                query += " ORDER BY g.GroupName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
+                    if (filter != "All")
+                    {
+                        cmd.Parameters.AddWithValue("@Status", filter);
+                    }
                     try
                     {
                         conn.Open();
@@ -73,6 +84,63 @@ namespace Project_Board.Admin
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+        protected void ddlReportFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadGroups();
+        }
+
+        protected void btnExportReport_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(connString)) return;
+            string filter = ddlReportFilter.SelectedValue;
+            
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string query = @"
+                    SELECT 
+                        g.GroupName AS [Group Name],
+                        g.Status AS [Status],
+                        l.FullName AS [Leader Name],
+                        ISNULL(m.FullName, 'Not Assigned') AS [Faculty Mentor],
+                        STUFF((
+                            SELECT ', ' + u.FullName 
+                            FROM GroupMembers gm 
+                            JOIN Users u ON gm.UserId = u.UserId 
+                            WHERE gm.GroupId = g.GroupId AND gm.JoinStatus = 'Accepted'
+                            FOR XML PATH('')
+                        ), 1, 2, '') AS [Members]
+                    FROM Groups g
+                    JOIN Users l ON g.LeaderId = l.UserId
+                    LEFT JOIN Users m ON g.MentorId = m.UserId";
+
+                if (filter != "All")
+                {
+                    query += " WHERE g.Status = @Status";
+                }
+                
+                query += " ORDER BY g.GroupName";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    if (filter != "All")
+                    {
+                        cmd.Parameters.AddWithValue("@Status", filter);
+                    }
+                    
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        string userName = Session["FullName"]?.ToString() ?? "Admin";
+                        string userEmail = Session["Email"]?.ToString() ?? "admin@example.com";
+                        
+                        Project_Board.Services.ReportService.GeneratePdfReport("Groups Management Report", dt, userName, userEmail, "Status: " + filter, Response);
                     }
                 }
             }

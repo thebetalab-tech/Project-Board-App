@@ -208,7 +208,20 @@
 
                 <!-- GLOBAL TASKS LIST -->
                 <div class="stat-card">
-                    <h3><i class="fa-solid fa-globe" style="color:var(--c-accent); margin-right:0.5rem;"></i> All System Tasks</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3><i class="fa-solid fa-globe" style="color:var(--c-accent); margin-right:0.5rem;"></i> All System Tasks</h3>
+                        <div style="display:flex; gap: 10px; align-items:center;">
+                            <asp:DropDownList ID="ddlReportFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-control" style="width:auto; padding: 0.5rem;">
+                                <asp:ListItem Text="All Tasks" Value="All"></asp:ListItem>
+                                <asp:ListItem Text="Completed" Value="Completed"></asp:ListItem>
+                                <asp:ListItem Text="In Progress" Value="In Progress"></asp:ListItem>
+                                <asp:ListItem Text="Appealed" Value="Appealed"></asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
+                                <i class="fa-solid fa-file-export"></i> Export Report
+                            </asp:LinkButton>
+                        </div>
+                    </div>
                     <table class="data-table">
                         <thead>
                             <tr>
