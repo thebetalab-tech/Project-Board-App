@@ -179,7 +179,7 @@
                                     <div class="topbar-actions">
                         <a href="<%= ResolveUrl("~/User/Notifications.aspx") %>" class="notification-btn" title="Notifications">
                             <i class="fa-regular fa-bell"></i>
-                            <span class="notification-badge">0</span>
+                            <span class="notification-badge"><%= Project_Board.Utils.NotificationHelper.GetUnreadCount(Session["UserId"]) %></span>
                         </a>
                         <div class="profile-menu-container">
                             <div class="profile-trigger">

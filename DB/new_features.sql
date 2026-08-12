@@ -7,7 +7,7 @@
 -- ============================================================================
 
 -- 1. Notifications Table
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Notifictions')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Notifications')
 BEGIN
     CREATE TABLE Notifications (
         NotificationId INT IDENTITY(1,1) PRIMARY KEY,
