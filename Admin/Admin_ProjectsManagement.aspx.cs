@@ -85,9 +85,10 @@ namespace Project_Board.Admin
             {
                 newStatus = "Approved";
             }
-            else if (e.CommandName == "Reject")
+                        else if (e.CommandName == "Reject")
             {
-                newStatus = "Rejected";
+                Response.Redirect($"~/Admin/RejectionForm.aspx?type=Project&id={projectId}");
+                return;
             }
 
             if (!string.IsNullOrEmpty(newStatus))
