@@ -30,16 +30,11 @@
 
     <div class="nav-section">
         <div class="nav-section-title">Preferences</div>
-        <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
+        <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Profile.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
             <i class="fa-solid fa-user"></i> <span>Profile</span>
         </a>
-        <a href='<%= ResolveUrl("~/User/Directory.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Directory.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
-            <i class="fa-solid fa-address-book"></i>
-            <span class="nav-text">Directory</span>
-        </a>
         <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <span class="nav-text">Logout</span>
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span>
         </a>
     </div>
 </asp:Content>
