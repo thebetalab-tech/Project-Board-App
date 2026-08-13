@@ -1,0 +1,54 @@
+<%@ Master Language="C#" MasterPageFile="~/Dashboard.Master" AutoEventWireup="true" CodeBehind="Leader.master.cs" Inherits="Project_Board.Student.Leader.LeaderMaster" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+    <asp:ContentPlaceHolder ID="TitleContent" runat="server">Leader Dashboard</asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="SidebarNav" runat="server">
+    <div class="nav-section">
+        <div class="nav-section-title">Main Menu</div>
+        <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Dashboard.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-chart-pie"></i> <span>Overview</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Analysis.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Leader_Analysis.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-chart-line"></i> <span>Analysis & Reports</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Leader_Members.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-users"></i> <span>Team Members</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Project.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Leader_Project.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-folder-open"></i> <span>Project Management</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Leader_Mentor.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-chalkboard-user"></i> <span>Mentor Request</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Leader/InvitationManager.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("InvitationManager.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-envelope"></i> <span>Invitations</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Leader/Leader_TaskManagement.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Leader_TaskManagement.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-list-check"></i> <span>Tasks</span>
+        </a>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Preferences</div>
+        <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
+            <i class="fa-solid fa-user"></i> <span>Profile</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span>
+        </a>
+    </div>
+</asp:Content>
+
+<asp:Content ID="Content4" ContentPlaceHolderID="MainContent" runat="server">
+    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+</asp:Content>
+
+<asp:Content ID="Content5" ContentPlaceHolderID="ScriptsContent" runat="server">
+    <asp:ContentPlaceHolder ID="ScriptsContent" runat="server" />
+</asp:Content>

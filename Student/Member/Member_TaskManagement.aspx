@@ -1,12 +1,8 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Member_TaskManagement.aspx.cs" Inherits="Project_Board.Student.Member.Member_TaskManagement" %>
-<!DOCTYPE html>
-<html lang="en">
-<head runat="server">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Dashboard - My Task Workspace</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link  rel="stylesheet" href="../../Admin/admin.css?v=latest_v3" />
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Member_TaskManagement.aspx.cs" Inherits="Project_Board.Student.Member.Member_TaskManagement" MasterPageFile="~/Student/Member/Member.master" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+    Member Dashboard - My Task Workspace
+</asp:Content>
+<asp:Content ID="ContentHead" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
         .badge-status {
             display: inline-flex;
@@ -104,87 +100,8 @@
         .alert-success { background-color: var(--c-green-bg); color: var(--c-green); border: 1px solid rgba(45, 125, 70, 0.2); }
         .alert-danger { background-color: var(--c-red-bg); color: var(--c-red); border: 1px solid rgba(184, 41, 61, 0.2); }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h2>Project Board</h2>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <div class="nav-section">
-                <div class="nav-section-title">Main Menu</div>
-                <a href='<%= ResolveUrl("~/Student/Member/Dashboard.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-chart-pie"></i> Overview
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Member/Member_Team.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-users"></i> Team & Mentor
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Member/Member_Project.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-folder-open"></i> Project Details
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-envelope"></i> Invitations
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Member/Member_TaskManagement.aspx") %>' class="nav-link active">
-                    <i class="fa-solid fa-list-check"></i> My Tasks
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Preferences</div>
-                <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-user"></i> Profile
-                </a>
-                <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
-                </a>
-            </div>
-        </nav>
-
-        <div class="sidebar-footer">
-            <div class="user-profile">
-                <div class="avatar"><%= UserInitials %></div>
-                <div class="user-info">
-                    <h4><%= UserName %></h4>
-                    <p><%= UserEmail %></p>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <header class="topbar">
-            <div class="search-bar" style="visibility: hidden;">
-                <i class="fa-solid fa-search"></i>
-                <input type="text" placeholder="Search...">
-            </div>
-                                <div class="topbar-actions">
-                        <a href="<%= ResolveUrl("~/User/Notifications.aspx") %>" class="notification-btn" title="Notifications">
-                            <i class="fa-regular fa-bell"></i>
-                            <span class="notification-badge"><%= Project_Board.Utils.NotificationHelper.GetUnreadCount(Session["UserId"]) %></span>
-                        </a>
-                        <div class="profile-menu-container">
-                            <div class="profile-trigger">
-                                <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
-                                <div class="profile-greeting">
-                                    <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
-                                </div>
-                                <i class="fa-solid fa-chevron-down profile-arrow"></i>
-                            </div>
-                            <div class="profile-dropdown">
-                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-regular fa-user"></i> My Profile</a>
-                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> Change Password</a>
-                                <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> Log Out</a>
-                            </div>
-                        </div>
-                    </div>
-        </header>
-
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
         <div class="dashboard-container">
             <div class="view-section active">
                 <div class="page-header">
@@ -356,11 +273,9 @@
                 </div>
             </div>
         </div>
-    </main>
-
-
-
-    </form>
+        </div>
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="ScriptsContent" runat="server">
     <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -368,7 +283,6 @@
             initTableSearch('searchMemberTasks', 'memberTasksTable');
         });
     </script>
-
     <script>
         function openModal(id) {
             document.getElementById(id).classList.add('active');
@@ -377,5 +291,4 @@
             document.getElementById(id).classList.remove('active');
         }
     </script>
-</body>
-</html>
+</asp:Content>

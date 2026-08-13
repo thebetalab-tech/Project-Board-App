@@ -110,6 +110,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Sidebar Toggle Logic
+    const sidebarToggleBtn = document.getElementById('sidebarToggle');
+    if (sidebarToggleBtn) {
+        // Initialize from localStorage
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            document.body.classList.add('sidebar-collapsed');
+        }
+        
+        sidebarToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('sidebar-collapsed');
+            const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+        });
+    }
 });
 
 // Generic Password Show/Hide Toggle Logic (for Admin/Profile pages)

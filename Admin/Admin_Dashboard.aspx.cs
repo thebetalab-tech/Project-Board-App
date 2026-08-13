@@ -23,13 +23,7 @@ namespace Project_Board.Admin
                     Response.Redirect("~/Default.aspx");
                     return;
                 }
-                // Fetch user information from session
-                string userName = Session["FullName"]?.ToString() ?? "Guest";
-                string userEmail = Session["Email"]?.ToString() ?? "No email provided";
-                string intial = userName.Substring(0, 1).ToUpper();
-                userNameLabel.Text = userName;
-                userEmailLabel.Text = userEmail;
-                userintial.Text = intial;
+
 
                 LoadDashboardStats();
             }

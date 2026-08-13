@@ -1,12 +1,8 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Leader_TaskManagement.aspx.cs" Inherits="Project_Board.Student.Leader.Leader_TaskManagement" %>
-<!DOCTYPE html>
-<html lang="en">
-<head runat="server">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leader Task Management — Project Board</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link  rel="stylesheet" href="../../Admin/admin.css?v=latest_v3" />
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Leader_TaskManagement.aspx.cs" Inherits="Project_Board.Student.Leader.Leader_TaskManagement" MasterPageFile="~/Student/Leader/Leader.master" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+    Leader Task Management — Project Board
+</asp:Content>
+<asp:Content ID="ContentHead" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
         .tab-nav {
             display: flex;
@@ -150,94 +146,8 @@
             line-height: 1.6;
         }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-icon"><i class="fa-solid fa-user-tie" style="color: white;"></i></div>
-            <h2>Project Board</h2>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <div class="nav-section">
-                <div class="nav-section-title">Main Menu</div>
-                <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-chart-pie"></i> Overview
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Leader/Leader_Analysis.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-chart-line"></i> Analysis & Reports
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-users"></i> Team Members
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Leader/Leader_Project.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-folder-open"></i> Project Management
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Leader/InvitationManager.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-envelope"></i> Invitations
-                </a>
-                <a href='<%= ResolveUrl("~/Student/Leader/Leader_TaskManagement.aspx") %>' class="nav-link active">
-                    <i class="fa-solid fa-list-check"></i> Tasks
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Preferences</div>
-                <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-user"></i> Profile
-                </a>
-                <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
-                </a>
-            </div>
-        </nav>
-
-        <div class="sidebar-footer">
-            <div class="user-profile">
-                <div class="avatar"><%= UserInitials %></div>
-                <div class="user-info">
-                    <h4><%= UserName %></h4>
-                    <p><%= UserEmail %></p>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <header class="topbar">
-            <div class="search-bar" style="visibility: hidden;">
-                <i class="fa-solid fa-search"></i>
-                <input type="text" placeholder="Search...">
-            </div>
-                                <div class="topbar-actions">
-                        <a href="<%= ResolveUrl("~/User/Notifications.aspx") %>" class="notification-btn" title="Notifications">
-                            <i class="fa-regular fa-bell"></i>
-                            <span class="notification-badge"><%= Project_Board.Utils.NotificationHelper.GetUnreadCount(Session["UserId"]) %></span>
-                        </a>
-                        <div class="profile-menu-container">
-                            <div class="profile-trigger">
-                                <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
-                                <div class="profile-greeting">
-                                    <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
-                                </div>
-                                <i class="fa-solid fa-chevron-down profile-arrow"></i>
-                            </div>
-                            <div class="profile-dropdown">
-                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-regular fa-user"></i> My Profile</a>
-                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> Change Password</a>
-                                <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> Log Out</a>
-                            </div>
-                        </div>
-                    </div>
-        </header>
-        <div class="dashboard-container">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
             <div class="view-section active">
                 <div class="page-header">
                     <div class="page-title">
@@ -487,13 +397,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </main>
-
-
-
-    </form>
+            </div>        </div>
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="ScriptsContent" runat="server">
     <!-- REPORT EXPORT MODALS -->
     <div id="reportModalMentor" class="modal-overlay">
         <div class="modal-content" style="max-width: 500px;">
@@ -563,5 +469,4 @@
             document.getElementById(id).classList.remove('active');
         }
     </script>
-</body>
-</html>
+</asp:Content>

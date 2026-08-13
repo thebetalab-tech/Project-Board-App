@@ -1,0 +1,48 @@
+<%@ Master Language="C#" MasterPageFile="~/Dashboard.Master" AutoEventWireup="true" CodeBehind="Member.master.cs" Inherits="Project_Board.Student.Member.MemberMaster" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+    <asp:ContentPlaceHolder ID="TitleContent" runat="server">Member Dashboard</asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="SidebarNav" runat="server">
+    <div class="nav-section">
+        <div class="nav-section-title">Main Menu</div>
+        <a href='<%= ResolveUrl("~/Student/Member/Dashboard.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Dashboard.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-chart-pie"></i> <span>Overview</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Member/Member_Team.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Member_Team.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-users"></i> <span>Team & Mentor</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Member/Member_Project.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Member_Project.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-folder-open"></i> <span>Project Details</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("InvitationManager.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-envelope"></i> <span>Invitations</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Student/Member/Member_TaskManagement.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Member_TaskManagement.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-list-check"></i> <span>My Tasks</span>
+        </a>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Preferences</div>
+        <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
+            <i class="fa-solid fa-user"></i> <span>Profile</span>
+        </a>
+        <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span>
+        </a>
+    </div>
+</asp:Content>
+
+<asp:Content ID="Content4" ContentPlaceHolderID="MainContent" runat="server">
+    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+</asp:Content>
+
+<asp:Content ID="Content5" ContentPlaceHolderID="ScriptsContent" runat="server">
+    <asp:ContentPlaceHolder ID="ScriptsContent" runat="server" />
+</asp:Content>

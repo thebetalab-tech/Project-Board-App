@@ -26,14 +26,7 @@ namespace Project_Board.Admin
 
             UserName = Session["FullName"]?.ToString() ?? "System Admin";
             UserEmail = Session["Email"]?.ToString() ?? "";
-            if (!string.IsNullOrEmpty(UserName))
-            {
-                UserInitials = UserName.Substring(0, 1).ToUpper();
-            }
-            userintial.Text = UserInitials;
-            userNameLabel.Text = UserName;
-            userEmailLabel.Text = UserEmail;
-
+            
             if (!IsPostBack)
             {
                 LoadAllGroups();
