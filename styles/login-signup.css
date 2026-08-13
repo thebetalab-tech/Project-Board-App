@@ -56,6 +56,39 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before, body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    z-index: -1;
+    animation: floatOrb 20s infinite alternate ease-in-out;
+}
+
+body::before {
+    width: 60vw;
+    height: 60vw;
+    background: rgba(163, 11, 11, 0.04);
+    top: -20vh;
+    left: -20vw;
+}
+
+body::after {
+    width: 50vw;
+    height: 50vw;
+    background: rgba(13, 148, 136, 0.04);
+    bottom: -20vh;
+    right: -20vw;
+    animation-delay: -10s;
+}
+
+@keyframes floatOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, 50px) scale(1.1); }
 }
 
 a {
@@ -71,9 +104,11 @@ a:hover {
 /* --- Layout --- */
 .auth-layout {
     width: 100%;
-    max-width: 440px;
-    padding: 2rem 1.5rem;
+    max-width: 520px;
+    padding: 3rem 1.5rem;
     margin: auto;
+    position: relative;
+    z-index: 10;
 }
 
 .auth-brand {
@@ -106,10 +141,11 @@ a:hover {
 
 .auth-card {
     background: var(--c-surface);
-    border-radius: var(--radius-xl);
-    padding: 2.5rem;
-    box-shadow: var(--shadow-xl);
+    border-radius: 32px;
+    padding: 3.5rem;
+    box-shadow: 0 24px 50px rgba(0,0,0,0.06);
     border: 1px solid rgba(0,0,0,0.03);
+    position: relative;
 }
 
 .auth-header {
@@ -119,7 +155,7 @@ a:hover {
 
 .auth-title {
     font-family: var(--f-display);
-    font-size: 1.75rem;
+    font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
 }
@@ -159,13 +195,13 @@ a:hover {
 
 .form-input {
     width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    padding: 1rem 1rem 1rem 3rem;
     font-family: inherit;
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: var(--c-foreground);
     background: var(--c-input-bg);
     border: 1px solid var(--c-border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     transition: all var(--transition);
     outline: none;
 }
@@ -229,17 +265,17 @@ a:hover {
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 0.875rem 1.5rem;
+    padding: 1.1rem 1.5rem;
     background: var(--c-primary);
     color: var(--c-on-primary);
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     cursor: pointer;
     transition: all var(--transition);
-    box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+    box-shadow: 0 4px 12px rgba(163, 11, 11, 0.15);
     text-decoration: none;
 }
 
