@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -370,7 +371,7 @@ namespace Project_Board.Student.Leader
             }
         }
 
-        protected void btnExportMentorTasks_Click(object sender, EventArgs e)
+        protected void btnGenerateMentorPdf_Click(object sender, EventArgs e)
         {
             int leaderId = Convert.ToInt32(Session["UserId"]);
             using (SqlConnection conn = new SqlConnection(ConnString))
@@ -378,6 +379,7 @@ namespace Project_Board.Student.Leader
                 string query = @"
                     SELECT 
                         t.TaskTitle AS [Task Title],
+                        t.TaskDescription AS [Description],
                         uBy.FullName AS [Assigned By],
                         t.DueDate AS [Due Date],
                         t.Status AS [Status]
@@ -397,16 +399,29 @@ namespace Project_Board.Student.Leader
                         DataTable dt = new DataTable();
                         da.Fill(dt);
                         
+                        List<string> selectedCols = new List<string>();
+                        if (chkMentorColTaskTitle.Checked) selectedCols.Add("Task Title");
+                        if (chkMentorColDescription.Checked) selectedCols.Add("Description");
+                        if (chkMentorColAssignedBy.Checked) selectedCols.Add("Assigned By");
+                        if (chkMentorColDueDate.Checked) selectedCols.Add("Due Date");
+                        if (chkMentorColStatus.Checked) selectedCols.Add("Status");
+
                         string userName = Session["FullName"]?.ToString() ?? "Student Leader";
                         string userEmail = Session["Email"]?.ToString() ?? "leader@example.com";
                         
-                        Project_Board.Services.ReportService.GeneratePdfReport("Tasks Received From Mentor", dt, userName, userEmail, "All Mentor Tasks", Response);
+                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Tasks Received From Mentor", dt, userName, userEmail, selectedCols);
+                        
+                        Response.Clear();
+                        Response.ContentType = "application/pdf";
+                        Response.AddHeader("content-disposition", "attachment;filename=Leader_MentorTasksReport.pdf");
+                        Response.BinaryWrite(pdfBytes);
+                        Response.End();
                     }
                 }
             }
         }
 
-        protected void btnExportMemberTasks_Click(object sender, EventArgs e)
+        protected void btnGenerateMemberPdf_Click(object sender, EventArgs e)
         {
             int leaderId = Convert.ToInt32(Session["UserId"]);
             using (SqlConnection conn = new SqlConnection(ConnString))
@@ -414,6 +429,7 @@ namespace Project_Board.Student.Leader
                 string query = @"
                     SELECT 
                         t.TaskTitle AS [Task Title],
+                        t.TaskDescription AS [Description],
                         uTo.FullName AS [Assigned Member],
                         t.TaskCategory AS [Category],
                         t.DueDate AS [Due Date],
@@ -433,13 +449,27 @@ namespace Project_Board.Student.Leader
                         DataTable dt = new DataTable();
                         da.Fill(dt);
                         
+                        List<string> selectedCols = new List<string>();
+                        if (chkMemberColTaskTitle.Checked) selectedCols.Add("Task Title");
+                        if (chkMemberColDescription.Checked) selectedCols.Add("Description");
+                        if (chkMemberColAssignedTo.Checked) selectedCols.Add("Assigned Member");
+                        if (chkMemberColDueDate.Checked) selectedCols.Add("Due Date");
+                        if (chkMemberColStatus.Checked) selectedCols.Add("Status");
+
                         string userName = Session["FullName"]?.ToString() ?? "Student Leader";
                         string userEmail = Session["Email"]?.ToString() ?? "leader@example.com";
                         
-                        Project_Board.Services.ReportService.GeneratePdfReport("Tasks Assigned To Members", dt, userName, userEmail, "All Member Tasks", Response);
+                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Tasks Assigned To Members", dt, userName, userEmail, selectedCols);
+                        
+                        Response.Clear();
+                        Response.ContentType = "application/pdf";
+                        Response.AddHeader("content-disposition", "attachment;filename=Leader_MemberTasksReport.pdf");
+                        Response.BinaryWrite(pdfBytes);
+                        Response.End();
                     }
                 }
             }
         }
     }
 }
+

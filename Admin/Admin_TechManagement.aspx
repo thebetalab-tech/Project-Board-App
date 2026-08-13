@@ -24,6 +24,9 @@
                 <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-chart-pie"></i> Overview
                 </a>
+                <a href='<%= ResolveUrl("~/Admin/Admin_Analysis.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                </a>
                 <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-users"></i> Users Management
                 </a>
@@ -107,8 +110,12 @@
                 <div class="data-section" style="max-width: 600px;">
                     <div class="section-header">
                         <h2>Available Technologies</h2>
+                        <div class="search-bar" style="width: 250px;">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" id="searchTechs" placeholder="Filter tech...">
+                        </div>
                     </div>
-                    <table>
+                    <table id="techsTable">
                         <thead>
                             <tr>
                                 <th>Tech ID</th>
@@ -195,6 +202,12 @@
         </div>
     </main>
 
+    <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initTableSearch('searchTechs', 'techsTable');
+        });
+    </script>
     <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
     </form>
 </body>

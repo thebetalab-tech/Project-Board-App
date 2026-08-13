@@ -167,6 +167,9 @@
                 <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-chart-pie"></i> Overview
                 </a>
+                <a href='<%= ResolveUrl("~/Student/Leader/Leader_Analysis.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                </a>
                 <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-users"></i> Team Members
                 </a>
@@ -295,14 +298,20 @@
                     <div class="data-section">
                         <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                             <h2>Tasks From Mentor</h2>
-                            <asp:LinkButton ID="btnExportMentorTasks" runat="server" CssClass="btn-secondary" OnClick="btnExportMentorTasks_Click">
-                                <i class="fa-solid fa-file-export"></i> Export Report
-                            </asp:LinkButton>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <a href="javascript:void(0)" class="btn-secondary" onclick="openModal('reportModalMentor')">
+                                    <i class="fa-solid fa-file-export"></i> Export Report
+                                </a>
+                                <div class="search-bar" style="width: 250px;">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" id="searchMentorTasks" placeholder="Filter mentor tasks...">
+                                </div>
+                            </div>
                         </div>
                         <div class="table-container">
                             <asp:Repeater ID="rptMentorTasks" runat="server" OnItemCommand="rptMentorTasks_ItemCommand">
                                 <HeaderTemplate>
-                                    <table class="modern-table">
+                                    <table class="modern-table" id="mentorTasksTable">
                                         <thead>
                                             <tr>
                                                 <th>Task Title</th>
@@ -408,14 +417,20 @@
                     <div class="data-section">
                         <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                             <h2>Assigned Member Tasks & Progress</h2>
-                            <asp:LinkButton ID="btnExportMemberTasks" runat="server" CssClass="btn-secondary" OnClick="btnExportMemberTasks_Click">
-                                <i class="fa-solid fa-file-export"></i> Export Report
-                            </asp:LinkButton>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <a href="javascript:void(0)" class="btn-secondary" onclick="openModal('reportModalMember')">
+                                    <i class="fa-solid fa-file-export"></i> Export Report
+                                </a>
+                                <div class="search-bar" style="width: 250px;">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" id="searchMemberTasks" placeholder="Filter member tasks...">
+                                </div>
+                            </div>
                         </div>
                         <div class="table-container">
                             <asp:Repeater ID="rptMemberTasks" runat="server" OnItemCommand="rptMemberTasks_ItemCommand">
                                 <HeaderTemplate>
-                                    <table class="modern-table">
+                                    <table class="modern-table" id="memberTasksTable">
                                         <thead>
                                             <tr>
                                                 <th>Task Title</th>
@@ -479,6 +494,60 @@
 
 
     </form>
+    <!-- REPORT EXPORT MODALS -->
+    <div id="reportModalMentor" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Export Mentor Tasks Report</h2>
+                <button type="button" class="close-btn" onclick="closeModal('reportModalMentor')"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p style="margin-bottom: 1rem; color: var(--c-text-dim);">Select the columns you want to include in the PDF report:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <label><asp:CheckBox ID="chkMentorColTaskTitle" runat="server" Checked="true" /> Task Title</label>
+                    <label><asp:CheckBox ID="chkMentorColDescription" runat="server" Checked="true" /> Description</label>
+                    <label><asp:CheckBox ID="chkMentorColAssignedBy" runat="server" Checked="true" /> Assigned By</label>
+                    <label><asp:CheckBox ID="chkMentorColDueDate" runat="server" Checked="true" /> Due Date</label>
+                    <label><asp:CheckBox ID="chkMentorColStatus" runat="server" Checked="true" /> Status</label>
+                </div>
+                <div style="text-align: right;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('reportModalMentor')">Cancel</button>
+                    <asp:Button ID="btnGenerateMentorPdf" runat="server" Text="Generate PDF" CssClass="btn-primary" OnClick="btnGenerateMentorPdf_Click" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reportModalMember" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Export Member Tasks Report</h2>
+                <button type="button" class="close-btn" onclick="closeModal('reportModalMember')"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p style="margin-bottom: 1rem; color: var(--c-text-dim);">Select the columns you want to include in the PDF report:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <label><asp:CheckBox ID="chkMemberColTaskTitle" runat="server" Checked="true" /> Task Title</label>
+                    <label><asp:CheckBox ID="chkMemberColDescription" runat="server" Checked="true" /> Description</label>
+                    <label><asp:CheckBox ID="chkMemberColAssignedTo" runat="server" Checked="true" /> Assigned Member</label>
+                    <label><asp:CheckBox ID="chkMemberColDueDate" runat="server" Checked="true" /> Due Date</label>
+                    <label><asp:CheckBox ID="chkMemberColStatus" runat="server" Checked="true" /> Status</label>
+                </div>
+                <div style="text-align: right;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('reportModalMember')">Cancel</button>
+                    <asp:Button ID="btnGenerateMemberPdf" runat="server" Text="Generate PDF" CssClass="btn-primary" OnClick="btnGenerateMemberPdf_Click" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initTableSearch('searchMentorTasks', 'mentorTasksTable');
+            initTableSearch('searchMemberTasks', 'memberTasksTable');
+        });
+    </script>
 
     <script>
         function switchTab(tabId, btn) {

@@ -212,17 +212,219 @@
                         <h3><i class="fa-solid fa-globe" style="color:var(--c-accent); margin-right:0.5rem;"></i> All System Tasks</h3>
                         <div style="display:flex; gap: 10px; align-items:center;">
                             <asp:DropDownList ID="ddlReportFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-control" style="width:auto; padding: 0.5rem;">
+        .badge-appealed { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .badge-progress { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--c-border);
+        }
+
+        .data-table th {
+            color: var(--c-text-dim);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--c-text);
+        }
+
+        .form-control {
+            background: var(--c-bg);
+            border: 1px solid var(--c-border);
+            color: var(--c-text);
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .btn-delete:hover {
+            background: #ef4444;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="form1" runat="server">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Project Board</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main Menu</div>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chart-pie"></i> Overview
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_Analysis.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-users"></i> Users Management
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_GroupsManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-user-group"></i> Groups
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_ProjectsManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-folder-open"></i> Projects
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-microchip"></i> Technologies
+                    </a>
+                    <a href='<%= ResolveUrl("~/Admin/Admin_TaskManagement.aspx") %>' class="nav-link active">
+                        <i class="fa-solid fa-list-check"></i> Tasks Management
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Preferences</div>
+                    <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-user"></i> Profile
+                    </a>
+                    <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar"><asp:Label ID="userintial" runat="server"></asp:Label></div>
+                    <div class="user-info">
+                        <h4><asp:Label ID="userNameLabel" runat="server"></asp:Label></h4>
+                        <p><asp:Label ID="userEmailLabel" runat="server"></asp:Label></p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="topbar">
+                <div class="search-bar" style="visibility: hidden;">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                                    <div class="topbar-actions">
+                        <a href="<%= ResolveUrl("~/User/Notifications.aspx") %>" class="notification-btn" title="Notifications">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="notification-badge"><%= Project_Board.Utils.NotificationHelper.GetUnreadCount(Session["UserId"]) %></span>
+                        </a>
+                        <div class="profile-menu-container">
+                            <div class="profile-trigger">
+                                <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
+                                <div class="profile-greeting">
+                                    <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
+                                </div>
+                                <i class="fa-solid fa-chevron-down profile-arrow"></i>
+                            </div>
+                            <div class="profile-dropdown">
+                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-regular fa-user"></i> My Profile</a>
+                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> Change Password</a>
+                                <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+            <div class="dashboard-container">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Global Admin Task Management</h1>
+                        <p>Global system visibility: Assign and oversee tasks across all groups, students, and faculty.</p>
+                    </div>
+                </div>
+
+                <asp:Label ID="lblMessage" runat="server" Visible="false" Style="display:block; margin-bottom:1rem;"></asp:Label>
+
+                <!-- GLOBAL TASK CREATION CARD -->
+                <div class="stat-card" style="margin-bottom: 1.5rem;">
+                    <h3><i class="fa-solid fa-plus-circle" style="color:var(--c-accent); margin-right:0.5rem;"></i> Create & Assign Global Task</h3>
+                    <div class="form-grid" style="margin-top:1rem;">
+                        <div class="form-group">
+                            <label>Target Group</label>
+                            <asp:DropDownList ID="ddlGroups" runat="server" CssClass="form-control"></asp:DropDownList>
+                        </div>
+                        <div class="form-group">
+                            <label>Assign To Any User (Student / Faculty / Leader)</label>
+                            <asp:DropDownList ID="ddlAssignToUser" runat="server" CssClass="form-control"></asp:DropDownList>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>Task Title</label>
+                            <asp:TextBox ID="txtTaskTitle" runat="server" CssClass="form-control" placeholder="Enter task title..."></asp:TextBox>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>Task Description</label>
+                            <asp:TextBox ID="txtTaskDescription" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" placeholder="Enter full task instructions..."></asp:TextBox>
+                        </div>
+                        <div class="form-group">
+                            <label>Points to Cover</label>
+                            <asp:TextBox ID="txtPointsToCover" runat="server" TextMode="MultiLine" Rows="2" CssClass="form-control" placeholder="Key points or requirements..."></asp:TextBox>
+                        </div>
+                        <div class="form-group">
+                            <label>Due Date</label>
+                            <asp:TextBox ID="txtDueDate" runat="server" TextMode="Date" CssClass="form-control"></asp:TextBox>
+                        </div>
+                    </div>
+                    <div style="margin-top:1rem; text-align:right;">
+                        <asp:Button ID="btnAdminCreateTask" runat="server" Text="Assign Global Task" CssClass="btn-primary" OnClick="btnAdminCreateTask_Click" />
+                    </div>
+                </div>
+
+                <!-- GLOBAL TASKS LIST -->
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3><i class="fa-solid fa-globe" style="color:var(--c-accent); margin-right:0.5rem;"></i> All System Tasks</h3>
+                        <div style="display:flex; gap: 10px; align-items:center;">
+                            <asp:DropDownList ID="ddlReportFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-control" style="width:auto; padding: 0.5rem;">
                                 <asp:ListItem Text="All Tasks" Value="All"></asp:ListItem>
                                 <asp:ListItem Text="Completed" Value="Completed"></asp:ListItem>
                                 <asp:ListItem Text="In Progress" Value="In Progress"></asp:ListItem>
                                 <asp:ListItem Text="Appealed" Value="Appealed"></asp:ListItem>
                             </asp:DropDownList>
-                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
+                            <a href="javascript:void(0)" class="btn-secondary" onclick="openModal('reportModal')">
                                 <i class="fa-solid fa-file-export"></i> Export Report
-                            </asp:LinkButton>
+                            </a>
+                            <div class="search-bar" style="width: 250px;">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" id="searchTasks" placeholder="Filter tasks...">
+                            </div>
                         </div>
                     </div>
-                    <table class="data-table">
+                    <table class="data-table" id="tasksTable">
                         <thead>
                             <tr>
                                 <th>Task Title</th>
@@ -274,6 +476,39 @@
             </div>
         </main>
     </form>
+    <!-- REPORT EXPORT MODAL -->
+    <div id="reportModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Export Task Report</h2>
+                <button type="button" class="close-btn" onclick="closeModal('reportModal')"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p style="margin-bottom: 1rem; color: var(--c-text-dim);">Select the columns you want to include in the PDF report:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <label><asp:CheckBox ID="chkColTaskTitle" runat="server" Checked="true" /> Task Title</label>
+                    <label><asp:CheckBox ID="chkColTaskDescription" runat="server" Checked="true" /> Description</label>
+                    <label><asp:CheckBox ID="chkColGroupName" runat="server" Checked="true" /> Group Name</label>
+                    <label><asp:CheckBox ID="chkColAssignedTo" runat="server" Checked="true" /> Assigned To</label>
+                    <label><asp:CheckBox ID="chkColAssignedBy" runat="server" Checked="true" /> Assigned By</label>
+                    <label><asp:CheckBox ID="chkColLevel" runat="server" Checked="true" /> Task Level</label>
+                    <label><asp:CheckBox ID="chkColDueDate" runat="server" Checked="true" /> Due Date</label>
+                    <label><asp:CheckBox ID="chkColStatus" runat="server" Checked="true" /> Status</label>
+                </div>
+                <div style="text-align: right;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('reportModal')">Cancel</button>
+                    <asp:Button ID="btnGeneratePdf" runat="server" Text="Generate PDF" CssClass="btn-primary" OnClick="btnGeneratePdf_Click" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initTableSearch('searchTasks', 'tasksTable');
+        });
+    </script>
     <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
 </body>
 

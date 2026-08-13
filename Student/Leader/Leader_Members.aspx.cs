@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -17,6 +18,12 @@ namespace Project_Board.Student.Leader
         protected global::System.Web.UI.WebControls.Panel pnlRequests;
         protected global::System.Web.UI.WebControls.Button btnToggleStatus;
         
+        protected global::System.Web.UI.WebControls.CheckBox chkColMemberId;
+        protected global::System.Web.UI.WebControls.CheckBox chkColMemberName;
+        protected global::System.Web.UI.WebControls.CheckBox chkColEnrollmentNo;
+        protected global::System.Web.UI.WebControls.CheckBox chkColEmail;
+        protected global::System.Web.UI.WebControls.CheckBox chkColStatus;
+
         protected string UserInitials { get; set; } = "TL";
         protected bool MemberNeeded { get; set; } = true;
 
@@ -204,7 +211,7 @@ namespace Project_Board.Student.Leader
             }
         }
 
-        protected void btnExportReport_Click(object sender, EventArgs e)
+        protected void btnGeneratePdf_Click(object sender, EventArgs e)
         {
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connString))
@@ -232,10 +239,23 @@ namespace Project_Board.Student.Leader
                         DataTable dt = new DataTable();
                         da.Fill(dt);
                         
+                        List<string> selectedCols = new List<string>();
+                        if (chkColMemberId.Checked) selectedCols.Add("Member ID");
+                        if (chkColMemberName.Checked) selectedCols.Add("Member Name");
+                        if (chkColEnrollmentNo.Checked) selectedCols.Add("Enrollment No.");
+                        if (chkColEmail.Checked) selectedCols.Add("Email Address");
+                        if (chkColStatus.Checked) selectedCols.Add("Status");
+
                         string userName = Session["FullName"]?.ToString() ?? "Student Leader";
                         string userEmail = Session["Email"]?.ToString() ?? "leader@example.com";
                         
-                        Project_Board.Services.ReportService.GeneratePdfReport("My Team Members Report", dt, userName, userEmail, "Active Group Members", Response);
+                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("My Team Members Report", dt, userName, userEmail, selectedCols);
+                        
+                        Response.Clear();
+                        Response.ContentType = "application/pdf";
+                        Response.AddHeader("content-disposition", "attachment;filename=Leader_TeamMembersReport.pdf");
+                        Response.BinaryWrite(pdfBytes);
+                        Response.End();
                     }
                 }
             }

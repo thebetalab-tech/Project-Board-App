@@ -24,6 +24,9 @@
                 <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-chart-pie"></i> Overview
                 </a>
+                <a href='<%= ResolveUrl("~/Admin/Admin_Analysis.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                </a>
                 <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link active">
                     <i class="fa-solid fa-users"></i> Users Management
                 </a>
@@ -121,11 +124,11 @@
                             </asp:LinkButton>
                             <div class="search-bar" style="width: 250px;">
                                 <i class="fa-solid fa-search"></i>
-                                <input type="text" placeholder="Filter users...">
+                                <input type="text" id="searchUsers" placeholder="Filter users...">
                             </div>
                         </div>
                     </div>
-                    <table>
+                    <table id="usersTable">
                         <thead>
                             <tr>
                                 <th>User</th>
@@ -227,6 +230,12 @@
             </div>
         </div>
     </div>
+    <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initTableSearch('searchUsers', 'usersTable');
+        });
+    </script>
     <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
     </form>
 </body>

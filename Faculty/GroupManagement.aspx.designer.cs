@@ -23,5 +23,11 @@ namespace Project_Board.Faculty
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         protected global::System.Web.UI.WebControls.LinkButton btnExportReport;
+        protected global::System.Web.UI.WebControls.CheckBox chkColGroupName;
+        protected global::System.Web.UI.WebControls.CheckBox chkColLeaderName;
+        protected global::System.Web.UI.WebControls.CheckBox chkColTechnology;
+        protected global::System.Web.UI.WebControls.CheckBox chkColTeamSize;
+
     }
 }
+

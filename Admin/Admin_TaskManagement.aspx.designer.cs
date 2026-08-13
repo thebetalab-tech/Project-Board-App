@@ -24,5 +24,15 @@ namespace Project_Board.Admin
         protected global::System.Web.UI.WebControls.Label lblNoTasks;
         protected global::System.Web.UI.WebControls.DropDownList ddlReportFilter;
         protected global::System.Web.UI.WebControls.LinkButton btnExportReport;
+        protected global::System.Web.UI.WebControls.CheckBox chkColTaskTitle;
+        protected global::System.Web.UI.WebControls.CheckBox chkColTaskDescription;
+        protected global::System.Web.UI.WebControls.CheckBox chkColGroupName;
+        protected global::System.Web.UI.WebControls.CheckBox chkColAssignedTo;
+        protected global::System.Web.UI.WebControls.CheckBox chkColAssignedBy;
+        protected global::System.Web.UI.WebControls.CheckBox chkColLevel;
+        protected global::System.Web.UI.WebControls.CheckBox chkColDueDate;
+        protected global::System.Web.UI.WebControls.CheckBox chkColStatus;
+
     }
 }
+

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -62,7 +63,7 @@ namespace Project_Board.Faculty
             }
         }
 
-        protected void btnExportReport_Click(object sender, EventArgs e)
+        protected void btnGeneratePdf_Click(object sender, EventArgs e)
         {
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
@@ -88,13 +89,27 @@ namespace Project_Board.Faculty
                         DataTable dt = new DataTable();
                         da.Fill(dt);
                         
+                        List<string> selectedCols = new List<string>();
+                        if (chkColGroupName.Checked) selectedCols.Add("Group Name");
+                        if (chkColLeaderName.Checked) selectedCols.Add("Leader Name");
+                        if (chkColTechnology.Checked) selectedCols.Add("Technology");
+                        if (chkColTeamSize.Checked) selectedCols.Add("Team Size");
+
                         string userName = Session["FullName"]?.ToString() ?? "Faculty";
                         string userEmail = Session["Email"]?.ToString() ?? "faculty@example.com";
                         
-                        Project_Board.Services.ReportService.GeneratePdfReport("My Mentored Groups Report", dt, userName, userEmail, "All Active Mentored Groups", Response);
+                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Mentored Groups Report", dt, userName, userEmail, selectedCols);
+                        
+                        Response.Clear();
+                        Response.ContentType = "application/pdf";
+                        Response.AddHeader("content-disposition", "attachment;filename=Faculty_GroupsReport.pdf");
+                        Response.BinaryWrite(pdfBytes);
+                        Response.End();
                     }
                 }
             }
         }
     }
 }
+
+

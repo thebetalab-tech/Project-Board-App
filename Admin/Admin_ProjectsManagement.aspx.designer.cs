@@ -74,5 +74,13 @@ namespace Project_Board.Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnExportReport;
+        protected global::System.Web.UI.WebControls.CheckBox chkColProjectTitle;
+        protected global::System.Web.UI.WebControls.CheckBox chkColFunctionality;
+        protected global::System.Web.UI.WebControls.CheckBox chkColGroupName;
+        protected global::System.Web.UI.WebControls.CheckBox chkColKeywords;
+        protected global::System.Web.UI.WebControls.CheckBox chkColProjectType;
+        protected global::System.Web.UI.WebControls.CheckBox chkColStatus;
+
     }
 }
+

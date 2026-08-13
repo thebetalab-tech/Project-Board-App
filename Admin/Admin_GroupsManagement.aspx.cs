@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.Configuration;
 using System.Data;
@@ -140,7 +141,19 @@ namespace Project_Board.Admin
                         string userName = Session["FullName"]?.ToString() ?? "Admin";
                         string userEmail = Session["Email"]?.ToString() ?? "admin@example.com";
                         
-                        Project_Board.Services.ReportService.GeneratePdfReport("Groups Management Report", dt, userName, userEmail, "Status: " + filter, Response);
+                        List<string> selectedCols = new List<string>();
+                        foreach (DataColumn column in dt.Columns)
+                        {
+                            selectedCols.Add(column.ColumnName);
+                        }
+                        
+                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Groups Management Report", dt, userName, userEmail, selectedCols);
+                        
+                        Response.Clear();
+                        Response.ContentType = "application/pdf";
+                        Response.AddHeader("content-disposition", "attachment;filename=Report.pdf");
+                        Response.BinaryWrite(pdfBytes);
+                        Response.End();
                     }
                 }
             }

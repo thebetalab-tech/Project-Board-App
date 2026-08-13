@@ -23,6 +23,9 @@
                     <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Overview
                     </a>
+                    <a href='<%= ResolveUrl("~/Student/Leader/Leader_Analysis.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                    </a>
                     <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-users"></i> Team Members
                     </a>

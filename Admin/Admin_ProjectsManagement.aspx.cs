@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.Configuration;
 using System.Data;
@@ -131,7 +132,7 @@ namespace Project_Board.Admin
             }
         }
 
-        protected void btnExportReport_Click(object sender, EventArgs e)
+        protected void btnGeneratePdf_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(connString)) return;
             string filter = ddlReportFilter.SelectedValue;
@@ -142,9 +143,10 @@ namespace Project_Board.Admin
                     SELECT 
                         p.ProjectTitle AS [Project Title],
                         p.Functionality AS [Functionality],
+                        p.Keywords AS [Keywords],
+                        p.ProjectType AS [Project Type],
                         g.GroupName AS [Group Name],
-                        p.Status AS [Status],
-                        p.CreatedAt AS [Submitted On]
+                        p.Status AS [Status]
                     FROM Projects p
                     LEFT JOIN Groups g ON p.GroupId = g.GroupId";
 
@@ -167,13 +169,28 @@ namespace Project_Board.Admin
                         DataTable dt = new DataTable();
                         da.Fill(dt);
                         
+                        List<string> selectedCols = new List<string>();
+                        if (chkColProjectTitle.Checked) selectedCols.Add("Project Title");
+                        if (chkColFunctionality.Checked) selectedCols.Add("Functionality");
+                        if (chkColGroupName.Checked) selectedCols.Add("Group Name");
+                        if (chkColKeywords.Checked) selectedCols.Add("Keywords");
+                        if (chkColProjectType.Checked) selectedCols.Add("Project Type");
+                        if (chkColStatus.Checked) selectedCols.Add("Status");
+
                         string userName = Session["FullName"]?.ToString() ?? "Admin";
                         string userEmail = Session["Email"]?.ToString() ?? "admin@example.com";
                         
-                        Project_Board.Services.ReportService.GeneratePdfReport("Projects Management Report", dt, userName, userEmail, "Status: " + filter, Response);
+                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Projects Management Report - " + filter, dt, userName, userEmail, selectedCols);
+                        
+                        Response.Clear();
+                        Response.ContentType = "application/pdf";
+                        Response.AddHeader("content-disposition", "attachment;filename=Admin_ProjectsReport.pdf");
+                        Response.BinaryWrite(pdfBytes);
+                        Response.End();
                     }
                 }
             }
         }
     }
 }
+

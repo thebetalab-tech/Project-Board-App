@@ -1,12 +1,36 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Admin_Dashboard.aspx.cs" Inherits="Project_Board.Admin.Admin_Dashboard" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Admin_Analysis.aspx.cs" Inherits="Project_Board.Admin.Admin_Analysis" %>
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard — Overview</title>
+    <title>Admin Dashboard — Analysis</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link  rel="stylesheet" href="../Admin/admin.css?v=latest_v3" />
+    <style>
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--c-border);
+        }
+        .chart-container h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--c-text);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -14,17 +38,16 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
-
             <h2>Project Board</h2>
         </div>
         
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Main Menu</div>
-                <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link active">
+                <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-chart-pie"></i> Overview
                 </a>
-                <a href='<%= ResolveUrl("~/Admin/Admin_Analysis.aspx") %>' class="nav-link">
+                <a href='<%= ResolveUrl("~/Admin/Admin_Analysis.aspx") %>' class="nav-link active">
                     <i class="fa-solid fa-chart-line"></i> Analysis & Reports
                 </a>
                 <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link">
@@ -74,88 +97,57 @@
                 <i class="fa-solid fa-search"></i>
                 <input type="text" placeholder="Search...">
             </div>
-                                <div class="topbar-actions">
-                        <a href="<%= ResolveUrl("~/User/Notifications.aspx") %>" class="notification-btn" title="Notifications">
-                            <i class="fa-regular fa-bell"></i>
-                            <span class="notification-badge"><%= Project_Board.Utils.NotificationHelper.GetUnreadCount(Session["UserId"]) %></span>
-                        </a>
-                        <div class="profile-menu-container">
-                            <div class="profile-trigger">
-                                <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
-                                <div class="profile-greeting">
-                                    <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
-                                </div>
-                                <i class="fa-solid fa-chevron-down profile-arrow"></i>
-                            </div>
-                            <div class="profile-dropdown">
-                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-regular fa-user"></i> My Profile</a>
-                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> Change Password</a>
-                                <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> Log Out</a>
-                            </div>
+            <div class="topbar-actions">
+                <a href="<%= ResolveUrl("~/User/Notifications.aspx") %>" class="notification-btn" title="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-badge"><%= Project_Board.Utils.NotificationHelper.GetUnreadCount(Session["UserId"]) %></span>
+                </a>
+                <div class="profile-menu-container">
+                    <div class="profile-trigger">
+                        <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
+                        <div class="profile-greeting">
+                            <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
                         </div>
+                        <i class="fa-solid fa-chevron-down profile-arrow"></i>
                     </div>
+                    <div class="profile-dropdown">
+                        <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-regular fa-user"></i> My Profile</a>
+                        <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> Change Password</a>
+                        <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> Log Out</a>
+                    </div>
+                </div>
+            </div>
         </header>
+        
         <div class="dashboard-container">
-            <div class="view-section active">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h1>Dashboard Overview</h1>
-                        <p>Welcome back, Admin. Here is what's happening today.</p>
-                    </div>
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>System Analysis</h1>
+                    <p>In-depth visualization and charts of platform activity.</p>
                 </div>
+            </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon users"><i class="fa-solid fa-users"></i></div>
-                        </div>
-                        <div class="stat-value"><asp:Label ID="lblTotalUsers" runat="server" Text="0"></asp:Label></div>
-                        <div class="stat-label">Total Active Users</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon groups"><i class="fa-solid fa-user-group"></i></div>
-                        </div>
-                        <div class="stat-value"><asp:Label ID="lblTotalGroups" runat="server" Text="0"></asp:Label></div>
-                        <div class="stat-label">Total Groups</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon projects"><i class="fa-solid fa-folder-open"></i></div>
-                        </div>
-                        <div class="stat-value"><asp:Label ID="lblPendingProjects" runat="server" Text="0"></asp:Label></div>
-                        <div class="stat-label">Pending Projects</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon tech"><i class="fa-solid fa-microchip"></i></div>
-                        </div>
-                        <div class="stat-value"><asp:Label ID="lblTotalTechs" runat="server" Text="0"></asp:Label></div>
-                        <div class="stat-label">Registered Technologies</div>
-                    </div>
+            <div class="analysis-grid">
+                <div class="chart-container">
+                    <h3><i class="fa-solid fa-users" style="color:#4f46e5;"></i> Users by Role</h3>
+                    <canvas id="usersChart" style="max-height: 300px;"></canvas>
                 </div>
-
-                <div class="charts-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-                    <div class="stat-card">
-                        <h3>Users by Role</h3>
-                        <canvas id="usersChart" style="max-height: 250px;"></canvas>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Projects by Status</h3>
-                        <canvas id="projectsChart" style="max-height: 250px;"></canvas>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Tasks by Status</h3>
-                        <canvas id="tasksChart" style="max-height: 250px;"></canvas>
-                    </div>
+                <div class="chart-container">
+                    <h3><i class="fa-solid fa-folder-tree" style="color:#10b981;"></i> Projects by Status</h3>
+                    <canvas id="projectsChart" style="max-height: 300px;"></canvas>
                 </div>
-                
+                <div class="chart-container">
+                    <h3><i class="fa-solid fa-microchip" style="color:#f59e0b;"></i> Projects by Technology</h3>
+                    <canvas id="techChart" style="max-height: 300px;"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3><i class="fa-solid fa-list-check" style="color:#ef4444;"></i> Tasks by Status</h3>
+                    <canvas id="tasksChart" style="max-height: 300px;"></canvas>
+                </div>
             </div>
         </div>
     </main>
+    
     <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -196,6 +188,21 @@
                 options: chartOptions
             });
 
+            // Tech Chart
+            const techData = <%= ProjectsByTechJson %>;
+            new Chart(document.getElementById('techChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(techData),
+                    datasets: [{
+                        label: 'Projects',
+                        data: Object.values(techData),
+                        backgroundColor: ['#f59e0b', '#8b5cf6', '#3b82f6', '#10b981', '#ef4444']
+                    }]
+                },
+                options: { ...chartOptions, plugins: { legend: { display: false } } }
+            });
+
             // Tasks Chart
             const tasksData = <%= TasksByStatusJson %>;
             new Chart(document.getElementById('tasksChart'), {
@@ -215,4 +222,3 @@
     </form>
 </body>
 </html>
-

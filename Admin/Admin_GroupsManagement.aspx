@@ -24,6 +24,9 @@
                 <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-chart-pie"></i> Overview
                 </a>
+                <a href='<%= ResolveUrl("~/Admin/Admin_Analysis.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                </a>
                 <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-users"></i> Users Management
                 </a>
@@ -115,9 +118,13 @@
                             <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
                                 <i class="fa-solid fa-file-export"></i> Export Report
                             </asp:LinkButton>
+                            <div class="search-bar" style="width: 250px;">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" id="searchGroups" placeholder="Filter groups...">
+                            </div>
                         </div>
                     </div>
-                    <table>
+                    <table id="groupsTable">
                         <thead>
                             <tr>
                                 <th>Group Name</th>
@@ -156,6 +163,12 @@
         </div>
     </main>
 
+    <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initTableSearch('searchGroups', 'groupsTable');
+        });
+    </script>
     <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
     </form>
 </body>

@@ -150,5 +150,58 @@ namespace Project_Board.Faculty
             lblMessage.CssClass = isSuccess ? "form-message success" : "form-message error";
             lblMessage.Visible = true;
         }
+
+        protected void btnGeneratePdf_Click(object sender, EventArgs e)
+        {
+            int facultyId = Convert.ToInt32(Session["UserId"]);
+            string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string query = @"
+                    SELECT 
+                        p.ProjectTitle AS [Project Title],
+                        p.Keywords AS [Keywords],
+                        g.GroupName AS [Group Name],
+                        p.ProjectType AS [Project Type],
+                        p.CreatedAt AS [Submitted On],
+                        p.Status AS [Status]
+                    FROM Projects p
+                    INNER JOIN Groups g ON p.GroupId = g.GroupId
+                    WHERE g.MentorId = @FacultyId
+                    ORDER BY p.CreatedAt DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                    
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        
+                        List<string> selectedCols = new List<string>();
+                        if (chkColProjectTitle.Checked) selectedCols.Add("Project Title");
+                        if (chkColKeywords.Checked) selectedCols.Add("Keywords");
+                        if (chkColGroupName.Checked) selectedCols.Add("Group Name");
+                        if (chkColProjectType.Checked) selectedCols.Add("Project Type");
+                        if (chkColSubmittedOn.Checked) selectedCols.Add("Submitted On");
+                        if (chkColStatus.Checked) selectedCols.Add("Status");
+
+                        string userName = Session["FullName"]?.ToString() ?? "Faculty";
+                        string userEmail = Session["Email"]?.ToString() ?? "faculty@example.com";
+                        
+                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Mentored Projects Report", dt, userName, userEmail, selectedCols);
+                        
+                        Response.Clear();
+                        Response.ContentType = "application/pdf";
+                        Response.AddHeader("content-disposition", "attachment;filename=Faculty_ProjectsReport.pdf");
+                        Response.BinaryWrite(pdfBytes);
+                        Response.End();
+                    }
+                }
+            }
+        }
     }
 }
+

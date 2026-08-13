@@ -24,6 +24,9 @@
                 <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-chart-pie"></i> Overview
                 </a>
+                <a href='<%= ResolveUrl("~/Admin/Admin_Analysis.aspx") %>' class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                </a>
                 <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link">
                     <i class="fa-solid fa-users"></i> Users Management
                 </a>
@@ -113,12 +116,16 @@
                                 <asp:ListItem Text="Approved" Value="Approved"></asp:ListItem>
                                 <asp:ListItem Text="Rejected" Value="Rejected"></asp:ListItem>
                             </asp:DropDownList>
-                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
+                            <a href="javascript:void(0)" class="btn-secondary" onclick="openModal('reportModal')">
                                 <i class="fa-solid fa-file-export"></i> Export Report
-                            </asp:LinkButton>
+                            </a>
+                            <div class="search-bar" style="width: 250px;">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" id="searchProjects" placeholder="Filter projects...">
+                            </div>
                         </div>
                     </div>
-                    <table>
+                    <table id="projectsTable">
                         <thead>
                             <tr>
                                 <th>Title & Functionality</th>
@@ -168,6 +175,37 @@
         </div>
     </main>
 
+    <!-- REPORT EXPORT MODAL -->
+    <div id="reportModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Export Projects Report</h2>
+                <button type="button" class="close-btn" onclick="closeModal('reportModal')"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p style="margin-bottom: 1rem; color: var(--c-text-dim);">Select the columns you want to include in the PDF report:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <label><asp:CheckBox ID="chkColProjectTitle" runat="server" Checked="true" /> Project Title</label>
+                    <label><asp:CheckBox ID="chkColFunctionality" runat="server" Checked="true" /> Functionality</label>
+                    <label><asp:CheckBox ID="chkColGroupName" runat="server" Checked="true" /> Group Name</label>
+                    <label><asp:CheckBox ID="chkColKeywords" runat="server" Checked="true" /> Keywords</label>
+                    <label><asp:CheckBox ID="chkColProjectType" runat="server" Checked="true" /> Project Type</label>
+                    <label><asp:CheckBox ID="chkColStatus" runat="server" Checked="true" /> Status</label>
+                </div>
+                <div style="text-align: right;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('reportModal')">Cancel</button>
+                    <asp:Button ID="btnGeneratePdf" runat="server" Text="Generate PDF" CssClass="btn-primary" OnClick="btnGeneratePdf_Click" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initTableSearch('searchProjects', 'projectsTable');
+        });
+    </script>
     <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
     </form>
 </body>

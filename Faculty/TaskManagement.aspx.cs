@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -156,7 +157,9 @@ namespace Project_Board.Faculty
                 
                 if (filter != "All")
                 {
-                    query += " AND t.Status = @Status";
+                    if (filter == "Completed") query += " AND t.Status = 'Completed'";
+                    else if (filter == "In Progress") query += " AND (t.Status = 'Working' OR t.Status = 'Pending')";
+                    else if (filter == "Appealed") query += " AND t.Status = 'Appealed'";
                 }
                 
                 query += " ORDER BY t.CreatedAt DESC";
@@ -165,10 +168,6 @@ namespace Project_Board.Faculty
                 {
                     cmd.Parameters.AddWithValue("@FacultyId", facultyId);
                     cmd.Parameters.AddWithValue("@GroupId", selectedGroupId);
-                    if (filter != "All")
-                    {
-                        cmd.Parameters.AddWithValue("@Status", filter);
-                    }
                     
                     conn.Open();
                     using (SqlDataAdapter da = new SqlDataAdapter(cmd))
@@ -307,7 +306,7 @@ namespace Project_Board.Faculty
             LoadTasks();
         }
 
-        protected void btnExportReport_Click(object sender, EventArgs e)
+        protected void btnGeneratePdf_Click(object sender, EventArgs e)
         {
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string filter = ddlReportFilter.SelectedValue;
@@ -323,6 +322,7 @@ namespace Project_Board.Faculty
                 string query = @"
                     SELECT 
                         t.TaskTitle AS [Task Title],
+                        t.TaskDescription AS [Description],
                         g.GroupName AS [Group Name],
                         uTo.FullName AS [Assigned To],
                         t.DueDate AS [Due Date],
@@ -352,14 +352,29 @@ namespace Project_Board.Faculty
                         DataTable dt = new DataTable();
                         da.Fill(dt);
                         
+                        List<string> selectedCols = new List<string>();
+                        if (chkColTaskTitle.Checked) selectedCols.Add("Task Title");
+                        if (chkColTaskDescription.Checked) selectedCols.Add("Description");
+                        if (chkColGroupName.Checked) selectedCols.Add("Group Name");
+                        if (chkColAssignedTo.Checked) selectedCols.Add("Assigned To");
+                        if (chkColDueDate.Checked) selectedCols.Add("Due Date");
+                        if (chkColStatus.Checked) selectedCols.Add("Status");
+
                         string userName = Session["FullName"]?.ToString() ?? "Faculty";
                         string userEmail = Session["Email"]?.ToString() ?? "faculty@example.com";
                         string groupFilterStr = selectedGroupId == 0 ? "All Groups" : ddlFilterGroup.SelectedItem.Text;
                         
-                        Project_Board.Services.ReportService.GeneratePdfReport("Mentored Group Tasks", dt, userName, userEmail, $"Group: {groupFilterStr}, Status: {filter}", Response);
+                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport($"Mentored Tasks - {groupFilterStr} ({filter})", dt, userName, userEmail, selectedCols);
+                        
+                        Response.Clear();
+                        Response.ContentType = "application/pdf";
+                        Response.AddHeader("content-disposition", "attachment;filename=Faculty_TaskReport.pdf");
+                        Response.BinaryWrite(pdfBytes);
+                        Response.End();
                     }
                 }
             }
         }
     }
 }
+

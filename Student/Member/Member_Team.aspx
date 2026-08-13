@@ -160,8 +160,12 @@
 
                 <!-- ROSTER MEMBERS SECTION -->
                 <div class="data-section">
-                    <div class="section-header">
+                    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <h2>Roster Members</h2>
+                        <div class="search-bar" style="width: 250px;">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" id="searchRoster" placeholder="Filter team members...">
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <asp:Panel ID="pnlUnassigned" runat="server">
@@ -176,7 +180,7 @@
                         </asp:Panel>
 
                         <asp:Panel ID="pnlAssigned" runat="server">
-                            <table>
+                            <table id="rosterTable">
                                 <thead>
                                     <tr>
                                         <th>Member Name</th>
@@ -214,6 +218,12 @@
             </div>
         </main>
     </form>
+    <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initTableSearch('searchRoster', 'rosterTable');
+        });
+    </script>
     <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
 </body>
 

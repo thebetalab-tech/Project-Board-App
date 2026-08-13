@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -105,17 +106,15 @@ namespace Project_Board.Admin
                 
                 if (filter != "All")
                 {
-                    query += " WHERE t.Status = @Status";
+                    if (filter == "Completed") query += " WHERE t.Status = 'Completed'";
+                    else if (filter == "In Progress") query += " WHERE t.Status = 'Working' OR t.Status = 'Pending'";
+                    else if (filter == "Appealed") query += " WHERE t.Status = 'Appealed'";
                 }
                 
                 query += " ORDER BY t.CreatedAt DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    if (filter != "All")
-                    {
-                        cmd.Parameters.AddWithValue("@Status", filter);
-                    }
                     conn.Open();
                     using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                     {
@@ -211,7 +210,7 @@ namespace Project_Board.Admin
             }
         }
 
-        protected void btnExportReport_Click(object sender, EventArgs e)
+        protected void btnGeneratePdf_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(ConnString)) return;
             string filter = ddlReportFilter.SelectedValue;
@@ -221,10 +220,11 @@ namespace Project_Board.Admin
                 string query = @"
                     SELECT 
                         t.TaskTitle AS [Task Title],
+                        t.TaskDescription AS [Description],
                         g.GroupName AS [Group Name],
                         u_to.FullName AS [Assigned To],
                         u_by.FullName AS [Assigned By],
-                        t.TaskLevel AS [Level],
+                        t.TaskLevel AS [Task Level],
                         t.Status AS [Status],
                         t.DueDate AS [Due Date]
                     FROM Tasks t
@@ -248,13 +248,31 @@ namespace Project_Board.Admin
                         DataTable dt = new DataTable();
                         da.Fill(dt);
                         
+                        // Apply Column Selection
+                        List<string> selectedCols = new List<string>();
+                        if (chkColTaskTitle.Checked) selectedCols.Add("Task Title");
+                        if (chkColTaskDescription.Checked) selectedCols.Add("Description");
+                        if (chkColGroupName.Checked) selectedCols.Add("Group Name");
+                        if (chkColAssignedTo.Checked) selectedCols.Add("Assigned To");
+                        if (chkColAssignedBy.Checked) selectedCols.Add("Assigned By");
+                        if (chkColLevel.Checked) selectedCols.Add("Task Level");
+                        if (chkColStatus.Checked) selectedCols.Add("Status");
+                        if (chkColDueDate.Checked) selectedCols.Add("Due Date");
+                        
                         string userName = Session["FullName"]?.ToString() ?? "Admin";
                         string userEmail = Session["Email"]?.ToString() ?? "admin@example.com";
                         
-                        Project_Board.Services.ReportService.GeneratePdfReport("System Tasks Report", dt, userName, userEmail, "Status: " + filter, Response);
+                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Global Task Report - " + filter, dt, userName, userEmail, selectedCols);
+                        
+                        Response.Clear();
+                        Response.ContentType = "application/pdf";
+                        Response.AddHeader("content-disposition", "attachment;filename=Admin_TaskReport.pdf");
+                        Response.BinaryWrite(pdfBytes);
+                        Response.End();
                     }
                 }
             }
         }
     }
 }
+

@@ -50,5 +50,17 @@ namespace Project_Board.Student.Leader
         protected global::System.Web.UI.WebControls.Button btnUpdateMemberStatusByLeader;
         protected global::System.Web.UI.WebControls.LinkButton btnExportMentorTasks;
         protected global::System.Web.UI.WebControls.LinkButton btnExportMemberTasks;
+        protected global::System.Web.UI.WebControls.CheckBox chkMentorColTaskTitle;
+        protected global::System.Web.UI.WebControls.CheckBox chkMentorColDescription;
+        protected global::System.Web.UI.WebControls.CheckBox chkMentorColAssignedBy;
+        protected global::System.Web.UI.WebControls.CheckBox chkMentorColDueDate;
+        protected global::System.Web.UI.WebControls.CheckBox chkMentorColStatus;
+        protected global::System.Web.UI.WebControls.CheckBox chkMemberColTaskTitle;
+        protected global::System.Web.UI.WebControls.CheckBox chkMemberColDescription;
+        protected global::System.Web.UI.WebControls.CheckBox chkMemberColAssignedTo;
+        protected global::System.Web.UI.WebControls.CheckBox chkMemberColDueDate;
+        protected global::System.Web.UI.WebControls.CheckBox chkMemberColStatus;
+
     }
 }
+

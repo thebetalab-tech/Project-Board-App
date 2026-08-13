@@ -233,13 +233,17 @@
 
                 <!-- MENTOR MAIN PROJECT TASKS (GROUP OVERVIEW) -->
                 <div class="data-section" style="margin-top: 1.5rem;">
-                    <div class="section-header">
+                    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <h2><i class="fa-solid fa-layer-group" style="color:var(--c-accent); margin-right:0.5rem;"></i> Mentor's Tasks (Group Overview)</h2>
+                        <div class="search-bar" style="width: 250px;">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" id="searchGroupMentorTasks" placeholder="Filter mentor tasks...">
+                        </div>
                     </div>
                     <div class="table-container">
                         <asp:Repeater ID="rptGroupMentorTasks" runat="server">
                             <HeaderTemplate>
-                                <table class="modern-table">
+                                <table class="modern-table" id="groupMentorTasksTable">
                                     <thead>
                                         <tr>
                                             <th>Task Title & Description</th>
@@ -283,14 +287,18 @@
 
                 <!-- MEMBER TASKS TABLE -->
                 <div class="data-section" style="margin-top: 1.5rem;">
-                    <div class="section-header">
+                    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <h2>My Assigned Tasks</h2>
+                        <div class="search-bar" style="width: 250px;">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" id="searchMemberTasks" placeholder="Filter tasks...">
+                        </div>
                     </div>
 
                     <div class="table-container">
                         <asp:Repeater ID="rptMemberTasks" runat="server" OnItemCommand="rptMemberTasks_ItemCommand">
                             <HeaderTemplate>
-                                <table class="modern-table">
+                                <table class="modern-table" id="memberTasksTable">
                                     <thead>
                                         <tr>
                                             <th>Task Title</th>
@@ -353,6 +361,13 @@
 
 
     </form>
+    <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initTableSearch('searchGroupMentorTasks', 'groupMentorTasksTable');
+            initTableSearch('searchMemberTasks', 'memberTasksTable');
+        });
+    </script>
 
     <script>
         function openModal(id) {
