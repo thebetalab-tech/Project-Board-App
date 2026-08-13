@@ -129,6 +129,9 @@
                     <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Dashboard
                     </a>
+                    <a href='<%= ResolveUrl("~/Faculty/Analysis.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                    </a>
                     <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-users-gear"></i> Group Management
                     </a>

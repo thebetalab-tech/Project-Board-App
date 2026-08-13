@@ -90,6 +90,9 @@
                     <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-chart-pie"></i> Dashboard
                     </a>
+                    <a href='<%= ResolveUrl("~/Faculty/Analysis.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                    </a>
                     <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-users-gear"></i> Group Management
                     </a>
@@ -100,7 +103,7 @@
                         <i class="fa-solid fa-envelope"></i> Mentor Requests
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class="nav-link active">
-                        <i class="fa-solid fa-list-check"></i> Tasks Management
+                        <i class="fa-solid fa-list-check"></i> Tasks
                     </a>
                 </div>
                 <div class="nav-section">

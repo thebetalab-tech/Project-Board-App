@@ -196,19 +196,22 @@
                     </a>
                 <% } else if (currentRole == "Faculty") { %>
                     <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chart-pie"></i> Overview
+                        <i class="fa-solid fa-chart-pie"></i> Dashboard
+                    </a>
+                    <a href='<%= ResolveUrl("~/Faculty/Analysis.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-chart-line"></i> Analysis & Reports
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-users-rectangle"></i> Managed Groups
+                        <i class="fa-solid fa-users-gear"></i> Group Management
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-diagram-project"></i> Project Approvals
+                        <i class="fa-solid fa-folder-tree"></i> Project Management
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-envelope-open-text"></i> Invitations
+                        <i class="fa-solid fa-envelope"></i> Mentor Requests
                     </a>
-                    <a href='<%= ResolveUrl("~/Admin/Mentor_TaskManagement.aspx") %>' class="nav-link active">
-                        <i class="fa-solid fa-list-check"></i> Task Reviews
+                    <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class="nav-link active">
+                        <i class="fa-solid fa-list-check"></i> Tasks
                     </a>
                 <% } else { %>
                     <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">

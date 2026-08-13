@@ -161,15 +161,20 @@ namespace Project_Board.Faculty
                 string query = @"
                     SELECT 
                         p.ProjectTitle AS [Project Title],
-                        p.Keywords AS [Keywords],
+                        STUFF((
+                            SELECT ', ' + pk.Keyword
+                            FROM ProjectKeywords pk 
+                            WHERE pk.ProjectId = p.ProjectId
+                            FOR XML PATH('')
+                        ), 1, 2, '') AS [Keywords],
                         g.GroupName AS [Group Name],
                         p.ProjectType AS [Project Type],
-                        p.CreatedAt AS [Submitted On],
+                        p.SubmittedAt AS [Submitted On],
                         p.Status AS [Status]
                     FROM Projects p
                     INNER JOIN Groups g ON p.GroupId = g.GroupId
                     WHERE g.MentorId = @FacultyId
-                    ORDER BY p.CreatedAt DESC";
+                    ORDER BY p.SubmittedAt DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
