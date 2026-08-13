@@ -260,7 +260,6 @@
 
             </div>
         </main>
-    </form>
     <!-- REPORT EXPORT MODAL -->
     <div id="reportModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 500px;">
@@ -285,6 +284,7 @@
             </div>
         </div>
     </div>
+    </form>
 
     <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
     <script>

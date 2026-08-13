@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Faculty Dashboard — Analysis</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link  rel="stylesheet" href="../Admin/admin.css?v=latest_v3" />
     <style>
@@ -37,6 +40,7 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-header">
+                <div class="logo-icon"><i class="fa-solid fa-graduation-cap" style="color: white;"></i></div>
                 <h2>Project Board</h2>
             </div>
             
@@ -44,22 +48,22 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
                     <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chart-pie"></i> Overview
+                        <i class="fa-solid fa-chart-pie"></i> Dashboard
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/Analysis.aspx") %>' class="nav-link active">
                         <i class="fa-solid fa-chart-line"></i> Analysis & Reports
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-users"></i> My Mentored Groups
+                        <i class="fa-solid fa-users-gear"></i> Group Management
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-folder-open"></i> Project Proposals
-                    </a>
-                    <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-list-check"></i> Tasks Management
+                        <i class="fa-solid fa-folder-tree"></i> Project Management
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class="nav-link">
                         <i class="fa-solid fa-envelope"></i> Mentor Requests
+                    </a>
+                    <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-list-check"></i> Tasks
                     </a>
                 </div>
 

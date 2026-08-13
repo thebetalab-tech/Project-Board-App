@@ -181,7 +181,6 @@
                 </div>
             </div>
         </main>
-    </form>
     
     <!-- REPORT EXPORT MODAL -->
     <div id="reportModal" class="modal-overlay">
@@ -207,6 +206,7 @@
             </div>
         </div>
     </div>
+    </form>
     
     <!-- Mobile toggle script -->
     <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
