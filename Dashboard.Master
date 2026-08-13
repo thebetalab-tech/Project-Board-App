@@ -39,9 +39,9 @@
         <main class="main-content" id="mainContent">
             <header class="topbar">
                 <div class="topbar-left">
-                    <a href="<%= ResolveUrl("~/User/Directory.aspx") %>" class="btn-secondary" style="text-decoration: none;">
-                        <i class="fa-solid fa-users" style="margin-right: 0.5rem;"></i> Members Directory
-                    </a>
+                    <h1 class="topbar-page-title" style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--c-text);">
+                        <asp:ContentPlaceHolder ID="TopbarTitle" runat="server">Dashboard Overview</asp:ContentPlaceHolder>
+                    </h1>
                 </div>
                 
                 <div class="topbar-actions">

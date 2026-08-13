@@ -163,6 +163,8 @@
     <Content Include="OnBoarding.aspx" />
     <Content Include="CreateGroup.aspx" />
     <Content Include="MentorSelection.aspx" />
+    <Content Include="User\Directory.aspx" />
+    <Content Include="User\PublicProfile.aspx" />
     <Content Include="Admin\technologies.html" />
     <Content Include="Admin\users.html" />
     <Content Include="Student\Leader\Dashboard.aspx" />
@@ -358,6 +360,20 @@
     </Compile>
     <Compile Include="JoinGroup.aspx.designer.cs">
       <DependentUpon>JoinGroup.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="User\Directory.aspx.cs">
+      <DependentUpon>Directory.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\Directory.aspx.designer.cs">
+      <DependentUpon>Directory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="User\PublicProfile.aspx.cs">
+      <DependentUpon>PublicProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\PublicProfile.aspx.designer.cs">
+      <DependentUpon>PublicProfile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Logout.aspx.cs">
       <DependentUpon>Logout.aspx</DependentUpon>
