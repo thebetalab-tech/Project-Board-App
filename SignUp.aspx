@@ -22,7 +22,7 @@
 </head>
 
 <body>
-    <div class="auth-layout">
+    <div class="auth-layout" style="max-width: 800px;">
         <div class="auth-brand">
             <div class="auth-brand-logo">
                 <i class="fa-solid fa-cubes-stacked"></i>

@@ -104,7 +104,7 @@ a:hover {
 /* --- Layout --- */
 .auth-layout {
     width: 100%;
-    max-width: 900px; /* Widened the card as requested */
+    max-width: 500px;
     padding: 3rem 1.5rem;
     margin: auto;
     position: relative;
