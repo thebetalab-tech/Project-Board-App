@@ -107,8 +107,8 @@ form {
     display: flex;
     flex-direction: column;
     position: fixed;
-    height: calc(100vh - 2rem);
     top: 1rem;
+    bottom: 1rem;
     left: 1rem;
     border-radius: 24px;
     z-index: 100;

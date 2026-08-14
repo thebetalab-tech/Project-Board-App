@@ -11,29 +11,29 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="SidebarNav" runat="server">
     <div class="nav-section">
         <div class="nav-section-title">Main Menu</div>
-        <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Dashboard.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+        <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.IndexOf("Dashboard", StringComparison.OrdinalIgnoreCase) >= 0 ? "active" : "" %>'>
             <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
         </a>
-        <a href='<%= ResolveUrl("~/Faculty/Analysis.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Analysis.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+        <a href='<%= ResolveUrl("~/Faculty/Analysis.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.IndexOf("Analysis", StringComparison.OrdinalIgnoreCase) >= 0 ? "active" : "" %>'>
             <i class="fa-solid fa-chart-line"></i> <span>Analysis & Reports</span>
         </a>
-        <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("GroupManagement.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+        <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.IndexOf("GroupManagement", StringComparison.OrdinalIgnoreCase) >= 0 ? "active" : "" %>'>
             <i class="fa-solid fa-users-gear"></i> <span>Group Management</span>
         </a>
-        <a href='<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("ProjectManagement.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+        <a href='<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.IndexOf("ProjectManagement", StringComparison.OrdinalIgnoreCase) >= 0 ? "active" : "" %>'>
             <i class="fa-solid fa-folder-tree"></i> <span>Project Management</span>
         </a>
-        <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("InvitationManager.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+        <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.IndexOf("InvitationManager", StringComparison.OrdinalIgnoreCase) >= 0 ? "active" : "" %>'>
             <i class="fa-solid fa-envelope"></i> <span>Mentor Requests</span>
         </a>
-        <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("TaskManagement.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+        <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.IndexOf("TaskManagement", StringComparison.OrdinalIgnoreCase) >= 0 ? "active" : "" %>'>
             <i class="fa-solid fa-list-check"></i> <span>Tasks</span>
         </a>
     </div>
 
     <div class="nav-section">
         <div class="nav-section-title">Preferences</div>
-        <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Profile.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+        <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.IndexOf("Profile", StringComparison.OrdinalIgnoreCase) >= 0 ? "active" : "" %>'>
             <i class="fa-solid fa-user"></i> <span>Profile</span>
         </a>
         <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">

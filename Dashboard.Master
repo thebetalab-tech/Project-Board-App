@@ -38,7 +38,7 @@
 
         <main class="main-content" id="mainContent">
             <header class="topbar">
-                <div class="topbar-left" style="display: none;">
+                <div class="topbar-left">
                     <h1 class="topbar-page-title" style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--c-text);">
                         <asp:ContentPlaceHolder ID="TopbarTitle" runat="server"></asp:ContentPlaceHolder>
                     </h1>
