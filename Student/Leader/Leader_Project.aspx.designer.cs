@@ -11,6 +11,7 @@ namespace Project_Board.Student.Leader
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         protected global::System.Web.UI.WebControls.Label lblMessage;
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl pnlWarning;
+        protected global::System.Web.UI.WebControls.Panel pnlSubmissionForm;
         protected global::System.Web.UI.WebControls.Label lblWarningMessage;
         protected global::System.Web.UI.WebControls.TextBox txtProjectTitle;
         protected global::System.Web.UI.WebControls.TextBox txtKeywords;
