@@ -165,3 +165,38 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// Highlight Active Sidebar Link based on current URL
+document.addEventListener('DOMContentLoaded', () => {
+    const currentPath = window.location.pathname.toLowerCase();
+    const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+    
+    // First, remove active class from all
+    navLinks.forEach(link => link.classList.remove('active'));
+    
+    // Find the best match
+    let bestMatch = null;
+    let longestMatchLength = 0;
+    
+    navLinks.forEach(link => {
+        try {
+            const linkPath = new URL(link.href, window.location.origin).pathname.toLowerCase();
+            // Don't match root "/" or empty to everything
+            if (linkPath.length > 1 && currentPath.includes(linkPath)) {
+                if (linkPath.length > longestMatchLength) {
+                    longestMatchLength = linkPath.length;
+                    bestMatch = link;
+                }
+            } else if (linkPath === currentPath) {
+                bestMatch = link;
+                longestMatchLength = linkPath.length;
+            }
+        } catch (e) {
+            // ignore invalid URLs
+        }
+    });
+    
+    if (bestMatch) {
+        bestMatch.classList.add('active');
+    }
+});
+
