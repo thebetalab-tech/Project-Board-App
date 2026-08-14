@@ -16,6 +16,7 @@ namespace Project_Board.Student.Leader
         protected string UserName { get; set; } = "Student Leader";
         protected string UserEmail { get; set; } = "leader@example.com";
         protected int CurrentGroupId { get; set; } = 0;
+        protected string CurrentGroupStatus { get; set; } = "";
 
         private string ConnString => ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
@@ -47,15 +48,18 @@ namespace Project_Board.Student.Leader
             int leaderId = Convert.ToInt32(Session["UserId"]);
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
-                string query = "SELECT GroupId FROM Groups WHERE LeaderId = @LeaderId";
+                string query = "SELECT GroupId, Status FROM Groups WHERE LeaderId = @LeaderId";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@LeaderId", leaderId);
                     conn.Open();
-                    object res = cmd.ExecuteScalar();
-                    if (res != null && res != DBNull.Value)
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        CurrentGroupId = Convert.ToInt32(res);
+                        if (rdr.Read())
+                        {
+                            CurrentGroupId = Convert.ToInt32(rdr["GroupId"]);
+                            CurrentGroupStatus = rdr["Status"].ToString();
+                        }
                     }
                 }
             }
@@ -178,6 +182,14 @@ namespace Project_Board.Student.Leader
             if (CurrentGroupId == 0)
             {
                 lblMessage.Text = "Error: You are not assigned as Leader of any group.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
+
+            if (CurrentGroupStatus != "Assigned Mentor")
+            {
+                lblMessage.Text = "Error: You cannot submit a project proposal until a mentor has accepted your group's request.";
                 lblMessage.CssClass = "alert alert-danger";
                 lblMessage.Visible = true;
                 return;

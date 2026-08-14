@@ -143,8 +143,8 @@
     <div class="dashboard-container">
         
         <div class="profile-container">
-            <a href="<%= ResolveUrl("~/User/Directory.aspx") %>" class="back-link">
-                <i class="fa-solid fa-arrow-left"></i> Back to Directory
+            <a href="javascript:history.back()" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back
             </a>
 
             <asp:Label ID="lblError" runat="server" CssClass="text-danger" style="color: red; display: block; margin-bottom: 1rem;"></asp:Label>
