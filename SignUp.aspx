@@ -42,7 +42,8 @@
 
                 <!-- Signup Form Fields -->
                 <asp:Panel ID="pnlSignupForm" runat="server">
-                    <div class="input-group" id="nameGroup">
+                    <div class="form-grid">
+                        <div class="input-group" id="nameGroup" style="grid-column: 1 / -1;">
                         <label for="fullName" class="input-label">Full Name</label>
                         <div class="input-wrapper">
                             <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -121,6 +122,7 @@
                             </button>
                         </div>
                         <asp:Label ID="lblConfirmPasswordError" runat="server" CssClass="error-message" EnableViewState="false"></asp:Label>
+                    </div>
                     </div>
 
                     <asp:LinkButton ID="loginBtn" runat="server" ClientIDMode="Static" CssClass="btn-primary mt-4" OnClick="loginBtn_Click">

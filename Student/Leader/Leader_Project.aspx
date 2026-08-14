@@ -124,7 +124,7 @@
                 </div>
 
                 <!-- PROJECT SUBMISSION FORM -->
-                <div class="stat-card" style="margin-bottom: 2rem;">
+                <asp:Panel ID="pnlSubmissionForm" runat="server" CssClass="stat-card" style="margin-bottom: 2rem;">
                     <h3><i class="fa-solid fa-plus-circle" style="color:var(--c-accent); margin-right:0.5rem;"></i> Submit New Project Proposal</h3>
                     <div class="form-grid" style="margin-top:1rem;">
                         <div class="form-group">
@@ -152,7 +152,7 @@
                     <div style="margin-top:1rem; text-align:right;">
                         <asp:Button ID="btnSubmitProject" runat="server" Text="Submit Project Proposal" CssClass="btn-primary" OnClick="btnSubmitProject_Click" />
                     </div>
-                </div>
+                </asp:Panel>
 
                 <!-- SUBMITTED PROPOSALS LIST -->
                 <div class="data-section">

@@ -24,6 +24,7 @@
             <asp:Label ID="lblError" runat="server" CssClass="error-message text-center mb-4" EnableViewState="false"></asp:Label>
             
             <div class="login-form" id="loginForm">
+                <div class="form-grid">
                 <div class="input-group" id="emailGroup">
                     <label for="txtLoginID" class="input-label">Login ID</label>
                     <div class="input-wrapper">
@@ -56,6 +57,7 @@
                         </button>
                     </div>
                     <asp:Label ID="lblPasswordError" runat="server" CssClass="error-message" EnableViewState="false"></asp:Label>
+                </div>
                 </div>
 
                 <div class="form-options">

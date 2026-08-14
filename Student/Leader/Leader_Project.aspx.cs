@@ -63,6 +63,21 @@ namespace Project_Board.Student.Leader
                     }
                 }
             }
+
+            if (CurrentGroupId == 0 || CurrentGroupStatus != "Assigned Mentor")
+            {
+                pnlSubmissionForm.Visible = false;
+                if (CurrentGroupId != 0 && CurrentGroupStatus != "Assigned Mentor")
+                {
+                    lblMessage.Text = "Notice: You can only submit a project proposal after your mentor request has been accepted.";
+                    lblMessage.CssClass = "alert-warning-box";
+                    lblMessage.Visible = true;
+                }
+            }
+            else
+            {
+                pnlSubmissionForm.Visible = true;
+            }
         }
 
         private void LoadProposals()
