@@ -13,7 +13,7 @@
 
                 </div>
 
-                <div class="data-section" style="max-width: 600px;">
+                <div class="data-section">
                     <div class="section-header">
                         <h2>Available Technologies</h2>
                         <div class="search-bar" style="width: 250px;">
@@ -61,7 +61,7 @@
                     </div>
                 </div>
 
-                <div class="data-section" style="max-width: 800px; margin-top: 2rem;">
+                <div class="data-section" style="margin-top: 2rem;">
                     <div class="section-header">
                         <h2>Assign Technology to Faculty</h2>
                     </div>

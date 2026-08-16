@@ -80,6 +80,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Highlight active link in sidebar robustly
+    const currentPath = window.location.pathname.toLowerCase();
+    document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+        if (!link.href) return;
+        const linkPath = new URL(link.href).pathname.toLowerCase();
+        
+        // Remove trailing slash if exists for comparison
+        const cp = currentPath.replace(/\/$/, '');
+        const lp = linkPath.replace(/\/$/, '');
+        
+        if (cp === lp || cp === lp + '.aspx' || cp + '.aspx' === lp || cp.includes(lp)) {
+            // Because some URLs like /Admin/Admin_TechManagement include the target
+            if (lp.length > 5 && cp.includes(lp.replace('.aspx',''))) {
+                link.classList.add('active');
+            }
+        }
+    });
+
     // Auto-wrap tables for responsiveness
     const dataSections = document.querySelectorAll('.data-section');
     dataSections.forEach(section => {

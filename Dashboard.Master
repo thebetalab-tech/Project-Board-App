@@ -71,6 +71,6 @@
         <asp:ContentPlaceHolder ID="ScriptsContent" runat="server" />
     </form>
     
-    <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v5") %>'></script>
+    <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v6") %>'></script>
 </body>
 </html>
