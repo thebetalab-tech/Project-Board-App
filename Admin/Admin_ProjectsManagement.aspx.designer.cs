@@ -81,6 +81,12 @@ namespace Project_Board.Admin
         protected global::System.Web.UI.WebControls.CheckBox chkColProjectType;
         protected global::System.Web.UI.WebControls.CheckBox chkColStatus;
 
+        protected global::System.Web.UI.WebControls.HiddenField hdnEditProjectId;
+        protected global::System.Web.UI.WebControls.TextBox txtEditProjectTitle;
+        protected global::System.Web.UI.WebControls.TextBox txtEditFunctionality;
+        protected global::System.Web.UI.WebControls.DropDownList ddlEditProjectStatus;
+        protected global::System.Web.UI.WebControls.Label lblEditMessage;
+        protected global::System.Web.UI.WebControls.Button btnUpdateProject;
     }
 }
 
