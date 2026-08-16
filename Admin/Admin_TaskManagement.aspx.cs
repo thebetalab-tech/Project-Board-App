@@ -203,6 +203,54 @@ namespace Project_Board.Admin
             }
         }
 
+        protected void btnUpdateTask_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(ConnString)) return;
+
+            string taskIdStr = hdnEditTaskId.Value;
+            string title = txtEditTaskTitle.Text.Trim();
+            string desc = txtEditTaskDesc.Text.Trim();
+            string status = ddlEditTaskStatus.SelectedValue;
+
+            int taskId;
+            if (!int.TryParse(taskIdStr, out taskId)) return;
+
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                // Note: handling both 'Task' and 'Tasks' depending on schema
+                string query = "UPDATE Tasks SET TaskTitle = @Title, TaskDescription = @Desc, Status = @Status WHERE TaskId = @TaskId";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Title", title);
+                    cmd.Parameters.AddWithValue("@Desc", desc);
+                    cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.Parameters.AddWithValue("@TaskId", taskId);
+                    try
+                    {
+                        conn.Open();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        
+                        // Fallback if the table is named Task instead of Tasks
+                        if (rowsAffected == 0)
+                        {
+                            cmd.CommandText = "UPDATE Task SET TaskTitle = @Title, TaskDescription = @Desc, Status = @Status WHERE TaskId = @TaskId";
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        LoadGlobalTasks();
+                        lblEditMessage.ForeColor = System.Drawing.Color.Green;
+                        lblEditMessage.Text = "Task updated successfully.";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "CloseModal", "closeModal('editTaskModal');", true);
+                    }
+                    catch (Exception ex)
+                    {
+                        lblEditMessage.ForeColor = System.Drawing.Color.Red;
+                        lblEditMessage.Text = "Error updating task: " + ex.Message;
+                    }
+                }
+            }
+        }
+
         protected void btnGeneratePdf_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(ConnString)) return;
