@@ -1709,6 +1709,7 @@ body {
 
 .glass-select {
     width: 100%;
+    height: 52px;
     padding: 14px 48px 14px 48px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1717,6 +1718,10 @@ body {
     font-family: var(--font-secondary);
     appearance: none;
     outline: none;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .glass-select:focus {
@@ -1726,6 +1731,9 @@ body {
 .glass-select option {
     background: #0f172a;
     color: var(--white);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .select-chevron {

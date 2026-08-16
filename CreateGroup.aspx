@@ -58,6 +58,16 @@
             appearance: none;
             cursor: pointer;
             padding-right: 2.75rem;
+            height: 52px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        select.form-input option {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .back-link {
             display: inline-flex;
