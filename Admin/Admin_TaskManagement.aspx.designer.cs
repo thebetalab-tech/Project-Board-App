@@ -33,6 +33,12 @@ namespace Project_Board.Admin
         protected global::System.Web.UI.WebControls.CheckBox chkColDueDate;
         protected global::System.Web.UI.WebControls.CheckBox chkColStatus;
 
+        protected global::System.Web.UI.WebControls.HiddenField hdnEditTaskId;
+        protected global::System.Web.UI.WebControls.TextBox txtEditTaskTitle;
+        protected global::System.Web.UI.WebControls.TextBox txtEditTaskDesc;
+        protected global::System.Web.UI.WebControls.DropDownList ddlEditTaskStatus;
+        protected global::System.Web.UI.WebControls.Label lblEditMessage;
+        protected global::System.Web.UI.WebControls.Button btnUpdateTask;
     }
 }
 

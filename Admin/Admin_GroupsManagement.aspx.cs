@@ -188,7 +188,7 @@ namespace Project_Board.Admin
                             cmd.ExecuteNonQuery();
                             LoadGroups();
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             // Could log or show error.
                         }
