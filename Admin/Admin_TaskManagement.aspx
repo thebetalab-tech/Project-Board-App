@@ -173,6 +173,9 @@
                                         </td>
                                         <td>
                                             <div class="table-actions">
+                                                <button type="button" class="icon-btn edit" onclick="openEditTaskModal('<%# Eval("TaskId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("TaskTitle").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("TaskDescription").ToString()) %>', '<%# Eval("Status") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit Task">
+                                                    <i class="fa-solid fa-edit"></i>
+                                                </button>
                                                 <a href='<%# ResolveUrl("~/Faculty/TaskDetails.aspx?TaskId=" + Eval("TaskId")) %>' class="icon-btn" title="View Details">
                                                     <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
                                                 </a>
@@ -193,6 +196,41 @@
                 </div>
 
             </div>
+            
+    <!-- Edit Task Modal -->
+    <div class="modal-overlay" id="editTaskModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2 style="margin-bottom: 1.5rem; font-family: var(--f-display);">Edit Task</h2>
+            <asp:HiddenField ID="hdnEditTaskId" runat="server" />
+            <div id="editTaskForm">
+                <div class="form-group">
+                    <label>Task Title</label>
+                    <asp:TextBox ID="txtEditTaskTitle" runat="server" CssClass="form-control"></asp:TextBox>
+                </div>
+                
+                <div class="form-group" style="margin-top:1rem;">
+                    <label>Description</label>
+                    <asp:TextBox ID="txtEditTaskDesc" runat="server" TextMode="MultiLine" Rows="4" CssClass="form-control"></asp:TextBox>
+                </div>
+                
+                <div class="form-group" style="margin-top:1rem;">
+                    <label>Status</label>
+                    <asp:DropDownList ID="ddlEditTaskStatus" runat="server" CssClass="form-control">
+                        <asp:ListItem Value="In Progress">In Progress</asp:ListItem>
+                        <asp:ListItem Value="Completed">Completed</asp:ListItem>
+                        <asp:ListItem Value="Appealed">Appealed</asp:ListItem>
+                    </asp:DropDownList>
+                </div>
+                
+                <asp:Label ID="lblEditMessage" runat="server" ForeColor="#ff4d4d" EnableViewState="false" style="display:block;margin-bottom:10px;"></asp:Label>
+                
+                <div class="form-actions" style="margin-top: 1.5rem; text-align: right;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editTaskModal')">Cancel</button>
+                    <asp:Button ID="btnUpdateTask" runat="server" Text="Save Changes" CssClass="btn-primary" OnClick="btnUpdateTask_Click" />
+                </div>
+            </div>
+        </div>
+    </div>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ScriptsContent" runat="server">
     <!-- REPORT EXPORT MODAL -->
@@ -227,5 +265,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             initTableSearch('searchTasks', 'tasksTable');
         });
+        function openEditTaskModal(id, title, desc, status) {
+            document.getElementById('<%= hdnEditTaskId.ClientID %>').value = id;
+            document.getElementById('<%= txtEditTaskTitle.ClientID %>').value = title;
+            document.getElementById('<%= txtEditTaskDesc.ClientID %>').value = desc;
+            document.getElementById('<%= ddlEditTaskStatus.ClientID %>').value = status;
+            openModal('editTaskModal');
+        }
     </script>
 </asp:Content>

@@ -60,6 +60,9 @@
                                         <td><span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span></td>
                                         <td>
                                             <div class="table-actions">
+                                                <button type="button" class="icon-btn edit" onclick="openEditProjectModal('<%# Eval("ProjectId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("ProjectTitle").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Functionality").ToString()) %>', '<%# Eval("Status") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit Project">
+                                                    <i class="fa-solid fa-edit"></i>
+                                                </button>
                                                 <asp:LinkButton ID="btnApprove" runat="server" CssClass="icon-btn" style="color:var(--c-green)" ToolTip="Approve" CommandName="Approve" CommandArgument='<%# Eval("ProjectId") %>' Visible='<%# Eval("Status").ToString() == "Pending" %>'>
                                                     <i class="fa-solid fa-check"></i>
                                                 </asp:LinkButton>
@@ -69,6 +72,9 @@
                                                 <a href='<%# ResolveUrl("~/Admin/Details/Project_Details.aspx?ProjectId=" + Eval("ProjectId")) %>' class="icon-btn" title="View Details">
                                                     <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
                                                 </a>
+                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteProject" CommandArgument='<%# Eval("ProjectId") %>' OnClientClick="return confirm('Are you sure you want to delete this project?');">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </asp:LinkButton>
                                             </div>
                                         </td>
                                     </tr>
@@ -79,6 +85,42 @@
                 </div>
             </div>
         </div>
+    
+    <!-- Edit Project Modal -->
+    <div class="modal-overlay" id="editProjectModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem; font-family: var(--f-display);">Edit Project</h2>
+            <asp:HiddenField ID="hdnEditProjectId" runat="server" />
+            <div id="editProjectForm">
+                <div class="form-group">
+                    <label>Project Title</label>
+                    <asp:TextBox ID="txtEditProjectTitle" runat="server" CssClass="form-control"></asp:TextBox>
+                </div>
+                
+                <div class="form-group">
+                    <label>Functionality</label>
+                    <asp:TextBox ID="txtEditFunctionality" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control"></asp:TextBox>
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <asp:DropDownList ID="ddlEditProjectStatus" runat="server" CssClass="form-control">
+                        <asp:ListItem Value="Pending">Pending</asp:ListItem>
+                        <asp:ListItem Value="Approved">Approved</asp:ListItem>
+                        <asp:ListItem Value="Rejected">Rejected</asp:ListItem>
+                        <asp:ListItem Value="Completed">Completed</asp:ListItem>
+                    </asp:DropDownList>
+                </div>
+                
+                <asp:Label ID="lblEditMessage" runat="server" ForeColor="#ff4d4d" EnableViewState="false" style="display:block;margin-bottom:10px;"></asp:Label>
+                
+                <div class="form-actions" style="margin-top: 1.5rem; text-align: right;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editProjectModal')">Cancel</button>
+                    <asp:Button ID="btnUpdateProject" runat="server" Text="Save Changes" CssClass="btn-primary" OnClick="btnUpdateProject_Click" />
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- REPORT EXPORT MODAL -->
     <div id="reportModal" class="modal-overlay">
@@ -111,6 +153,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             initTableSearch('searchProjects', 'projectsTable');
         });
+        function openEditProjectModal(id, title, func, status) {
+            document.getElementById('<%= hdnEditProjectId.ClientID %>').value = id;
+            document.getElementById('<%= txtEditProjectTitle.ClientID %>').value = title;
+            document.getElementById('<%= txtEditFunctionality.ClientID %>').value = func;
+            document.getElementById('<%= ddlEditProjectStatus.ClientID %>').value = status;
+            openModal('editProjectModal');
+        }
     </script>
 </asp:Content>
 

@@ -102,6 +102,33 @@ namespace Project_Board.Admin
                 Response.Redirect($"~/Admin/RejectionForm.aspx?type=Project&id={projectId}");
                 return;
             }
+            else if (e.CommandName == "DeleteProject")
+            {
+                if (string.IsNullOrEmpty(connString)) return;
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    string deleteQuery = @"
+                        IF OBJECT_ID('ProjectKeywords', 'U') IS NOT NULL
+                            DELETE FROM ProjectKeywords WHERE ProjectId = @ProjectId;
+                        DELETE FROM Projects WHERE ProjectId = @ProjectId;
+                    ";
+                    using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ProjectId", projectId);
+                        try
+                        {
+                            conn.Open();
+                            cmd.ExecuteNonQuery();
+                            LoadProjects();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Error deleting project: " + ex.Message);
+                        }
+                    }
+                }
+                return;
+            }
 
             if (!string.IsNullOrEmpty(newStatus))
             {
@@ -122,6 +149,45 @@ namespace Project_Board.Admin
                         {
                             System.Diagnostics.Debug.WriteLine("Error updating project status: " + ex.Message);
                         }
+                    }
+                }
+            }
+        }
+
+        protected void btnUpdateProject_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(connString)) return;
+
+            string projectIdStr = hdnEditProjectId.Value;
+            string title = txtEditProjectTitle.Text.Trim();
+            string func = txtEditFunctionality.Text.Trim();
+            string status = ddlEditProjectStatus.SelectedValue;
+
+            int projectId;
+            if (!int.TryParse(projectIdStr, out projectId)) return;
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string query = "UPDATE Projects SET ProjectTitle = @Title, Functionality = @Func, Status = @Status WHERE ProjectId = @ProjectId";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Title", title);
+                    cmd.Parameters.AddWithValue("@Func", func);
+                    cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.Parameters.AddWithValue("@ProjectId", projectId);
+                    try
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        LoadProjects();
+                        lblEditMessage.ForeColor = System.Drawing.Color.Green;
+                        lblEditMessage.Text = "Project updated successfully.";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "CloseModal", "closeModal('editProjectModal');", true);
+                    }
+                    catch (Exception ex)
+                    {
+                        lblEditMessage.ForeColor = System.Drawing.Color.Red;
+                        lblEditMessage.Text = "Error updating project: " + ex.Message;
                     }
                 }
             }
