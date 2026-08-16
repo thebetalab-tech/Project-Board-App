@@ -36,7 +36,7 @@
         }
         .forget-wrapper {
             width: 100% !important;
-            max-width: 600px !important;
+            max-width: 800px !important;
             margin: auto !important;
             background: var(--c-bg-card, #ffffff) !important;
             border: 1px solid var(--c-border, rgba(0, 0, 0, 0.08)) !important;

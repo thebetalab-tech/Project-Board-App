@@ -112,7 +112,7 @@ a:hover {
 /* --- Layout --- */
 .auth-layout {
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     padding: 3rem 1.5rem;
     margin: auto;
     position: relative;
