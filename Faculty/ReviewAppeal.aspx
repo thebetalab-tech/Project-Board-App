@@ -180,60 +180,60 @@
                 <div class="nav-section-title">Main Menu</div>
                 <% if (currentRole == "Leader") { %>
                     <a href='<%= ResolveUrl("~/Student/Leader/Dashboard.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chart-pie"></i> Overview
+                        <i class="fa-solid fa-chart-pie"></i> <span>Overview</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Student/Leader/Leader_Members.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-users"></i> Team Members
+                        <i class="fa-solid fa-users"></i> <span>Team Members</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Student/Leader/Leader_Project.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-folder-open"></i> Project Management
+                        <i class="fa-solid fa-folder-open"></i> <span>Project Management</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chalkboard-user"></i> Mentor Request
+                        <i class="fa-solid fa-chalkboard-user"></i> <span>Mentor Request</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Student/Leader/InvitationManager.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-envelope"></i> Invitations
+                        <i class="fa-solid fa-envelope"></i> <span>Invitations</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Student/Leader/Leader_TaskManagement.aspx") %>' class="nav-link active">
-                        <i class="fa-solid fa-list-check"></i> Tasks
+                        <i class="fa-solid fa-list-check"></i> <span>Tasks</span>
                     </a>
                 <% } else if (currentRole == "Faculty") { %>
                     <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chart-pie"></i> Dashboard
+                        <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/Analysis.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                        <i class="fa-solid fa-chart-line"></i> <span>Analysis & Reports</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-users-gear"></i> Group Management
+                        <i class="fa-solid fa-users-gear"></i> <span>Group Management</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-folder-tree"></i> Project Management
+                        <i class="fa-solid fa-folder-tree"></i> <span>Project Management</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-envelope"></i> Mentor Requests
+                        <i class="fa-solid fa-envelope"></i> <span>Mentor Requests</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class="nav-link active">
-                        <i class="fa-solid fa-list-check"></i> Tasks
+                        <i class="fa-solid fa-list-check"></i> <span>Tasks</span>
                     </a>
                 <% } else { %>
                     <a href='<%= ResolveUrl("~/Admin/Admin_Dashboard.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chart-pie"></i> Dashboard
+                        <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-users-gear"></i> User Management
+                        <i class="fa-solid fa-users-gear"></i> <span>User Management</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Admin/Admin_GroupsManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-users"></i> Group Management
+                        <i class="fa-solid fa-users"></i> <span>Group Management</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Admin/Admin_ProjectsManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-folder-open"></i> Project Management
+                        <i class="fa-solid fa-folder-open"></i> <span>Project Management</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-microchip"></i> Technology Stack
+                        <i class="fa-solid fa-microchip"></i> <span>Technology Stack</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Admin/Admin_TaskManagement.aspx") %>' class="nav-link active">
-                        <i class="fa-solid fa-list-check"></i> Task Reviews
+                        <i class="fa-solid fa-list-check"></i> <span>Task Reviews</span>
                     </a>
                 <% } %>
             </div>
@@ -241,10 +241,10 @@
             <div class="nav-section">
                 <div class="nav-section-title">Preferences</div>
                 <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-user"></i> Profile
+                    <i class="fa-solid fa-user"></i> <span>Profile</span>
                 </a>
                 <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span>
                 </a>
             </div>
         </nav>
@@ -281,8 +281,8 @@
                             </div>
                             <div class="profile-dropdown">
                                 <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-regular fa-user"></i> My Profile</a>
-                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> Change Password</a>
-                                <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> Log Out</a>
+                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> <span>Change Password</span></a>
+                                <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> <span>Log Out</span></a>
                             </div>
                         </div>
                     </div>

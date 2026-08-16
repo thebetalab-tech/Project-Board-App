@@ -27,31 +27,31 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
                     <a href='<%= ResolveUrl("~/Faculty/Dashboard.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chart-pie"></i> Dashboard
+                        <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/Analysis.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chart-line"></i> Analysis & Reports
+                        <i class="fa-solid fa-chart-line"></i> <span>Analysis & Reports</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/GroupManagement.aspx") %>' class="nav-link active">
-                        <i class="fa-solid fa-users-gear"></i> Group Management
+                        <i class="fa-solid fa-users-gear"></i> <span>Group Management</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/ProjectManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-folder-tree"></i> Project Management
+                        <i class="fa-solid fa-folder-tree"></i> <span>Project Management</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/InvitationManager.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-envelope"></i> Mentor Requests
+                        <i class="fa-solid fa-envelope"></i> <span>Mentor Requests</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Faculty/TaskManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-list-check"></i> Tasks
+                        <i class="fa-solid fa-list-check"></i> <span>Tasks</span>
                     </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
                     <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-user"></i> Profile
+                        <i class="fa-solid fa-user"></i> <span>Profile</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span>
                     </a>
                 </div>
             </nav>
@@ -88,8 +88,8 @@
                             </div>
                             <div class="profile-dropdown">
                                 <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-regular fa-user"></i> My Profile</a>
-                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> Change Password</a>
-                                <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> Log Out</a>
+                                <a href="<%= ResolveUrl("~/User/Profile.aspx") %>"><i class="fa-solid fa-key"></i> <span>Change Password</span></a>
+                                <a href="<%= ResolveUrl("~/Logout.aspx") %>"><i class="fa-solid fa-lock"></i> <span>Log Out</span></a>
                             </div>
                         </div>
                     </div>
@@ -108,7 +108,7 @@
                         <h2>Actively Mentored Groups</h2>
                         <div style="display:flex; gap: 10px; align-items:center;">
                             <a href="javascript:void(0)" class="btn-secondary" onclick="openModal('reportModal')">
-                                <i class="fa-solid fa-file-export"></i> Export Report
+                                <i class="fa-solid fa-file-export"></i> <span>Export Report</span>
                             </a>
                             <div class="search-bar" style="width: 250px;">
                                 <i class="fa-solid fa-search"></i>
@@ -140,8 +140,7 @@
                                             <td>
                                                 <div class="table-actions">
                                                     <a href='<%# ResolveUrl("~/Faculty/Details/Group_Details.aspx?GroupId=" + Eval("GroupId")) %>' class="icon-btn" title="View Details">
-                                                        <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
-                                                    </a>
+                                                        <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i> <span> </span></a>
                                                 </div>
                                             </td>
                                         </tr>
