@@ -301,6 +301,59 @@ namespace Project_Board.Admin
             }
         }
 
+        protected void btnUpdateUser_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(connString)) return;
+
+            string userIdStr = hdnEditUserId.Value;
+            int userId;
+            if (!int.TryParse(userIdStr, out userId)) return;
+
+            string fullName = txtEditFullName.Text.Trim();
+            string email = txtEditEmail.Text.Trim();
+            string enrollment = txtEditEnrollment.Text.Trim();
+            string role = ddlEditRole.SelectedValue;
+
+            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email))
+            {
+                lblEditMessage.Text = "Name and Email are required.";
+                return;
+            }
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string query = @"
+                    UPDATE Users 
+                    SET FullName = @FullName, Email = @Email, EnrollmentNo = @EnrollmentNo, Role = @Role
+                    WHERE UserId = @UserId";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@FullName", fullName);
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.Parameters.AddWithValue("@EnrollmentNo", string.IsNullOrEmpty(enrollment) ? (object)DBNull.Value : enrollment);
+                    cmd.Parameters.AddWithValue("@Role", role);
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+
+                    try
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        LoadUsers();
+                        lblEditMessage.ForeColor = System.Drawing.Color.Green;
+                        lblEditMessage.Text = "User updated successfully.";
+                        
+                        // Register script to close modal if needed
+                        ScriptManager.RegisterStartupScript(this, GetType(), "CloseModal", "closeModal('editUserModal');", true);
+                    }
+                    catch (Exception ex)
+                    {
+                        lblEditMessage.ForeColor = System.Drawing.Color.Red;
+                        lblEditMessage.Text = "Error updating user: " + ex.Message;
+                    }
+                }
+            }
+        }
+
         protected void btnExportReport_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(connString)) return;

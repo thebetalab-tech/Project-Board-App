@@ -66,6 +66,9 @@
                                         </td>
                                         <td>
                                             <div class="table-actions">
+                                                <button type="button" class="icon-btn edit" onclick="openEditUserModal('<%# Eval("UserId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("FullName").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Email").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("EnrollmentNo"))) %>', '<%# Eval("Role") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit User">
+                                                    <i class="fa-solid fa-edit"></i>
+                                                </button>
                                                 <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to deactivate this user?');">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </asp:LinkButton>
@@ -135,6 +138,48 @@
             </div>
         </div>
     </div>
+    
+    <!-- Edit User Modal -->
+    <div class="modal-overlay" id="editUserModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem; font-family: var(--f-display);">Edit User</h2>
+            <asp:HiddenField ID="hdnEditUserId" runat="server" />
+            <div id="editUserForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <asp:TextBox ID="txtEditFullName" runat="server" CssClass="form-control" Required="true"></asp:TextBox>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <asp:TextBox ID="txtEditEmail" runat="server" TextMode="Email" CssClass="form-control" Required="true"></asp:TextBox>
+                </div>
+                
+                <div style="display:flex; gap:1rem;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Enrollment / Faculty ID</label>
+                        <asp:TextBox ID="txtEditEnrollment" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                    
+                    <div class="form-group" style="flex:1;">
+                        <label>Role</label>
+                        <asp:DropDownList ID="ddlEditRole" runat="server" CssClass="form-control">
+                            <asp:ListItem Value="Student">Student</asp:ListItem>
+                            <asp:ListItem Value="Faculty">Faculty</asp:ListItem>
+                            <asp:ListItem Value="Admin">Admin</asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+                </div>
+                
+                <asp:Label ID="lblEditMessage" runat="server" ForeColor="#ff4d4d" EnableViewState="false" style="display:block;margin-bottom:10px;"></asp:Label>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editUserModal')">Cancel</button>
+                    <asp:Button ID="btnUpdateUser" runat="server" Text="Save Changes" CssClass="btn-primary" OnClick="btnUpdateUser_Click" />
+                </div>
+            </div>
+        </div>
+    </div>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ScriptsContent" runat="server">
     <script src='<%= ResolveUrl("~/Scripts/tableSearch.js") %>'></script>
@@ -142,5 +187,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             initTableSearch('searchUsers', 'usersTable');
         });
+        
+        function openEditUserModal(id, name, email, enroll, role) {
+            document.getElementById('<%= hdnEditUserId.ClientID %>').value = id;
+            document.getElementById('<%= txtEditFullName.ClientID %>').value = name;
+            document.getElementById('<%= txtEditEmail.ClientID %>').value = email;
+            document.getElementById('<%= txtEditEnrollment.ClientID %>').value = enroll;
+            document.getElementById('<%= ddlEditRole.ClientID %>').value = role;
+            openModal('editUserModal');
+        }
     </script>
 </asp:Content>

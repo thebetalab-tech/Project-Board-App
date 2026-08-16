@@ -106,6 +106,62 @@ namespace Project_Board.Admin
             }
         }
 
+        protected void btnUpdateTech_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(connString)) return;
+
+            string techIdStr = hdnEditTechId.Value;
+            string newTechName = txtEditTechName.Text.Trim();
+
+            if (string.IsNullOrEmpty(newTechName) || string.IsNullOrEmpty(techIdStr))
+            {
+                lblMessage.ForeColor = System.Drawing.Color.Red;
+                lblMessage.Text = "Technology name cannot be empty.";
+                return;
+            }
+
+            int techId;
+            if (!int.TryParse(techIdStr, out techId)) return;
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string checkQuery = "SELECT COUNT(1) FROM Technologies WHERE TechName = @TechName AND TechId <> @TechId";
+                using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
+                {
+                    checkCmd.Parameters.AddWithValue("@TechName", newTechName);
+                    checkCmd.Parameters.AddWithValue("@TechId", techId);
+                    try
+                    {
+                        conn.Open();
+                        int count = (int)checkCmd.ExecuteScalar();
+                        if (count > 0)
+                        {
+                            lblMessage.ForeColor = System.Drawing.Color.Red;
+                            lblMessage.Text = "This technology name is already in use.";
+                            return;
+                        }
+
+                        string updateQuery = "UPDATE Technologies SET TechName = @TechName WHERE TechId = @TechId";
+                        using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
+                        {
+                            updateCmd.Parameters.AddWithValue("@TechName", newTechName);
+                            updateCmd.Parameters.AddWithValue("@TechId", techId);
+                            updateCmd.ExecuteNonQuery();
+
+                            lblMessage.ForeColor = System.Drawing.Color.Green;
+                            lblMessage.Text = "Technology updated successfully.";
+                            LoadTechnologies();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        lblMessage.ForeColor = System.Drawing.Color.Red;
+                        lblMessage.Text = "Error updating technology: " + ex.Message;
+                    }
+                }
+            }
+        }
+
         protected void rptTechs_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "DeleteTech")
