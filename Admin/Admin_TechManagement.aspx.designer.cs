@@ -73,5 +73,8 @@ namespace Project_Board.Admin
         protected global::System.Web.UI.WebControls.Button btnAssign;
         protected global::System.Web.UI.WebControls.Label lblAssignMessage;
         protected global::System.Web.UI.WebControls.Repeater rptFacultyTech;
+        protected global::System.Web.UI.WebControls.HiddenField hdnEditTechId;
+        protected global::System.Web.UI.WebControls.TextBox txtEditTechName;
+        protected global::System.Web.UI.WebControls.Label lblEditMessage;
     }
 }

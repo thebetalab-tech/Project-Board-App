@@ -90,5 +90,13 @@ namespace Project_Board.Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label userintial;
+        
+        protected global::System.Web.UI.WebControls.HiddenField hdnEditUserId;
+        protected global::System.Web.UI.WebControls.TextBox txtEditFullName;
+        protected global::System.Web.UI.WebControls.TextBox txtEditEmail;
+        protected global::System.Web.UI.WebControls.TextBox txtEditEnrollment;
+        protected global::System.Web.UI.WebControls.DropDownList ddlEditRole;
+        protected global::System.Web.UI.WebControls.Label lblEditMessage;
+        protected global::System.Web.UI.WebControls.Button btnUpdateUser;
     }
 }
