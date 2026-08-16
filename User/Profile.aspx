@@ -106,7 +106,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="window.location.reload(); return false;">Discard</button>
+                    <button type="button" class="btn-secondary" onclick="window.location.href='<%= ResolveUrl("~/Default.aspx") %>'; return false;">Discard</button>
                     <asp:LinkButton ID="btnSave" runat="server" CssClass="btn-primary" OnClick="btnSave_Click">
                         <i class="fa-solid fa-check"></i> Save Changes
                     </asp:LinkButton>
