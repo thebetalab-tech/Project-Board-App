@@ -181,9 +181,7 @@
     <Content Include="styles\login-signup.css" />
     <Content Include="User\forget_password.aspx" />
     <Content Include="User\Profile.aspx" />
-    <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
-    <Content Include="Site.Mobile.Master" />
     <Content Include="Admin\ReviewAppeal.aspx" />
     <Content Include="Student\Appeal.aspx" />
     <Content Include="Faculty\ReviewAppeal.aspx" />
@@ -431,12 +429,7 @@
     <Compile Include="Student\Member\Member.master.designer.cs">
       <DependentUpon>Member.master</DependentUpon>
     </Compile>
-    <Compile Include="Site.Mobile.Master.cs">
-      <DependentUpon>Site.Mobile.Master</DependentUpon>
-    </Compile>
-    <Compile Include="Site.Mobile.Master.designer.cs">
-      <DependentUpon>Site.Mobile.Master</DependentUpon>
-    </Compile>
+
     <Compile Include="OnBoarding.aspx.cs">
       <DependentUpon>OnBoarding.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -536,12 +529,7 @@
     <Compile Include="User\Profile.aspx.designer.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ViewSwitcher.ascx.cs">
-      <DependentUpon>ViewSwitcher.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="ViewSwitcher.ascx.designer.cs">
-      <DependentUpon>ViewSwitcher.ascx</DependentUpon>
-    </Compile>
+
     <Compile Include="Admin\ReviewAppeal.aspx.cs">
       <DependentUpon>ReviewAppeal.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
