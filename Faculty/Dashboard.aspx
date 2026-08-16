@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <div class="charts-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+        <div class="charts-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1.5rem; margin-top: 2rem;">
             <div class="stat-card">
                 <h3>Groups by Status</h3>
                 <canvas id="groupsChart" style="max-height: 250px;"></canvas>

@@ -129,7 +129,7 @@
         </div>
 
         <!-- TASK PROGRESS OVERVIEW GRID -->
-        <div class="stats-grid" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 1.5rem;">
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); margin-bottom: 1.5rem;">
             <div class="stat-card">
                 <div class="stat-header">
                     <div class="stat-icon" style="background: rgba(234, 179, 8, 0.12); color: #eab308;"><i class="fa-solid fa-clock"></i></div>

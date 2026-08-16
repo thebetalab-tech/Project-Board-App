@@ -6,7 +6,7 @@
     <style>
         .analysis-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
             gap: 2rem;
             margin-top: 2rem;
         }

@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="charts-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+            <div class="charts-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1.5rem; margin-top: 2rem;">
                 <div class="stat-card">
                     <h3>Users by Role</h3>
                     <canvas id="usersChart" style="max-height: 250px;"></canvas>

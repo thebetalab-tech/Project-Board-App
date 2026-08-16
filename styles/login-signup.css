@@ -385,4 +385,10 @@ a:hover {
     .form-grid {
         grid-template-columns: 1fr;
     }
+    .auth-layout {
+        padding: 1.5rem 1rem;
+    }
+    .auth-card {
+        padding: 2rem 1.5rem;
+    }
 }

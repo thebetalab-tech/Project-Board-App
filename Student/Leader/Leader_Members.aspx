@@ -128,7 +128,7 @@
                 </div>
                 <div style="padding: 1.5rem;">
                     <p style="margin-bottom: 1rem; color: var(--c-text-dim);">Select the columns you want to include in the PDF report:</p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 0.5rem; margin-bottom: 1.5rem;">
                         <label><asp:CheckBox ID="chkColMemberId" runat="server" Checked="true" /> Member ID</label>
                         <label><asp:CheckBox ID="chkColMemberName" runat="server" Checked="true" /> Member Name</label>
                         <label><asp:CheckBox ID="chkColEnrollmentNo" runat="server" Checked="true" /> Enrollment No.</label>

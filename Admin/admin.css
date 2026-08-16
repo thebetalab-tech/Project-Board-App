@@ -250,6 +250,7 @@ form {
     flex: 1;
     margin-left: calc(280px + 2rem);
     width: calc(100% - 280px - 3rem);
+    min-width: 0;
     display: flex;
     flex-direction: column;
     min-height: calc(100vh - 2rem);
@@ -489,6 +490,8 @@ form {
     border-radius: 16px;
     overflow: hidden;
     margin-bottom: 3rem;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .section-header {
@@ -880,6 +883,7 @@ select.form-select option {
 
     .main-content {
         margin-left: 0;
+        margin-right: 0;
         width: 100%;
     }
 
@@ -950,6 +954,7 @@ select.form-select option {
         padding: 1.5rem;
         margin: 1rem;
         width: calc(100% - 2rem);
+        max-width: calc(100vw - 2rem);
     }
 
     .table-actions {
