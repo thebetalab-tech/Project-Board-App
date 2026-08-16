@@ -74,5 +74,10 @@ namespace Project_Board.Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnExportReport;
+
+        protected global::System.Web.UI.WebControls.HiddenField hdnEditGroupId;
+        protected global::System.Web.UI.WebControls.DropDownList ddlEditGroupStatus;
+        protected global::System.Web.UI.WebControls.Label lblEditMessage;
+        protected global::System.Web.UI.WebControls.Button btnUpdateGroup;
     }
 }
