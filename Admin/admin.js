@@ -81,20 +81,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Highlight active link in sidebar robustly
-    const currentPath = window.location.pathname.toLowerCase();
+    const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '').replace('.aspx', '');
     document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
         if (!link.href) return;
-        const linkPath = new URL(link.href).pathname.toLowerCase();
+        const linkPath = new URL(link.href).pathname.toLowerCase().replace(/\/$/, '').replace('.aspx', '');
         
-        // Remove trailing slash if exists for comparison
-        const cp = currentPath.replace(/\/$/, '');
-        const lp = linkPath.replace(/\/$/, '');
-        
-        if (cp === lp || cp === lp + '.aspx' || cp + '.aspx' === lp || cp.includes(lp)) {
-            // Because some URLs like /Admin/Admin_TechManagement include the target
-            if (lp.length > 5 && cp.includes(lp.replace('.aspx',''))) {
-                link.classList.add('active');
-            }
+        if (currentPath === linkPath || currentPath.endsWith(linkPath)) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
         }
     });
 
