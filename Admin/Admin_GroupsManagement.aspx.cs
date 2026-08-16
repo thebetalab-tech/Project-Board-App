@@ -154,5 +154,82 @@ namespace Project_Board.Admin
                 }
             }
         }
+
+        protected void rptGroups_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName == "DeleteGroup")
+            {
+                int groupId = Convert.ToInt32(e.CommandArgument);
+                if (string.IsNullOrEmpty(connString)) return;
+
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    string deleteQuery = @"
+                        IF OBJECT_ID('ProjectKeywords', 'U') IS NOT NULL
+                            DELETE FROM ProjectKeywords WHERE ProjectId IN (SELECT ProjectId FROM Projects WHERE GroupId = @GroupId);
+                        IF OBJECT_ID('Projects', 'U') IS NOT NULL
+                            DELETE FROM Projects WHERE GroupId = @GroupId;
+                        IF OBJECT_ID('Task', 'U') IS NOT NULL
+                            DELETE FROM Task WHERE GroupId = @GroupId;
+                        IF OBJECT_ID('Tasks', 'U') IS NOT NULL
+                            DELETE FROM Tasks WHERE GroupId = @GroupId;
+                        
+                        DELETE FROM GroupMentorRejections WHERE GroupId = @GroupId;
+                        DELETE FROM GroupMembers WHERE GroupId = @GroupId;
+                        DELETE FROM Groups WHERE GroupId = @GroupId;
+                    ";
+                    
+                    using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@GroupId", groupId);
+                        try
+                        {
+                            conn.Open();
+                            cmd.ExecuteNonQuery();
+                            LoadGroups();
+                        }
+                        catch (Exception ex)
+                        {
+                            // Could log or show error.
+                        }
+                    }
+                }
+            }
+        }
+
+        protected void btnUpdateGroup_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(connString)) return;
+
+            string groupIdStr = hdnEditGroupId.Value;
+            string status = ddlEditGroupStatus.SelectedValue;
+
+            int groupId;
+            if (!int.TryParse(groupIdStr, out groupId)) return;
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string query = "UPDATE Groups SET Status = @Status WHERE GroupId = @GroupId";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.Parameters.AddWithValue("@GroupId", groupId);
+                    try
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        LoadGroups();
+                        lblEditMessage.ForeColor = System.Drawing.Color.Green;
+                        lblEditMessage.Text = "Group updated successfully.";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "CloseModal", "closeModal('editGroupModal');", true);
+                    }
+                    catch (Exception ex)
+                    {
+                        lblEditMessage.ForeColor = System.Drawing.Color.Red;
+                        lblEditMessage.Text = "Error updating group: " + ex.Message;
+                    }
+                }
+            }
+        }
     }
 }
