@@ -168,7 +168,6 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo-icon"><i class="fa-solid fa-graduation-cap" style="color: white;"></i></div>
             <h2>Project Board</h2>
         </div>
         

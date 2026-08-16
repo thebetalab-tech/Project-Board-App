@@ -80,19 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Highlight active link in sidebar robustly
-    const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '').replace('.aspx', '');
-    document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
-        if (!link.href) return;
-        const linkPath = new URL(link.href).pathname.toLowerCase().replace(/\/$/, '').replace('.aspx', '');
-        
-        if (currentPath === linkPath || currentPath.endsWith(linkPath)) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-
     // Auto-wrap tables for responsiveness
     const dataSections = document.querySelectorAll('.data-section');
     dataSections.forEach(section => {
@@ -104,6 +91,27 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.appendChild(table);
         }
     });
+});
+
+// Highlight active link in sidebar robustly (Run immediately since script is at end of body)
+(function() {
+    try {
+        const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '').replace('.aspx', '');
+        document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+            if (!link.href) return;
+            const linkPath = new URL(link.href).pathname.toLowerCase().replace(/\/$/, '').replace('.aspx', '');
+            
+            if (currentPath === linkPath || currentPath.endsWith(linkPath)) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    } catch (e) {
+        console.error("Error highlighting active link: ", e);
+    }
+})();
+
 
     // Profile Dropdown Toggle
     const profileTrigger = document.querySelector('.profile-trigger');

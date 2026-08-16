@@ -14,7 +14,6 @@
         <asp:ScriptManager runat="server"></asp:ScriptManager>
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo-icon"><i class="fa-solid fa-layer-group"></i></div>
                 <h2 class="sidebar-title">Project Board</h2>
                 <button type="button" id="sidebarToggle" class="sidebar-toggle-btn" title="Toggle Sidebar">
                     <i class="fa-solid fa-bars"></i>

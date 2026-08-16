@@ -40,7 +40,6 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo-icon"><i class="fa-solid fa-graduation-cap" style="color: white;"></i></div>
                 <h2 class="sidebar-title">Project Board</h2>
                 <button type="button" id="sidebarToggle" class="sidebar-toggle-btn" title="Toggle Sidebar">
                     <i class="fa-solid fa-bars"></i>
