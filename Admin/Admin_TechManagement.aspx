@@ -29,37 +29,6 @@
                                 <th style="text-align: right;">Actions</th>
                             </tr>
                         </thead>
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Admin_TechManagement.aspx.cs" Inherits="Project_Board.Admin.Admin_TechManagement" MasterPageFile="~/Admin/Admin.master" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
-    Admin Dashboard — Technologies
-</asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-        <div class="dashboard-container">
-            <div class="view-section active">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h1>Technologies Master</h1>
-                        <p>Manage the list of approved technologies for projects.</p>
-                    </div>
-
-                </div>
-
-                <div class="data-section" style="max-width: 600px;">
-                    <div class="section-header">
-                        <h2>Available Technologies</h2>
-                        <div class="search-bar" style="width: 250px;">
-                            <i class="fa-solid fa-search"></i>
-                            <input type="text" id="searchTechs" placeholder="Filter tech...">
-                        </div>
-                    </div>
-                    <table id="techsTable">
-                        <thead>
-                            <tr>
-                                <th>Tech ID</th>
-                                <th>Technology Name</th>
-                                <th style="text-align: right;">Actions</th>
-                            </tr>
-                        </thead>
                         <tbody>
                             <asp:Repeater ID="rptTechs" runat="server" OnItemCommand="rptTechs_ItemCommand">
                                 <ItemTemplate>
