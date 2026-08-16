@@ -269,7 +269,7 @@
             </div>
         </main>
     </form>
-    <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
+    <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v7") %>'></script>
 </body>
 
 </html>

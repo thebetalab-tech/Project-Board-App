@@ -150,7 +150,7 @@
         </main>
     </form>
     
-    <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v2") %>'></script>
+    <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v7") %>'></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
