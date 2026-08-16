@@ -36,12 +36,14 @@
                                         <td>#<%# Eval("TechId") %></td>
                                         <td><strong><%# Eval("TechName") %></strong></td>
                                         <td style="text-align: right;">
-                                            <button type="button" class="icon-btn edit" onclick="openEditTechModal('<%# Eval("TechId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("TechName").ToString()) %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;">
-                                                <i class="fa-solid fa-edit"></i>
-                                            </button>
-                                            <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteTech" CommandArgument='<%# Eval("TechId") %>' OnClientClick="return confirm('Are you sure you want to delete this technology?');">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </asp:LinkButton>
+                                            <div class="table-actions" style="justify-content: flex-end;">
+                                                <button type="button" class="icon-btn edit" onclick="openEditTechModal('<%# Eval("TechId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("TechName").ToString()) %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;">
+                                                    <i class="fa-solid fa-edit"></i>
+                                                </button>
+                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteTech" CommandArgument='<%# Eval("TechId") %>' OnClientClick="return confirm('Are you sure you want to delete this technology?');">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </asp:LinkButton>
+                                            </div>
                                         </td>
                                     </tr>
                                 </ItemTemplate>
