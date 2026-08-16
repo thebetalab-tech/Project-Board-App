@@ -60,6 +60,14 @@ body {
     overflow-x: hidden;
 }
 
+#form1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
 body::before, body::after {
     content: '';
     position: absolute;
