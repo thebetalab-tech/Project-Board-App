@@ -22,11 +22,8 @@
 </head>
 
 <body>
-    <div class="auth-layout" style="max-width: 800px;">
+    <div class="auth-layout">
         <div class="auth-brand">
-            <div class="auth-brand-logo">
-                <i class="fa-solid fa-cubes-stacked"></i>
-            </div>
             <h1 class="auth-brand-title">Project Board</h1>
             <p class="auth-brand-tagline">Organize. Track. Collaborate.</p>
         </div>

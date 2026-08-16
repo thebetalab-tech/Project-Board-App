@@ -36,7 +36,7 @@
         }
         .forget-wrapper {
             width: 100% !important;
-            max-width: 460px !important;
+            max-width: 600px !important;
             margin: auto !important;
             background: var(--c-bg-card, #ffffff) !important;
             border: 1px solid var(--c-border, rgba(0, 0, 0, 0.08)) !important;
@@ -51,9 +51,6 @@
     <form id="form1" runat="server" autocomplete="off">
         <div class="forget-wrapper">
             <div class="forget-header">
-                <div class="forget-icon">
-                    <i class="fa-solid fa-key"></i>
-                </div>
                 <h1 class="forget-title">
                     <asp:Literal ID="litTitle" runat="server" Text="Reset Password"></asp:Literal>
                 </h1>
