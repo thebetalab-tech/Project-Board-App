@@ -93,13 +93,9 @@
                 <div class="stat-card" style="margin-bottom: 1.5rem;">
                     <h3><i class="fa-solid fa-plus-circle" style="color:var(--c-accent); margin-right:0.5rem;"></i> Create & Assign Global Task</h3>
                     <div class="form-grid" style="margin-top:1rem;">
-                        <div class="form-group">
-                            <label>Target Group</label>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>Select Target Group & Leader</label>
                             <asp:DropDownList ID="ddlGroups" runat="server" CssClass="form-control"></asp:DropDownList>
-                        </div>
-                        <div class="form-group">
-                            <label>Assign To Any User (Student / Faculty / Leader)</label>
-                            <asp:DropDownList ID="ddlAssignToUser" runat="server" CssClass="form-control"></asp:DropDownList>
                         </div>
                         <div class="form-group" style="grid-column: span 2;">
                             <label>Task Title</label>

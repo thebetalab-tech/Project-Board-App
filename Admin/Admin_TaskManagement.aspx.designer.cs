@@ -13,7 +13,7 @@ namespace Project_Board.Admin
         protected global::System.Web.UI.WebControls.Label userNameLabel;
         protected global::System.Web.UI.WebControls.Label userEmailLabel;
         protected global::System.Web.UI.WebControls.DropDownList ddlGroups;
-        protected global::System.Web.UI.WebControls.DropDownList ddlAssignToUser;
+
         protected global::System.Web.UI.WebControls.TextBox txtTaskTitle;
         protected global::System.Web.UI.WebControls.TextBox txtTaskDescription;
         protected global::System.Web.UI.WebControls.TextBox txtPointsToCover;

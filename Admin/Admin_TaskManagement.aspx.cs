@@ -30,7 +30,6 @@ namespace Project_Board.Admin
             if (!IsPostBack)
             {
                 LoadAllGroups();
-                LoadAllUsers();
                 LoadGlobalTasks();
             }
         }
@@ -38,11 +37,15 @@ namespace Project_Board.Admin
         private void LoadAllGroups()
         {
             ddlGroups.Items.Clear();
-            ddlGroups.Items.Add(new ListItem("-- Select Group --", ""));
+            ddlGroups.Items.Add(new ListItem("-- Select Group & Leader --", ""));
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
-                string query = "SELECT GroupId, GroupName FROM Groups ORDER BY GroupName";
+                string query = @"
+                    SELECT g.GroupId, g.GroupName, u.FullName AS LeaderName 
+                    FROM Groups g
+                    INNER JOIN Users u ON g.LeaderId = u.UserId
+                    ORDER BY g.GroupName";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     conn.Open();
@@ -50,32 +53,8 @@ namespace Project_Board.Admin
                     {
                         while (rdr.Read())
                         {
-                            ddlGroups.Items.Add(new ListItem(rdr["GroupName"].ToString(), rdr["GroupId"].ToString()));
-                        }
-                    }
-                }
-            }
-        }
-
-        private void LoadAllUsers()
-        {
-            ddlAssignToUser.Items.Clear();
-            ddlAssignToUser.Items.Add(new ListItem("-- Select Any User / Student / Faculty --", ""));
-
-            using (SqlConnection conn = new SqlConnection(ConnString))
-            {
-                string query = "SELECT UserId, FullName, Role, EnrollmentNo FROM Users WHERE IsActive = 1 ORDER BY Role ASC, FullName ASC";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    conn.Open();
-                    using (SqlDataReader rdr = cmd.ExecuteReader())
-                    {
-                        while (rdr.Read())
-                        {
-                            string role = rdr["Role"].ToString();
-                            string text = $"{rdr["FullName"]} ({role})";
-                            if (rdr["EnrollmentNo"] != DBNull.Value) text += $" - {rdr["EnrollmentNo"]}";
-                            ddlAssignToUser.Items.Add(new ListItem(text, rdr["UserId"].ToString()));
+                            string itemText = $"{rdr["GroupName"]} (Leader: {rdr["LeaderName"]})";
+                            ddlGroups.Items.Add(new ListItem(itemText, rdr["GroupId"].ToString()));
                         }
                     }
                 }
@@ -130,20 +109,44 @@ namespace Project_Board.Admin
         {
             int adminId = Convert.ToInt32(Session["UserId"]);
 
-            if (string.IsNullOrEmpty(ddlGroups.SelectedValue) || string.IsNullOrEmpty(ddlAssignToUser.SelectedValue))
+            if (string.IsNullOrEmpty(ddlGroups.SelectedValue))
             {
-                lblMessage.Text = "Please select both a Group and an Assignee.";
+                lblMessage.Text = "Please select a target group.";
                 lblMessage.CssClass = "alert alert-danger";
                 lblMessage.Visible = true;
                 return;
             }
 
             int groupId = Convert.ToInt32(ddlGroups.SelectedValue);
-            int assignedTo = Convert.ToInt32(ddlAssignToUser.SelectedValue);
             string title = txtTaskTitle.Text.Trim();
             string description = txtTaskDescription.Text.Trim();
             string points = txtPointsToCover.Text.Trim();
             DateTime? dueDate = string.IsNullOrEmpty(txtDueDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtDueDate.Text);
+
+            int leaderId = 0;
+            // Fetch LeaderId for selected group
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                string query = "SELECT LeaderId FROM Groups WHERE GroupId = @GroupId";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@GroupId", groupId);
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        leaderId = Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            if (leaderId == 0)
+            {
+                lblMessage.Text = "Selected group does not have an assigned leader.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
@@ -156,13 +159,53 @@ namespace Project_Board.Admin
                     cmd.Parameters.AddWithValue("@PointsToCover", points);
                     cmd.Parameters.AddWithValue("@GroupId", groupId);
                     cmd.Parameters.AddWithValue("@AssignedBy", adminId);
-                    cmd.Parameters.AddWithValue("@AssignedTo", assignedTo);
-                    cmd.Parameters.AddWithValue("@TaskLevel", "AdminToAll");
+                    cmd.Parameters.AddWithValue("@AssignedTo", leaderId);
+                    cmd.Parameters.AddWithValue("@TaskLevel", "AdminToLeader");
                     cmd.Parameters.AddWithValue("@DueDate", (object)dueDate ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Status", "Working");
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
+                }
+
+                // Send email to Leader
+                try
+                {
+                    string infoSql = @"
+                        SELECT u.FullName AS LeaderName, u.Email AS LeaderEmail, g.GroupName
+                        FROM Users u
+                        INNER JOIN Groups g ON u.UserId = g.LeaderId
+                        WHERE g.GroupId = @GroupId";
+                    using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
+                    {
+                        infoCmd.Parameters.AddWithValue("@GroupId", groupId);
+                        // Connection is already open
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string leaderName = rdr["LeaderName"].ToString();
+                                string leaderEmail = rdr["LeaderEmail"].ToString();
+                                string groupName = rdr["GroupName"].ToString();
+                                string adminName = Session["FullName"]?.ToString() ?? "System Admin";
+
+                                Project_Board.Services.EmailService.SendFacultyTaskAssignedToLeader(
+                                    leaderEmail,
+                                    leaderName,
+                                    adminName,
+                                    groupName,
+                                    title,
+                                    description,
+                                    points,
+                                    dueDate?.ToString("dd MMM yyyy")
+                                );
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
             }
 

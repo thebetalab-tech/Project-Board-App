@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('sidebarCollapsed', isCollapsed);
         });
     }
-});
+
 
 // Generic Password Show/Hide Toggle Logic (for Admin/Profile pages)
 document.addEventListener('click', (e) => {
