@@ -78,7 +78,7 @@
                     <div class="form-group" style="position:relative;">
                         <label>New Password</label>
                         <asp:TextBox ID="txtNewPassword" runat="server" CssClass="form-control" placeholder="Leave blank to keep current" TextMode="Password" style="padding-right:40px;"></asp:TextBox>
-                        <button type="button" class="password-toggle" aria-label="Toggle password visibility" style="position:absolute; right:10px; top:35px; background:none; border:none; color:var(--text-secondary, #666); cursor:pointer;">
+                        <button type="button" class="password-toggle" aria-label="Toggle password visibility" style="position:absolute; right:15px; bottom:16px; background:none; border:none; color:var(--text-secondary, #666); cursor:pointer;">
                             <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                 <circle cx="12" cy="12" r="3" />
@@ -92,7 +92,7 @@
                     <div class="form-group" style="position:relative;">
                         <label>Confirm Password</label>
                         <asp:TextBox ID="txtConfirmPassword" runat="server" CssClass="form-control" placeholder="Re-type new password" TextMode="Password" style="padding-right:40px;"></asp:TextBox>
-                        <button type="button" class="password-toggle" aria-label="Toggle password visibility" style="position:absolute; right:10px; top:35px; background:none; border:none; color:var(--text-secondary, #666); cursor:pointer;">
+                        <button type="button" class="password-toggle" aria-label="Toggle password visibility" style="position:absolute; right:15px; bottom:16px; background:none; border:none; color:var(--text-secondary, #666); cursor:pointer;">
                             <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                 <circle cx="12" cy="12" r="3" />
