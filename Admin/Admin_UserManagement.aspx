@@ -10,7 +10,7 @@
                         <h1>Users Management</h1>
                         <p>Manage all students, faculty, and administrators.</p>
                     </div>
-                    <button class="btn-primary" onclick="openModal('userModal')">
+                    <button type="button" class="btn-primary" onclick="openModal('userModal')">
                         <i class="fa-solid fa-user-plus"></i> Add User
                     </button>
                 </div>
