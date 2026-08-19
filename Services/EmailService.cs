@@ -418,7 +418,11 @@ namespace Project_Board.Services
             body.Append($"<div class='info-row'><span class='info-label'>Role:</span><span class='info-value'>{WebUtility.HtmlEncode(role)}</span></div>");
             body.Append($"<div class='info-row'><span class='info-label'>Password:</span><span class='info-value'>{WebUtility.HtmlEncode(rawPassword)}</span></div>");
             body.Append("</div>");
-            body.Append("<p>Please log in using your credentials. We recommend updating your profile or password after your first sign-in.</p>");
+            body.Append("<p>You can log in to your account here: <a href='http://projectboard.tryasp.net/' class='btn'>Login to Project Board</a></p>");
+            if (role.Equals("Student", StringComparison.OrdinalIgnoreCase))
+            {
+                body.Append("<p>Since you are a student, please complete your onboarding step: <br><a href='http://projectboard.tryasp.net/OnBoarding' class='btn' style='background: linear-gradient(135deg, #10b981 0%, #059669 100%); margin-top: 10px;'>Complete Onboarding</a></p>");
+            }
 
             string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
             SendEmailAsync(toEmail, "Welcome to Project Board - Account Credentials", html);
