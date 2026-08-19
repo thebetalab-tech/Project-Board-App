@@ -90,17 +90,17 @@
             <div id="addUserForm">
                 <div class="form-group">
                     <label>Full Name</label>
-                    <asp:TextBox ID="txtFullName" runat="server" CssClass="form-control" placeholder="Enter full name" Required="true"></asp:TextBox>
+                    <asp:TextBox ID="txtFullName" runat="server" CssClass="form-control" placeholder="Enter full name"></asp:TextBox>
                 </div>
                 
                 <div class="form-group">
                     <label>Email Address</label>
-                    <asp:TextBox ID="txtEmail" runat="server" TextMode="Email" CssClass="form-control" placeholder="user@university.edu" Required="true"></asp:TextBox>
+                    <asp:TextBox ID="txtEmail" runat="server" TextMode="Email" CssClass="form-control" placeholder="user@university.edu"></asp:TextBox>
                 </div>
 
                 <div class="form-group" style="position:relative;">
                     <label>Password</label>
-                    <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" CssClass="form-control" placeholder="Create a temporary password" Required="true" style="padding-right:40px;"></asp:TextBox>
+                    <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" CssClass="form-control" placeholder="Create a temporary password" style="padding-right:40px;"></asp:TextBox>
                     <button type="button" class="password-toggle" aria-label="Toggle password visibility" style="position:absolute; right:10px; top:35px; background:none; border:none; color:var(--text-secondary, #666); cursor:pointer;">
                         <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -147,12 +147,12 @@
             <div id="editUserForm">
                 <div class="form-group">
                     <label>Full Name</label>
-                    <asp:TextBox ID="txtEditFullName" runat="server" CssClass="form-control" Required="true"></asp:TextBox>
+                    <asp:TextBox ID="txtEditFullName" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
                 
                 <div class="form-group">
                     <label>Email Address</label>
-                    <asp:TextBox ID="txtEditEmail" runat="server" TextMode="Email" CssClass="form-control" Required="true"></asp:TextBox>
+                    <asp:TextBox ID="txtEditEmail" runat="server" TextMode="Email" CssClass="form-control"></asp:TextBox>
                 </div>
                 
                 <div style="display:flex; gap:1rem;">
