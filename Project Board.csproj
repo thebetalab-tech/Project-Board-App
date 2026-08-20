@@ -189,6 +189,7 @@
     <Content Include="Student\Leader\ReviewAppeal.aspx" />
     <Content Include="Faculty\RejectionForm.aspx" />
     <Content Include="DB\new_features.sql" />
+    <Content Include="DB\deletion_audit_schema.sql" />
     <Content Include="User\Notifications.aspx" />
   </ItemGroup>
   <ItemGroup>
