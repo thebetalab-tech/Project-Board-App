@@ -39,6 +39,7 @@ namespace Project_Board.Admin
             {
                 LoadAssignedGroups();
                 LoadTasks();
+                txtDueDate.Attributes["min"] = DateTime.Now.ToString("yyyy-MM-dd");
             }
         }
 

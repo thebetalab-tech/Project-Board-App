@@ -48,6 +48,7 @@ namespace Project_Board.Student.Leader
                 LoadGroupMembers();
                 LoadParentTasksDropdown();
                 LoadMemberTasks();
+                txtMemberTaskDueDate.Attributes["min"] = DateTime.Now.ToString("yyyy-MM-dd");
             }
             else
             {

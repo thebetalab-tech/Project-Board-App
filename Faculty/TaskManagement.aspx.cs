@@ -35,6 +35,7 @@ namespace Project_Board.Faculty
             {
                 LoadMentoredGroups();
                 LoadTasks();
+                txtDueDate.Attributes["min"] = DateTime.Now.ToString("yyyy-MM-dd");
             }
         }
 
