@@ -142,6 +142,7 @@
     <Content Include="Faculty\TaskManagement.aspx" />
     <Content Include="Faculty\TaskDetails.aspx" />
     <Content Include="Admin\Admin_TaskManagement.aspx" />
+    <Content Include="Admin\Admin_DeletedRecords.aspx" />
     <Content Include="DB\Appeals.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -197,6 +198,13 @@
     </Compile>
     <Compile Include="Admin\Admin_Dashboard.aspx.designer.cs">
       <DependentUpon>Admin_Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Admin_DeletedRecords.aspx.cs">
+      <DependentUpon>Admin_DeletedRecords.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Admin_DeletedRecords.aspx.designer.cs">
+      <DependentUpon>Admin_DeletedRecords.aspx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Admin_GroupsManagement.aspx.cs">
       <DependentUpon>Admin_GroupsManagement.aspx</DependentUpon>
