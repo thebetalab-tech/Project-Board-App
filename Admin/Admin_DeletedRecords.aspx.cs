@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -354,5 +355,130 @@ namespace Project_Board.Admin
                 return 0;
             }
         }
+
+        // -----------------------------------------------------------------------
+        //  REPORT GENERATION
+        // -----------------------------------------------------------------------
+        protected void btnGetReport_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(connString)) return;
+
+            // Build report data
+            var reportData = GetReportData();
+
+            if (reportData == null || reportData.Count == 0)
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "notify", "alert('No data available to generate report.');", true);
+                return;
+            }
+
+            // Generate CSV
+            string csv = GenerateCsv(reportData);
+
+            // Export
+            Response.Clear();
+            Response.ContentType = "text/csv";
+            Response.AddHeader("Content-Disposition", "attachment; filename=Deleted_Records_Report_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".csv");
+            Response.ContentEncoding = Encoding.UTF8;
+            Response.Write(csv);
+            Response.End();
+        }
+
+        private List<DeletedRecordDto> GetReportData()
+        {
+            var records = new List<DeletedRecordDto>();
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_crud_deleted_records", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Action", "ALL");
+
+                    try
+                    {
+                        conn.Open();
+                        using (SqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            while (rdr.Read())
+                            {
+                                records.Add(new DeletedRecordDto
+                                {
+                                    DeleteId = Convert.ToInt32(rdr["DeleteId"]),
+                                    EntityType = rdr["EntityType"]?.ToString() ?? "",
+                                    EntityId = Convert.ToInt32(rdr["EntityId"]),
+                                    EntityName = rdr["EntityName"]?.ToString() ?? "",
+                                    EntityDetails = rdr["EntityDetails"]?.ToString() ?? "",
+                                    DeletedBy = rdr["DeletedBy"] != DBNull.Value ? Convert.ToInt32(rdr["DeletedBy"]) : (int?)null,
+                                    DeletedByName = rdr["DeletedByName"]?.ToString() ?? "",
+                                    DeletedAt = rdr["DeletedAt"] != DBNull.Value ? Convert.ToDateTime(rdr["DeletedAt"]) : (DateTime?)null,
+                                    Reason = rdr["Reason"]?.ToString() ?? "",
+                                    ParentDeleteId = rdr["ParentDeleteId"] != DBNull.Value ? Convert.ToInt32(rdr["ParentDeleteId"]) : (int?)null
+                                });
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("GetReportData Error: " + ex.Message);
+                    }
+                }
+            }
+
+            return records;
+        }
+
+        private string GenerateCsv(List<DeletedRecordDto> records)
+        {
+            var sb = new System.Text.StringBuilder();
+
+            // Header
+            sb.AppendLine("DeleteId,EntityType,EntityId,EntityName,EntityDetails,DeletedBy,DeletedByName,DeletedAt,Reason,ParentDeleteId");
+
+            // Rows
+            foreach (var rec in records)
+            {
+                sb.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
+                    rec.DeleteId,
+                    EscapeCsv(rec.EntityType),
+                    rec.EntityId,
+                    EscapeCsv(rec.EntityName),
+                    EscapeCsv(rec.EntityDetails),
+                    rec.DeletedBy?.ToString() ?? "",
+                    EscapeCsv(rec.DeletedByName ?? ""),
+                    rec.DeletedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "",
+                    EscapeCsv(rec.Reason ?? ""),
+                    rec.ParentDeleteId?.ToString() ?? ""
+                ));
+            }
+
+            return sb.ToString();
+        }
+
+        private string EscapeCsv(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return "";
+            // Escape quotes and wrap in quotes if contains comma, quote, or newline
+            if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+            {
+                return "\"" + value.Replace("\"", "\"\"") + "\"";
+            }
+            return value;
+        }
+    }
+
+    // DTO class for report data
+    public class DeletedRecordDto
+    {
+        public int DeleteId { get; set; }
+        public string EntityType { get; set; }
+        public int EntityId { get; set; }
+        public string EntityName { get; set; }
+        public string EntityDetails { get; set; }
+        public int? DeletedBy { get; set; }
+        public string DeletedByName { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public string Reason { get; set; }
+        public int? ParentDeleteId { get; set; }
     }
 }

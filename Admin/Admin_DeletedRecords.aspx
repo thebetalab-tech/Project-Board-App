@@ -66,7 +66,13 @@
     </div>
 
     <!-- Filters Bar -->
-    <div class="stat-card" style="margin-top:1.5rem;padding:1.2rem 1.5rem;">
+    <div style="margin-top:1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;">
+      <asp:LinkButton ID="btnGetReport" runat="server" CssClass="btn btn-primary" OnClick="btnGetReport_Click" style="padding:.5rem 1.2rem;font-weight:600;display:inline-flex;align-items:center;gap:.5rem;">
+        <i class="fa-solid fa-file-export"></i>
+        <span>Get Report</span>
+      </asp:LinkButton>
+    </div>
+    <div class="stat-card" style="margin-top:1rem;padding:1.2rem 1.5rem;">
       <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;">
         
         <!-- Entity Type Filter -->
