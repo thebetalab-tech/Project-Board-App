@@ -138,21 +138,21 @@
         <ItemTemplate>
           <tr class="del-record-row" style="<%# Convert.ToString(Eval("ParentDeleteId")) != "" ? "opacity:.7;background:var(--c-sidebar);" : "" %>">
             <td>
-              <span class="badge <%# GetTypeBadgeClass(Eval("EntityType")?.ToString()) %>">
-                <i class="<%# GetTypeIcon(Eval("EntityType")?.ToString()) %>"></i>
+              <span class="badge <%# GetTypeBadgeClass(Convert.ToString(Eval("EntityType"))) %>">
+                <i class="<%# GetTypeIcon(Convert.ToString(Eval("EntityType"))) %>"></i>
                 <%# Eval("EntityType") %>
               </span>
             </td>
             <td>
-              <div style="font-weight:600;color:var(--c-text);"><%# System.Web.HttpUtility.HtmlEncode(Eval("EntityName")?.ToString()) %></div>
+              <div style="font-weight:600;color:var(--c-text);"><%# System.Web.HttpUtility.HtmlEncode(Convert.ToString(Eval("EntityName"))) %></div>
               <div style="font-size:.78rem;color:var(--c-text-muted);margin-top:.2rem;">ID: <%# Eval("EntityId") %><%# Convert.ToString(Eval("ParentDeleteId")) != "" ? " · Cascade deletion" : "" %></div>
             </td>
             <td>
-              <div style="font-weight:500;"><%# System.Web.HttpUtility.HtmlEncode(Eval("DeletedByName")?.ToString()) %></div>
+              <div style="font-weight:500;"><%# System.Web.HttpUtility.HtmlEncode(Convert.ToString(Eval("DeletedByName"))) %></div>
             </td>
             <td>
-              <div style="font-size:.875rem;"><%# Convert.ToDateTime(Eval("DeletedAt")).ToString("dd MMM yyyy") %></div>
-              <div style="font-size:.75rem;color:var(--c-text-muted);"><%# Convert.ToDateTime(Eval("DeletedAt")).ToString("hh:mm tt") %></div>
+              <div style="font-size:.875rem;"><%# Eval("DeletedAt") != null ? Convert.ToDateTime(Eval("DeletedAt")).ToString("dd MMM yyyy") : "" %></div>
+              <div style="font-size:.75rem;color:var(--c-text-muted);"><%# Eval("DeletedAt") != null ? Convert.ToDateTime(Eval("DeletedAt")).ToString("hh:mm tt") : "" %></div>
             </td>
             <td>
               <asp:LinkButton ID="lnkViewDetails" runat="server" 

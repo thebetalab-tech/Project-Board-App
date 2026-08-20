@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using System.Linq;
+using Project_Board.Admin;
 using Project_Board.Services;
 
 namespace Project_Board.Student.Leader
@@ -320,9 +321,47 @@ namespace Project_Board.Student.Leader
             if (e.CommandName == "DeleteProposal")
             {
                 int projectId = Convert.ToInt32(e.CommandArgument);
+                int leaderId = Convert.ToInt32(Session["UserId"]);
+                string leaderName = Session["FullName"]?.ToString() ?? "Leader";
+
                 using (SqlConnection conn = new SqlConnection(ConnString))
                 {
                     conn.Open();
+
+                    // ── AUDIT: Snapshot project details before deletion ────────────
+                    string snapshotSql = @"
+                        SELECT p.ProjectTitle, p.ProjectType, p.Functionality, p.Status, p.SubmittedAt,
+                               STUFF((
+                                   SELECT ', ' + pk.Keyword
+                                   FROM ProjectKeywords pk WHERE pk.ProjectId = p.ProjectId
+                                   FOR XML PATH('')
+                               ), 1, 2, '') AS Keywords
+                        FROM Projects p
+                        WHERE p.ProjectId = @ProjectId";
+
+                    string projectTitle = $"Project #{projectId}";
+                    string projectDetails = "";
+
+                    using (SqlCommand snapCmd = new SqlCommand(snapshotSql, conn))
+                    {
+                        snapCmd.Parameters.AddWithValue("@ProjectId", projectId);
+                        using (SqlDataReader rdr = snapCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                projectTitle = rdr["ProjectTitle"]?.ToString() ?? projectTitle;
+                                string submittedAt = rdr["SubmittedAt"] != DBNull.Value
+                                    ? Convert.ToDateTime(rdr["SubmittedAt"]).ToString("dd MMM yyyy")
+                                    : "N/A";
+                                projectDetails = $"{{Title: {projectTitle}, Type: {rdr["ProjectType"]}, Status: {rdr["Status"]}, SubmittedAt: {submittedAt}, Functionality: {rdr["Functionality"]?.ToString()?.Substring(0, Math.Min(200, rdr["Functionality"]?.ToString()?.Length ?? 0))}, Keywords: {rdr["Keywords"]}}}";
+                            }
+                        }
+                    }
+
+                    Admin_DeletedRecords.LogDeletion(conn, "Project", projectId, projectTitle, projectDetails,
+                        leaderId > 0 ? (int?)leaderId : null, leaderName, reason: "Project proposal withdrawn by leader");
+
+                    // ── HARD DELETE ───────────────────────────────────────────────
                     string delKw = "DELETE FROM ProjectKeywords WHERE ProjectId = @ProjectId";
                     using (SqlCommand kwCmd = new SqlCommand(delKw, conn))
                     {

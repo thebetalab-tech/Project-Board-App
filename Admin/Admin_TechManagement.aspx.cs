@@ -167,18 +167,42 @@ namespace Project_Board.Admin
             if (e.CommandName == "DeleteTech")
             {
                 int techId = Convert.ToInt32(e.CommandArgument);
-                
-                // NOTE: Cannot perform a hard delete if this technology is already linked to Faculty or Groups.
-                // We'll catch the SqlException and inform the user.
+                int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
+                string adminName = Session["FullName"]?.ToString() ?? "Admin";
+
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
+                    conn.Open();
+
+                    // ── AUDIT: Snapshot technology details before deletion ────────────
+                    string techName = $"Technology #{techId}";
+                    string techDetails = "";
+
+                    string snapshotSql = "SELECT TechName FROM Technologies WHERE TechId = @TechId";
+                    using (SqlCommand snapCmd = new SqlCommand(snapshotSql, conn))
+                    {
+                        snapCmd.Parameters.AddWithValue("@TechId", techId);
+                        using (SqlDataReader rdr = snapCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                techName = rdr["TechName"]?.ToString() ?? techName;
+                                techDetails = $"{{TechName: {techName}}}";
+                            }
+                        }
+                    }
+
+                    Admin_DeletedRecords.LogDeletion(conn, "Technology", techId, techName, techDetails,
+                        adminId > 0 ? (int?)adminId : null, adminName);
+
+                    // NOTE: Cannot perform a hard delete if this technology is already linked to Faculty or Groups.
+                    // We'll catch the SqlException and inform the user.
                     string query = "DELETE FROM Technologies WHERE TechId = @TechId";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@TechId", techId);
                         try
                         {
-                            conn.Open();
                             cmd.ExecuteNonQuery();
                             lblMessage.ForeColor = System.Drawing.Color.Green;
                             lblMessage.Text = "Technology deleted successfully.";
