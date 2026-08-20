@@ -46,6 +46,14 @@
                     <div class="stat-value"><asp:Label ID="lblTotalTechs" runat="server" Text="0"></asp:Label></div>
                     <div class="stat-label">Registered Technologies</div>
                 </div>
+
+                <div class="stat-card" style="cursor:pointer;" onclick="window.location='<%= ResolveUrl("~/Admin/Admin_DeletedRecords.aspx") %>'">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background:rgba(239,68,68,.12);color:#ef4444;"><i class="fa-solid fa-trash-can-arrow-up"></i></div>
+                    </div>
+                    <div class="stat-value"><asp:Label ID="lblTotalDeletedDash" runat="server" Text="0"></asp:Label></div>
+                    <div class="stat-label">Deleted Records <i class="fa-solid fa-arrow-right" style="font-size:.7rem;margin-left:.25rem;"></i></div>
+                </div>
             </div>
 
             <div class="charts-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1.5rem; margin-top: 2rem;">

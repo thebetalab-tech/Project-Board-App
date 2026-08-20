@@ -43,7 +43,10 @@ namespace Project_Board.Admin
                         (SELECT COUNT(1) FROM Users WHERE IsActive = 1) AS TotalUsers,
                         (SELECT COUNT(1) FROM Groups) AS TotalGroups,
                         (SELECT COUNT(1) FROM Projects WHERE Status = 'Pending') AS PendingProjects,
-                        (SELECT COUNT(1) FROM Technologies) AS TotalTechs;
+                        (SELECT COUNT(1) FROM Technologies) AS TotalTechs,
+                        (SELECT CASE WHEN OBJECT_ID('DeletedRecords','U') IS NOT NULL 
+                                     THEN (SELECT COUNT(1) FROM DeletedRecords) 
+                                     ELSE 0 END) AS TotalDeleted;
 
                     SELECT Role, COUNT(1) as Cnt FROM Users WHERE IsActive = 1 GROUP BY Role;
                     SELECT Status, COUNT(1) as Cnt FROM Projects GROUP BY Status;
@@ -59,10 +62,11 @@ namespace Project_Board.Admin
                         {
                             if (reader.Read())
                             {
-                                lblTotalUsers.Text = reader["TotalUsers"].ToString();
-                                lblTotalGroups.Text = reader["TotalGroups"].ToString();
-                                lblPendingProjects.Text = reader["PendingProjects"].ToString();
-                                lblTotalTechs.Text = reader["TotalTechs"].ToString();
+                                lblTotalUsers.Text         = reader["TotalUsers"].ToString();
+                                lblTotalGroups.Text        = reader["TotalGroups"].ToString();
+                                lblPendingProjects.Text    = reader["PendingProjects"].ToString();
+                                lblTotalTechs.Text         = reader["TotalTechs"].ToString();
+                                lblTotalDeletedDash.Text   = reader["TotalDeleted"].ToString();
                             }
 
                             System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();

@@ -162,8 +162,50 @@ namespace Project_Board.Admin
                 int groupId = Convert.ToInt32(e.CommandArgument);
                 if (string.IsNullOrEmpty(connString)) return;
 
+                int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
+                string adminName = Session["FullName"]?.ToString() ?? "Admin";
+
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
+                    conn.Open();
+
+                    // ── AUDIT: Snapshot group details before deletion ─────────────────
+                    string snapshotSql = @"
+                        SELECT g.GroupName, g.Status,
+                               l.FullName AS LeaderName,
+                               ISNULL(m.FullName, 'Not Assigned') AS MentorName,
+                               STUFF((
+                                   SELECT ', ' + u.FullName
+                                   FROM GroupMembers gm
+                                   JOIN Users u ON gm.UserId = u.UserId
+                                   WHERE gm.GroupId = g.GroupId AND gm.JoinStatus = 'Accepted'
+                                   FOR XML PATH('')
+                               ), 1, 2, '') AS Members
+                        FROM Groups g
+                        JOIN Users l ON g.LeaderId = l.UserId
+                        LEFT JOIN Users m ON g.MentorId = m.UserId
+                        WHERE g.GroupId = @GroupId";
+
+                    string groupName = $"Group #{groupId}";
+                    string groupDetails = "";
+
+                    using (SqlCommand snapCmd = new SqlCommand(snapshotSql, conn))
+                    {
+                        snapCmd.Parameters.AddWithValue("@GroupId", groupId);
+                        using (SqlDataReader rdr = snapCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                groupName = rdr["GroupName"]?.ToString() ?? groupName;
+                                groupDetails = $"{{GroupName: {groupName}, Status: {rdr["Status"]}, Leader: {rdr["LeaderName"]}, Mentor: {rdr["MentorName"]}, Members: {rdr["Members"]}}}";
+                            }
+                        }
+                    }
+
+                    Admin_DeletedRecords.LogDeletion(conn, "Group", groupId, groupName, groupDetails,
+                        adminId > 0 ? (int?)adminId : null, adminName);
+
+                    // ── HARD DELETE CASCADE ───────────────────────────────────────────
                     string deleteQuery = @"
                         IF OBJECT_ID('ProjectKeywords', 'U') IS NOT NULL
                             DELETE FROM ProjectKeywords WHERE ProjectId IN (SELECT ProjectId FROM Projects WHERE GroupId = @GroupId);
@@ -178,13 +220,12 @@ namespace Project_Board.Admin
                         DELETE FROM GroupMembers WHERE GroupId = @GroupId;
                         DELETE FROM Groups WHERE GroupId = @GroupId;
                     ";
-                    
+
                     using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@GroupId", groupId);
                         try
                         {
-                            conn.Open();
                             cmd.ExecuteNonQuery();
                             LoadGroups();
                         }

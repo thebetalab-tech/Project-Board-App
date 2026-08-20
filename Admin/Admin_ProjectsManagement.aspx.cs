@@ -105,8 +105,50 @@ namespace Project_Board.Admin
             else if (e.CommandName == "DeleteProject")
             {
                 if (string.IsNullOrEmpty(connString)) return;
+
+                int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
+                string adminName = Session["FullName"]?.ToString() ?? "Admin";
+
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
+                    conn.Open();
+
+                    // ── AUDIT: Snapshot project details before deletion ────────────
+                    string snapshotSql = @"
+                        SELECT p.ProjectTitle, p.ProjectType, p.Functionality, p.Status, p.SubmittedAt,
+                               g.GroupName,
+                               STUFF((
+                                   SELECT ', ' + pk.Keyword
+                                   FROM ProjectKeywords pk WHERE pk.ProjectId = p.ProjectId
+                                   FOR XML PATH('')
+                               ), 1, 2, '') AS Keywords
+                        FROM Projects p
+                        JOIN Groups g ON p.GroupId = g.GroupId
+                        WHERE p.ProjectId = @ProjectId";
+
+                    string projectTitle = $"Project #{projectId}";
+                    string projectDetails = "";
+
+                    using (SqlCommand snapCmd = new SqlCommand(snapshotSql, conn))
+                    {
+                        snapCmd.Parameters.AddWithValue("@ProjectId", projectId);
+                        using (SqlDataReader rdr = snapCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                projectTitle   = rdr["ProjectTitle"]?.ToString() ?? projectTitle;
+                                string submittedAt = rdr["SubmittedAt"] != DBNull.Value
+                                    ? Convert.ToDateTime(rdr["SubmittedAt"]).ToString("dd MMM yyyy")
+                                    : "N/A";
+                                projectDetails = $"{{Title: {projectTitle}, Type: {rdr["ProjectType"]}, Group: {rdr["GroupName"]}, Status: {rdr["Status"]}, SubmittedAt: {submittedAt}, Keywords: {rdr["Keywords"]}, Functionality: {rdr["Functionality"]?.ToString()?.Substring(0, Math.Min(200, rdr["Functionality"]?.ToString()?.Length ?? 0))}}}";
+                            }
+                        }
+                    }
+
+                    Admin_DeletedRecords.LogDeletion(conn, "Project", projectId, projectTitle, projectDetails,
+                        adminId > 0 ? (int?)adminId : null, adminName);
+
+                    // ── HARD DELETE ───────────────────────────────────────────────
                     string deleteQuery = @"
                         IF OBJECT_ID('ProjectKeywords', 'U') IS NOT NULL
                             DELETE FROM ProjectKeywords WHERE ProjectId = @ProjectId;
@@ -117,7 +159,6 @@ namespace Project_Board.Admin
                         cmd.Parameters.AddWithValue("@ProjectId", projectId);
                         try
                         {
-                            conn.Open();
                             cmd.ExecuteNonQuery();
                             LoadProjects();
                         }

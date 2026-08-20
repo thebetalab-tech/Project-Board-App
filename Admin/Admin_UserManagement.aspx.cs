@@ -178,17 +178,21 @@ namespace Project_Board.Admin
             if (e.CommandName == "DeleteUser")
             {
                 int userId = Convert.ToInt32(e.CommandArgument);
-                
+                int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
+                string adminName = Session["FullName"]?.ToString() ?? "Admin";
+
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     conn.Open();
 
-                    // Fetch target user details before deletion for email notification
+                    // Fetch target user details before deletion
                     string targetName = string.Empty;
                     string targetEmail = string.Empty;
                     string targetRole = string.Empty;
+                    string targetEnrollment = string.Empty;
+                    string targetCreatedAt = string.Empty;
 
-                    string getUserSql = "SELECT FullName, Email, Role FROM Users WHERE UserId = @UserId";
+                    string getUserSql = "SELECT FullName, Email, Role, ISNULL(EnrollmentNo,'N/A') AS EnrollmentNo, CreatedAt FROM Users WHERE UserId = @UserId";
                     using (SqlCommand getCmd = new SqlCommand(getUserSql, conn))
                     {
                         getCmd.Parameters.AddWithValue("@UserId", userId);
@@ -196,13 +200,55 @@ namespace Project_Board.Admin
                         {
                             if (rdr.Read())
                             {
-                                targetName = rdr["FullName"]?.ToString() ?? "User";
-                                targetEmail = rdr["Email"]?.ToString() ?? string.Empty;
-                                targetRole = rdr["Role"]?.ToString() ?? "User";
+                                targetName       = rdr["FullName"]?.ToString()     ?? "User";
+                                targetEmail      = rdr["Email"]?.ToString()        ?? string.Empty;
+                                targetRole       = rdr["Role"]?.ToString()         ?? "User";
+                                targetEnrollment = rdr["EnrollmentNo"]?.ToString() ?? "N/A";
+                                targetCreatedAt  = rdr["CreatedAt"] != DBNull.Value
+                                    ? Convert.ToDateTime(rdr["CreatedAt"]).ToString("dd MMM yyyy")
+                                    : "N/A";
                             }
                         }
                     }
 
+                    // ── AUDIT: Log the user deletion first ──────────────────────────────
+                    string userDetails = $"{{Name: {targetName}, Email: {targetEmail}, Role: {targetRole}, Enrollment: {targetEnrollment}, JoinedOn: {targetCreatedAt}}}";
+                    int parentDeleteId = Admin_DeletedRecords.LogDeletion(
+                        conn,
+                        entityType:    "User",
+                        entityId:      userId,
+                        entityName:    targetName,
+                        entityDetails: userDetails,
+                        deletedBy:     adminId > 0 ? (int?)adminId : null,
+                        deletedByName: adminName
+                    );
+
+                    // ── AUDIT: Log each group owned by this user ─────────────────────────
+                    string getGroupsSql = @"
+                        SELECT g.GroupId, g.GroupName, g.Status,
+                               ISNULL(m.FullName,'Not Assigned') AS MentorName
+                        FROM Groups g
+                        LEFT JOIN Users m ON g.MentorId = m.UserId
+                        WHERE g.LeaderId = @UserId";
+                    using (SqlCommand grpCmd = new SqlCommand(getGroupsSql, conn))
+                    {
+                        grpCmd.Parameters.AddWithValue("@UserId", userId);
+                        DataTable groupsTable = new DataTable();
+                        using (SqlDataAdapter da = new SqlDataAdapter(grpCmd)) { da.Fill(groupsTable); }
+
+                        foreach (DataRow row in groupsTable.Rows)
+                        {
+                            int gId = Convert.ToInt32(row["GroupId"]);
+                            string gName = row["GroupName"]?.ToString() ?? "Group";
+                            string gDetails = $"{{GroupName: {gName}, Status: {row["Status"]}, Mentor: {row["MentorName"]}, Leader: {targetName}}}";
+                            Admin_DeletedRecords.LogDeletion(conn, "Group", gId, gName, gDetails,
+                                adminId > 0 ? (int?)adminId : null, adminName,
+                                reason: $"Cascade: parent user '{targetName}' deleted",
+                                parentDeleteId: parentDeleteId > 0 ? (int?)parentDeleteId : null);
+                        }
+                    }
+
+                    // ── HARD DELETE CASCADE ──────────────────────────────────────────────
                     string deleteCascadeQuery = @"
                         IF OBJECT_ID('Task', 'U') IS NOT NULL
                         BEGIN

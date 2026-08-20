@@ -227,14 +227,57 @@ namespace Project_Board.Admin
             if (e.CommandName == "DeleteTask")
             {
                 int taskId = Convert.ToInt32(e.CommandArgument);
+                int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
+                string adminName = Session["FullName"]?.ToString() ?? "Admin";
+
                 using (SqlConnection conn = new SqlConnection(ConnString))
                 {
+                    conn.Open();
+
+                    // ── AUDIT: Snapshot task details before deletion ──────────────
+                    string snapshotSql = @"
+                        SELECT t.TaskTitle, t.TaskDescription, t.Status, t.TaskLevel, t.TaskCategory,
+                               t.DueDate, t.CreatedAt,
+                               g.GroupName,
+                               uTo.FullName AS AssignedToName,
+                               uBy.FullName AS AssignedByName
+                        FROM Task t
+                        INNER JOIN Groups g ON t.GroupId = g.GroupId
+                        INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                        INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
+                        WHERE t.TaskId = @TaskId";
+
+                    string taskTitle = $"Task #{taskId}";
+                    string taskDetails = "";
+
+                    using (SqlCommand snapCmd = new SqlCommand(snapshotSql, conn))
+                    {
+                        snapCmd.Parameters.AddWithValue("@TaskId", taskId);
+                        using (SqlDataReader rdr = snapCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                taskTitle = rdr["TaskTitle"]?.ToString() ?? taskTitle;
+                                string dueDate = rdr["DueDate"] != DBNull.Value
+                                    ? Convert.ToDateTime(rdr["DueDate"]).ToString("dd MMM yyyy")
+                                    : "No due date";
+                                string createdAt = rdr["CreatedAt"] != DBNull.Value
+                                    ? Convert.ToDateTime(rdr["CreatedAt"]).ToString("dd MMM yyyy")
+                                    : "N/A";
+                                taskDetails = $"{{Title: {taskTitle}, Group: {rdr["GroupName"]}, AssignedTo: {rdr["AssignedToName"]}, AssignedBy: {rdr["AssignedByName"]}, Level: {rdr["TaskLevel"]}, Category: {rdr["TaskCategory"]}, Status: {rdr["Status"]}, DueDate: {dueDate}, CreatedAt: {createdAt}}}";
+                            }
+                        }
+                    }
+
+                    Admin_DeletedRecords.LogDeletion(conn, "Task", taskId, taskTitle, taskDetails,
+                        adminId > 0 ? (int?)adminId : null, adminName);
+
+                    // ── HARD DELETE ──────────────────────────────────────────────
                     using (SqlCommand cmd = new SqlCommand("sp_crud_tasks", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@Action", "DELETE");
                         cmd.Parameters.AddWithValue("@TaskId", taskId);
-                        conn.Open();
                         cmd.ExecuteNonQuery();
                     }
                 }
