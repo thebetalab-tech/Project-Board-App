@@ -54,7 +54,7 @@ namespace Project_Board.Student.Member
                 using (SqlCommand cmd = new SqlCommand("sp_select_tasks", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Action", "MEMBER_ASSIGNED_TASKS");
+                    cmd.Parameters.AddWithValue("@Action", "BY_ASSIGNED_TO");
                     cmd.Parameters.AddWithValue("@UserId", memberId);
 
                     conn.Open();

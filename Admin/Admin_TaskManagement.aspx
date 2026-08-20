@@ -26,6 +26,8 @@
             padding: 0.75rem 1rem;
             text-align: left;
             border-bottom: 1px solid var(--c-border);
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .data-table th {
