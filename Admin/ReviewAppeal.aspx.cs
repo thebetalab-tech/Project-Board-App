@@ -203,6 +203,10 @@ namespace Project_Board.Admin
             {
                 Response.Redirect("~/Student/Leader/Leader_TaskManagement.aspx");
             }
+            else if (role == "Faculty")
+            {
+                Response.Redirect("~/Admin/Mentor_TaskManagement.aspx");
+            }
             else
             {
                 Response.Redirect("~/Admin/Admin_TaskManagement.aspx");
@@ -215,6 +219,10 @@ namespace Project_Board.Admin
             if (role == "Leader")
             {
                 Response.Redirect("~/Student/Leader/Leader_TaskManagement.aspx");
+            }
+            else if (role == "Faculty")
+            {
+                Response.Redirect("~/Admin/Mentor_TaskManagement.aspx");
             }
             else
             {
