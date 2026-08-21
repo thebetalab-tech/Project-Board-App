@@ -249,23 +249,6 @@
                     </div>
                 </asp:Panel>
 
-                <!-- REVIEW & AUTHORIZED ACTIONS CARD -->
-                <div class="detail-card">
-                    <h3><i class="fa-solid fa-gavel" style="color:var(--c-accent); margin-right:0.5rem;"></i> Review & Authorized Actions</h3>
-                    
-                    <div style="margin-top:1rem;">
-                        <label style="font-size:0.85rem; font-weight:600;">Faculty / Reviewer Feedback & Remarks</label>
-                        <asp:TextBox ID="txtRemarks" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" placeholder="Enter remarks or revision feedback for student..."></asp:TextBox>
-                    </div>
-
-                    <div class="action-bar">
-                        <asp:Button ID="btnMarkCompleted" runat="server" Text="Mark Completed" CssClass="btn-success" OnClick="btnMarkCompleted_Click" />
-                        <asp:Button ID="btnRejectCompletion" runat="server" Text="Request Revision" CssClass="btn-danger" OnClick="btnRejectCompletion_Click" />
-                        <asp:Button ID="btnAcceptAppeal" runat="server" Text="Accept Appeal" CssClass="btn-purple" OnClick="btnAcceptAppeal_Click" Visible="false" />
-                        <asp:Button ID="btnRejectAppeal" runat="server" Text="Reject Appeal" CssClass="btn-danger" OnClick="btnRejectAppeal_Click" Visible="false" />
-                    </div>
-                </div>
-
             </div>
         </main>
     </form>

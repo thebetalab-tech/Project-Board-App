@@ -551,7 +551,7 @@ BEGIN
         INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
         INNER JOIN Groups g ON t.GroupId = g.GroupId
         LEFT JOIN Task p ON t.ParentTaskId = p.TaskId
-        WHERE t.TaskLevel = 'MentorToLeader'
+        WHERE t.TaskLevel IN ('MentorToLeader', 'AdminToLeader', 'AdminToAll')
           AND (@GroupId IS NULL OR t.GroupId = @GroupId)
           AND (@UserId IS NULL OR t.AssignedBy = @UserId OR t.AssignedTo = @UserId)
         ORDER BY t.CreatedAt DESC;

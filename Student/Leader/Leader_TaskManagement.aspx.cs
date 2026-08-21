@@ -120,10 +120,15 @@ namespace Project_Board.Student.Leader
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 int groupId = CurrentGroupId;
-                using (SqlCommand cmd = new SqlCommand("sp_select_tasks", conn))
+                string query = @"
+                    SELECT t.TaskId, t.TaskTitle 
+                    FROM Task t
+                    WHERE t.GroupId = @GroupId 
+                      AND t.TaskLevel IN ('MentorToLeader', 'AdminToLeader', 'AdminToAll')
+                    ORDER BY t.CreatedAt DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Action", "MENTOR_LEADER_TASKS");
                     cmd.Parameters.AddWithValue("@GroupId", groupId);
 
                     conn.Open();
@@ -147,10 +152,24 @@ namespace Project_Board.Student.Leader
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_select_tasks", conn))
+                string query = @"
+                    SELECT 
+                        t.*,
+                        uBy.FullName AS AssignedByName,
+                        uTo.FullName AS AssignedToName,
+                        g.GroupName,
+                        ISNULL(p.TaskTitle, '') AS ParentTaskTitle
+                    FROM Task t
+                    INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
+                    INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
+                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    LEFT JOIN Task p ON t.ParentTaskId = p.TaskId
+                    WHERE t.TaskLevel IN ('MentorToLeader', 'AdminToLeader', 'AdminToAll')
+                      AND (t.AssignedBy = @UserId OR t.AssignedTo = @UserId)
+                    ORDER BY t.CreatedAt DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Action", "MENTOR_LEADER_TASKS");
                     cmd.Parameters.AddWithValue("@UserId", leaderId);
 
                     conn.Open();
@@ -432,7 +451,7 @@ namespace Project_Board.Student.Leader
                     INNER JOIN Groups g ON t.GroupId = g.GroupId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
-                    WHERE t.AssignedTo = @LeaderId AND (t.TaskLevel = 'MentorToLeader' OR t.TaskLevel = 'AdminToAll')
+                    WHERE t.AssignedTo = @LeaderId AND t.TaskLevel IN ('MentorToLeader', 'AdminToLeader', 'AdminToAll')
                     ORDER BY t.CreatedAt DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
