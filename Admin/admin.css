@@ -755,7 +755,8 @@ tbody tr:hover {
     display: flex;
 }
 
-.modal-overlay.active .modal-content {
+.modal-overlay.active .modal-content,
+.modal-overlay.active .modal-box {
     transform: translateY(0);
     opacity: 1;
 }
@@ -1177,4 +1178,107 @@ body.sidebar-collapsed .user-profile {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+/* ==========================================================================
+   ADMIN DELETED RECORDS - Specific Styles
+   ========================================================================== */
+
+/* Entity Type Badges */
+.badge-user { background: var(--c-red-bg); color: var(--c-red); }
+.badge-group { background: var(--c-blue-bg); color: var(--c-blue); }
+.badge-project { background: var(--c-yellow-bg); color: var(--c-yellow); }
+.badge-task { background: var(--c-green-bg); color: var(--c-green); }
+.badge-tech { background: var(--c-accent-bg); color: var(--c-accent); }
+.badge-other { background: var(--c-surface); color: var(--c-text-muted); }
+
+/* Modal Box (used by Admin_DeletedRecords) */
+.modal-box {
+    background: var(--c-bg);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.modal-overlay.active .modal-box {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* Detail Row Styles */
+.detail-row {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--c-border);
+}
+
+.detail-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--c-text-muted);
+    min-width: 120px;
+}
+
+.detail-val {
+    flex: 1;
+    color: var(--c-text);
+    font-size: 0.9rem;
+    word-break: break-word;
+}
+
+/* Responsive Table */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table th,
+.data-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--c-border);
+}
+
+.data-table th {
+    font-weight: 600;
+    color: var(--c-text-muted);
+    background: var(--c-bg-warm);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.data-table tbody tr:hover {
+    background: var(--c-bg-warm);
+}
+
+/* Badge in table */
+.data-table .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
 }

@@ -341,10 +341,8 @@
                         <label>Update Status</label>
                         <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control">
                             <asp:ListItem Text="Working" Value="Working"></asp:ListItem>
-                            <asp:ListItem Text="Appealed" Value="Appealed"></asp:ListItem>
                             <asp:ListItem Text="Completed" Value="Completed"></asp:ListItem>
                             <asp:ListItem Text="Revision Needed" Value="Revision Needed"></asp:ListItem>
-                            <asp:ListItem Text="Failed" Value="Failed"></asp:ListItem>
                         </asp:DropDownList>
                     </div>
 

@@ -66,13 +66,13 @@
     </div>
 
     <!-- Filters Bar -->
-    <div style="margin-top:1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;">
-      <asp:LinkButton ID="btnGetReport" runat="server" CssClass="btn btn-primary" OnClick="btnGetReport_Click" style="padding:.5rem 1.2rem;font-weight:600;display:inline-flex;align-items:center;gap:.5rem;">
-        <i class="fa-solid fa-file-export"></i>
-        <span>Get Report</span>
-      </asp:LinkButton>
-    </div>
     <div class="stat-card" style="margin-top:1rem;padding:1.2rem 1.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <asp:LinkButton ID="btnGetReport" runat="server" CssClass="btn btn-primary" OnClick="btnGetReport_Click" style="padding:.5rem 1.2rem;font-weight:600;display:inline-flex;align-items:center;gap:.5rem;">
+          <i class="fa-solid fa-file-export"></i>
+          <span>Get Report</span>
+        </asp:LinkButton>
+      </div>
       <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;">
         
         <!-- Entity Type Filter -->
@@ -127,9 +127,10 @@
 
     <!-- Records Table -->
     <div class="stat-card" style="padding:0;overflow:hidden;">
-      <asp:Repeater ID="rptDeletedRecords" runat="server" OnItemCommand="rptDeletedRecords_ItemCommand">
-        <HeaderTemplate>
-          <table class="data-table" style="width:100%;border-collapse:collapse;">
+      <div style="overflow-x:auto;">
+        <asp:Repeater ID="rptDeletedRecords" runat="server" OnItemCommand="rptDeletedRecords_ItemCommand">
+          <HeaderTemplate>
+            <table class="data-table" style="width:100%;border-collapse:collapse;min-width:600px;">
             <thead>
               <tr>
                 <th style="width:130px;">Type</th>
@@ -175,6 +176,7 @@
           </table>
         </FooterTemplate>
       </asp:Repeater>
+      </div>
 
       <!-- Empty State -->
       <asp:Panel ID="pnlEmpty" runat="server" Visible="false" style="text-align:center;padding:3rem 1rem;">
@@ -188,7 +190,7 @@
 </div>
 
 <!-- Detail Modal -->
-<div id="detailModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeModal('detailModal')">
+<div id="detailModal" class="modal-overlay" onclick="if(event.target===this)closeModal('detailModal')">
   <div class="modal-box" style="max-width:600px;max-height:80vh;overflow-y:auto;">
     <div class="modal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
       <h2 style="margin:0;font-size:1.25rem;">Deletion Details</h2>
