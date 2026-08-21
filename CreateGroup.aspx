@@ -4,7 +4,7 @@
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Board — Create Group</title>
+    <title>Project Board - Create Group</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles/login-signup.css?v=20260724" />
     <style>
@@ -55,6 +55,8 @@
             pointer-events: none;
         }
         select.form-input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
             appearance: none;
             cursor: pointer;
             padding-right: 2.75rem;
@@ -63,11 +65,16 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            background-color: var(--c-input-bg);
+            color: var(--c-foreground);
         }
         select.form-input option {
             max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
+            background-color: #ffffff;
+            color: #1e293b;
+            padding: 0.5rem;
         }
         .back-link {
             display: inline-flex;
@@ -143,8 +150,7 @@
                             <line x1="12" y1="17" x2="12" y2="21" />
                         </svg>
                         
-                        <asp:DropDownList ID="ddlTechDomain" runat="server" ClientIDMode="Static" CssClass="form-input" required="required" AppendDataBoundItems="true">
-                            <asp:ListItem Value="" Text="Select primary technology" disabled="disabled" Selected="True"></asp:ListItem>
+                        <asp:DropDownList ID="ddlTechDomain" runat="server" ClientIDMode="Static" CssClass="form-input" required="required">
                         </asp:DropDownList>
                         
                         <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
