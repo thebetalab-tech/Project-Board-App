@@ -24,6 +24,22 @@ namespace Project_Board.Admin
 
             if (!IsPostBack)
             {
+                if (!string.IsNullOrEmpty(connString))
+                {
+                    using (SqlConnection conn = new SqlConnection(connString))
+                    {
+                        conn.Open();
+                        string sql = @"
+                            IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Groups]') AND name = 'IsActive')
+                            BEGIN
+                                ALTER TABLE [dbo].[Groups] ADD IsActive BIT NOT NULL DEFAULT 1;
+                            END";
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
                 LoadGroups();
             }
         }
@@ -40,6 +56,7 @@ namespace Project_Board.Admin
                         g.GroupId,
                         g.GroupName,
                         g.Status,
+                        ISNULL(g.IsActive, 1) AS IsActive,
                         l.FullName AS LeaderName,
                         m.FullName AS MentorName,
                         STUFF((SELECT ', ' + u.FullName
@@ -143,6 +160,7 @@ namespace Project_Board.Admin
                         g.GroupId,
                         g.GroupName,
                         g.Status,
+                        ISNULL(g.IsActive, 1) AS IsActive,
                         l.FullName AS LeaderName,
                         m.FullName AS MentorName,
                         STUFF((SELECT ', ' + u.FullName

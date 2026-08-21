@@ -28,26 +28,32 @@ namespace Project_Board
                 {
                     UserInitials = fullName.Substring(0, 1).ToUpper();
                 }
+
+                // Ensure IsActive column exists
+                string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"]?.ConnectionString;
+                if (!string.IsNullOrEmpty(connString))
+                {
+                    using (SqlConnection conn = new SqlConnection(connString))
+                    {
+                        conn.Open();
+                        string sql = @"
+                            IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Groups]') AND name = 'IsActive')
+                            BEGIN
+                                ALTER TABLE [dbo].[Groups] ADD IsActive BIT NOT NULL DEFAULT 1;
+                            END";
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+
                 LoadTechnologies();
                 LoadAvailableGroups();
             }
             else
             {
-                // Show success/error messages after postback (button click)
-                if (!string.IsNullOrEmpty(SuccessMessage))
-                {
-                    pnlMessage.Visible = true;
-                    litMessage.Text = SuccessMessage;
-                    pnlMessage.CssClass = "alert alert-success";
-                    SuccessMessage = ""; // Clear after showing
-                }
-                else if (!string.IsNullOrEmpty(ErrorMessage))
-                {
-                    pnlMessage.Visible = true;
-                    litMessage.Text = ErrorMessage;
-                    pnlMessage.CssClass = "alert alert-danger";
-                    ErrorMessage = ""; // Clear after showing
-                }
+                // Removed because it runs before ItemCommand. Messages are now shown directly.
             }
         }
 
@@ -85,14 +91,13 @@ namespace Project_Board
                     LEFT JOIN Technologies t ON g.TechId = t.TechId
                     JOIN Users l ON g.LeaderId = l.UserId";
 
-                // Note: IsActive column check will be added after database migration
                 if (techId > 0)
                 {
-                    query += " WHERE g.TechId = @TechId AND g.MemberNeeded = 1";
+                    query += " WHERE g.TechId = @TechId AND g.MemberNeeded = 1 AND g.IsActive = 1";
                 }
                 else
                 {
-                    query += " WHERE g.MemberNeeded = 1";
+                    query += " WHERE g.MemberNeeded = 1 AND g.IsActive = 1";
                 }
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -145,7 +150,7 @@ namespace Project_Board
                         int count = Convert.ToInt32(checkCmd.ExecuteScalar());
                         if (count > 0)
                         {
-                            ErrorMessage = "You already have a pending group join request. Please wait for the leader's response.";
+                            ShowMessage("You already have a pending group join request. Please wait for the leader's response.", false);
                             LoadAvailableGroups(ddlTechnology.SelectedValue != "0" ? Convert.ToInt32(ddlTechnology.SelectedValue) : 0);
                             return;
                         }
@@ -194,16 +199,33 @@ namespace Project_Board
                                 }
                             }
 
-                            SuccessMessage = "<div class='alert alert-success' style='background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.2); padding:1rem; border-radius:8px;'><i class='fa-solid fa-check-circle' style='margin-right:0.5rem;'></i>Your request to join the group has been submitted successfully. You will be notified when the leader responds.</div>";
+                            ShowMessage("Your request to join the group has been submitted successfully. You will be notified when the leader responds.", true);
                         }
                         else
                         {
-                            ErrorMessage = "<div class='alert alert-danger' style='background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.2); padding:1rem; border-radius:8px;'><i class='fa-solid fa-exclamation-circle' style='margin-right:0.5rem;'></i>You have already requested to join this group.</div>";
+                            ShowMessage("You have already requested to join this group.", false);
                         }
                     }
                 }
                 LoadAvailableGroups(ddlTechnology.SelectedValue != "0" ? Convert.ToInt32(ddlTechnology.SelectedValue) : 0);
             }
+        }
+
+        private void ShowMessage(string message, bool isSuccess)
+        {
+            pnlMessage.Visible = true;
+            pnlMessage.CssClass = isSuccess ? "alert alert-success" : "alert alert-danger";
+
+            string icon = isSuccess ? "<i class='fa-solid fa-check-circle' style='margin-right:0.5rem;'></i>" : "<i class='fa-solid fa-exclamation-circle' style='margin-right:0.5rem;'></i>";
+            string bgColor = isSuccess ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)";
+            string color = isSuccess ? "#22c55e" : "#ef4444";
+
+            pnlMessage.Style["background"] = bgColor;
+            pnlMessage.Style["color"] = color;
+            pnlMessage.Style["border"] = "1px solid " + color;
+            pnlMessage.Style["display"] = "block";
+
+            litMessage.Text = icon + message;
         }
     }
 }
