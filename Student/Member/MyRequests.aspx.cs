@@ -127,10 +127,10 @@ namespace Project_Board.Student.Member
 
             pnlMessage.Style["background"] = bgColor;
             pnlMessage.Style["color"] = color;
-            pnlMessage.Style["border"] = $"1px solid {color}";
+            pnlMessage.Style["border"] = "1px solid " + color;
             pnlMessage.Style["display"] = "block";
 
-            litMessage.Text = $"{icon}{message}";
+            litMessage.Text = icon + message;
         }
     }
 }
