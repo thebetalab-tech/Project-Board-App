@@ -72,9 +72,13 @@
                                 <line x1="8" y1="21" x2="16" y2="21" />
                                 <line x1="12" y1="17" x2="12" y2="21" />
                             </svg>
-                            <asp:TextBox ID="enrollment" runat="server" ClientIDMode="Static" CssClass="form-input" placeholder="Enter your enrollment number" required="required"></asp:TextBox>
+                            <asp:TextBox ID="enrollment" runat="server" ClientIDMode="Static" CssClass="form-input" placeholder="e.g. 24020201071" MaxLength="20" required="required"></asp:TextBox>
                         </div>
                         <asp:Label ID="lblEnrollmentError" runat="server" CssClass="error-message" EnableViewState="false"></asp:Label>
+                        <div class="help-text" style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem;">
+                            <i class="fa-solid fa-info-circle" style="color: #3b82f6;"></i>
+                            <strong>Requirement:</strong> 20-digit enrollment number (e.g., 24020201071)
+                        </div>
                     </div>
 
                     <div class="input-group" id="passwordGroup">

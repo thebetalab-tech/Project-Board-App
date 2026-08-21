@@ -196,7 +196,7 @@
                 </div>
 
                 <!-- Success/Error Messages -->
-                <asp:Panel ID="pnlMessage" runat="server" Visible="false" CssClass="alert" style="margin-bottom:1.5rem; padding:1rem; border-radius:8px; display:none;">
+                <asp:Panel ID="pnlMessage" runat="server" Visible="false" CssClass="alert" style="margin-bottom:1.5rem; padding:1rem; border-radius:8px;">
                     <asp:Literal ID="litMessage" runat="server"></asp:Literal>
                 </asp:Panel>
 

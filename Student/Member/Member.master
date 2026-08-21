@@ -23,6 +23,9 @@
         <a href='<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("InvitationManager.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
             <i class="fa-solid fa-envelope"></i> <span>Invitations</span>
         </a>
+        <a href='<%= ResolveUrl("~/Student/Member/MyRequests.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("MyRequests.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
+            <i class="fa-solid fa-file-circle-check"></i> <span>My Requests</span>
+        </a>
         <a href='<%= ResolveUrl("~/Student/Member/Member_TaskManagement.aspx") %>' class='nav-link <%= Request.Url.AbsolutePath.EndsWith("Member_TaskManagement.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>'>
             <i class="fa-solid fa-list-check"></i> <span>My Tasks</span>
         </a>

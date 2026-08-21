@@ -33,18 +33,20 @@ namespace Project_Board
             }
             else
             {
-                // Show success/error messages
+                // Show success/error messages after postback (button click)
                 if (!string.IsNullOrEmpty(SuccessMessage))
                 {
                     pnlMessage.Visible = true;
                     litMessage.Text = SuccessMessage;
                     pnlMessage.CssClass = "alert alert-success";
+                    SuccessMessage = ""; // Clear after showing
                 }
                 else if (!string.IsNullOrEmpty(ErrorMessage))
                 {
                     pnlMessage.Visible = true;
                     litMessage.Text = ErrorMessage;
                     pnlMessage.CssClass = "alert alert-danger";
+                    ErrorMessage = ""; // Clear after showing
                 }
             }
         }
@@ -83,6 +85,7 @@ namespace Project_Board
                     LEFT JOIN Technologies t ON g.TechId = t.TechId
                     JOIN Users l ON g.LeaderId = l.UserId";
 
+                // Note: IsActive column check will be added after database migration
                 if (techId > 0)
                 {
                     query += " WHERE g.TechId = @TechId AND g.MemberNeeded = 1";
@@ -143,6 +146,7 @@ namespace Project_Board
                         if (count > 0)
                         {
                             ErrorMessage = "You already have a pending group join request. Please wait for the leader's response.";
+                            LoadAvailableGroups(ddlTechnology.SelectedValue != "0" ? Convert.ToInt32(ddlTechnology.SelectedValue) : 0);
                             return;
                         }
                     }

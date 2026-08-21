@@ -119,6 +119,10 @@
                         <asp:TextBox ID="txtEnrollment" runat="server" CssClass="form-control" placeholder="e.g. 24020201071" MaxLength="20"></asp:TextBox>
                         <asp:RequiredFieldValidator ID="reqEnrollment" runat="server" ControlToValidate="txtEnrollment" ErrorMessage="Enrollment number is required" ForeColor="Red" Display="Dynamic" />
                         <asp:RegularExpressionValidator ID="regexEnrollment" runat="server" ControlToValidate="txtEnrollment" ErrorMessage="Enrollment must be exactly 20 digits" ValidationExpression="^[0-9]{20}$" ForeColor="Red" Display="Dynamic" />
+                        <div style="margin-top:0.5rem; font-size:0.75rem; color:var(--c-text-muted);">
+                            <i class="fa-solid fa-info-circle" style="color:var(--c-primary);"></i>
+                            <strong>Requirement:</strong> 20-digit enrollment number (e.g., 24020201071, 23020201099)
+                        </div>
                     </div>
                     
                     <div class="form-group" style="flex:1;">

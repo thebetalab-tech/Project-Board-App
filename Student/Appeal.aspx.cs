@@ -109,6 +109,42 @@ namespace Project_Board.Student
         {
             if (TaskId == 0) return;
 
+            // Security & Deadline check
+            using (SqlConnection checkConn = new SqlConnection(ConnString))
+            {
+                string checkQuery = "SELECT AssignedTo, DueDate FROM Task WHERE TaskId = @TaskId";
+                using (SqlCommand checkCmd = new SqlCommand(checkQuery, checkConn))
+                {
+                    checkCmd.Parameters.AddWithValue("@TaskId", TaskId);
+                    checkConn.Open();
+                    using (SqlDataReader reader = checkCmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int assignedTo = Convert.ToInt32(reader["AssignedTo"]);
+                            int currentUserId = Convert.ToInt32(Session["UserId"]);
+                            
+                            if (assignedTo != currentUserId)
+                            {
+                                lblMessage.Text = "You are not authorized to appeal this task.";
+                                lblMessage.CssClass = "alert alert-danger";
+                                lblMessage.Visible = true;
+                                return;
+                            }
+
+                            DateTime? dueDate = reader["DueDate"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["DueDate"]);
+                            if (dueDate.HasValue && dueDate.Value < DateTime.Now)
+                            {
+                                lblMessage.Text = "The deadline for this task has passed. You cannot submit an appeal.";
+                                lblMessage.CssClass = "alert alert-danger";
+                                lblMessage.Visible = true;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
             string reason = txtReason.Text.Trim();
             string changesMade = txtChangesMade.Text.Trim();
             string explanation = txtExplanation.Text.Trim();

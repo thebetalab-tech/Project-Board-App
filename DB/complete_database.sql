@@ -55,8 +55,16 @@ BEGIN
         LeaderId INT FOREIGN KEY REFERENCES Users(UserId),
         TechId INT FOREIGN KEY REFERENCES Technologies(TechId),
         MentorId INT FOREIGN KEY REFERENCES Users(UserId) NULL,
-        Status NVARCHAR(30) DEFAULT 'Forming' 
+        Status NVARCHAR(30) DEFAULT 'Forming',
+        IsActive BIT DEFAULT 1
     );
+END
+GO
+
+-- Add IsActive column if it doesn't exist (for existing databases)
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Groups') AND name = 'IsActive')
+BEGIN
+    ALTER TABLE Groups ADD IsActive BIT DEFAULT 1;
 END
 GO
 

@@ -179,6 +179,10 @@
     <Content Include="Student\Member\Member_Project.aspx" />
     <Content Include="Student\Member\Member_TaskManagement.aspx" />
     <Content Include="Student\Member\Member_Team.aspx" />
+    <Content Include="Student\Member\MyRequests.aspx" />
+    <Content Include="Student\Member\MyRequests.aspx.cs">
+      <DependentUpon>MyRequests.aspx</DependentUpon>
+    </Content>
     <Content Include="styles\login-signup.css" />
     <Content Include="User\forget_password.aspx" />
     <Content Include="User\Profile.aspx" />

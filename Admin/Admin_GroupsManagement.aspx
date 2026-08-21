@@ -60,8 +60,8 @@
                                                 <a href='<%# ResolveUrl("~/Admin/Details/Group_Details.aspx?GroupId=" + Eval("GroupId")) %>' class="icon-btn" title="View Details">
                                                     <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i>
                                                 </a>
-                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteGroup" CommandArgument='<%# Eval("GroupId") %>' OnClientClick="return confirm('Are you sure you want to delete this group?');">
-                                                    <i class="fa-solid fa-trash"></i>
+                                                <asp:LinkButton ID="btnToggleStatus" runat="server" CssClass="icon-btn" CommandName="ToggleGroupStatus" CommandArgument='<%# Eval("GroupId") %>' OnClientClick="return confirm('Are you sure you want to deactivate this group? Deactivated groups will not be visible for new join requests.');">
+                                                    <i class='fa-solid fa-ban' style='color: var(--c-red);'></i>
                                                 </asp:LinkButton>
                                             </div>
                                         </td>

@@ -256,8 +256,15 @@
                                                 : "<span style='color:var(--c-text-muted);'><i class='fa-solid fa-clock'></i> Working</span>" %>
                                         </td>
                                         <td>
-                                            <asp:LinkButton ID="btnReport" runat="server" CommandName="ReportToMentor" CommandArgument='<%# Eval("TaskId") %>' Visible='<%# Eval("Status").ToString() != "Completed" %>' CssClass="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem;">
+                                            <asp:LinkButton ID="btnReport" runat="server" CommandName="ReportToMentor" CommandArgument='<%# Eval("TaskId") %>' 
+                                                Visible='<%# Eval("Status").ToString() != "Completed" && (Eval("DueDate") == DBNull.Value || Convert.ToDateTime(Eval("DueDate")) >= DateTime.Now) %>' 
+                                                CssClass="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem;">
                                                 <i class="fa-solid fa-flag"></i> Appeal Completion
+                                            </asp:LinkButton>
+                                            <asp:LinkButton ID="btnReportDisabled" runat="server"
+                                                Visible='<%# Eval("Status").ToString() != "Completed" && (Eval("DueDate") != DBNull.Value && Convert.ToDateTime(Eval("DueDate")) < DateTime.Now) %>'
+                                                CssClass="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem; opacity:0.5; cursor:not-allowed; background-color:#64748b; border:1px solid #64748b;" Enabled="false">
+                                                <i class="fa-solid fa-flag"></i> Appeal Completion (Deadline Passed)
                                             </asp:LinkButton>
                                             <button type="button" disabled="disabled" class="btn-primary" visible='<%# Eval("Status").ToString() == "Completed" %>' runat="server" style="padding:0.4rem 0.8rem; font-size:0.8rem; opacity:0.5; cursor:not-allowed; background-color:#64748b; border:1px solid #64748b;">
                                                 <i class="fa-solid fa-flag"></i> Appeal Completion

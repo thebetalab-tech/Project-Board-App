@@ -8,7 +8,12 @@ namespace Project_Board.Student.Member
 {
     public partial class MyRequests : System.Web.UI.Page
     {
-        protected string UserInitials { get; set; } = "SM";
+        private string _userInitials = "SM";
+        protected string UserInitials
+        {
+            get { return _userInitials; }
+            set { _userInitials = value; }
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -20,7 +25,7 @@ namespace Project_Board.Student.Member
 
             if (!IsPostBack)
             {
-                string fullName = Session["FullName"]?.ToString() ?? "Student Member";
+                string fullName = Session["FullName"] != null ? Session["FullName"].ToString() : "Student Member";
                 if (!string.IsNullOrEmpty(fullName))
                 {
                     UserInitials = fullName.Substring(0, 1).ToUpper();
@@ -64,7 +69,7 @@ namespace Project_Board.Student.Member
 
         protected string GetStatusClass(string status)
         {
-            switch (status?.ToLower())
+            switch (status != null ? status.ToLower() : null)
             {
                 case "pending":
                     return "badge-pending";
@@ -77,6 +82,55 @@ namespace Project_Board.Student.Member
                 default:
                     return "badge-pending";
             }
+        }
+
+        protected void rptRequests_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName == "CancelRequest")
+            {
+                int groupId = Convert.ToInt32(e.CommandArgument);
+                int userId = Convert.ToInt32(Session["UserId"]);
+                string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    string sql = "DELETE FROM GroupMembers WHERE GroupId = @GroupId AND UserId = @UserId AND JoinStatus IN ('Requested', 'Pending')";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@GroupId", groupId);
+                        cmd.Parameters.AddWithValue("@UserId", userId);
+                        conn.Open();
+                        int rows = cmd.ExecuteNonQuery();
+
+                        if (rows > 0)
+                        {
+                            ShowMessage("Request cancelled successfully.", true);
+                        }
+                        else
+                        {
+                            ShowMessage("Could not cancel request. It may have already been processed.", false);
+                        }
+                    }
+                }
+                LoadMyRequests();
+            }
+        }
+
+        private void ShowMessage(string message, bool isSuccess)
+        {
+            pnlMessage.Visible = true;
+            pnlMessage.CssClass = isSuccess ? "alert alert-success" : "alert alert-danger";
+
+            string icon = isSuccess ? "<i class='fa-solid fa-check-circle' style='margin-right:0.5rem;'></i>" : "<i class='fa-solid fa-exclamation-circle' style='margin-right:0.5rem;'></i>";
+            string bgColor = isSuccess ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)";
+            string color = isSuccess ? "#22c55e" : "#ef4444";
+
+            pnlMessage.Style["background"] = bgColor;
+            pnlMessage.Style["color"] = color;
+            pnlMessage.Style["border"] = $"1px solid {color}";
+            pnlMessage.Style["display"] = "block";
+
+            litMessage.Text = $"{icon}{message}";
         }
     }
 }

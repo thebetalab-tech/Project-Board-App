@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="MyRequests.aspx.cs" Inherits="Project_Board.Student.Member.MyRequests" MasterPageFile="~/Student/Member/Member.master" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="MyRequests.aspx.cs" Inherits="Project_Board.Student.Member.MyRequests" MasterPageFile="~/Student/Member/Member.master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
     My Group Requests - Project Board
@@ -121,9 +121,14 @@
             <div class="section-header">
                 <h2>All Requests</h2>
             </div>
+            
+            <!-- Success/Error Messages -->
+            <asp:Panel ID="pnlMessage" runat="server" Visible="false" CssClass="alert" style="margin-bottom:1.5rem; padding:1rem; border-radius:8px;">
+                <asp:Literal ID="litMessage" runat="server"></asp:Literal>
+            </asp:Panel>
 
             <div id="requestsList" runat="server">
-                <asp:Repeater ID="rptRequests" runat="server">
+                <asp:Repeater ID="rptRequests" runat="server" OnItemCommand="rptRequests_ItemCommand">
                     <ItemTemplate>
                         <div class="request-card">
                             <div class="request-header">
@@ -148,7 +153,13 @@
                                     </div>
                                 </div>
                                 <div class="request-actions">
-                                    <span class="request-date">
+                                    <asp:LinkButton ID="btnCancel" runat="server" CommandName="CancelRequest" CommandArgument='<%# Eval("GroupId") %>' 
+                                        Visible='<%# Eval("JoinStatus").ToString() == "Requested" || Eval("JoinStatus").ToString() == "Pending" %>'
+                                        CssClass="btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:6px; color:#ef4444; border:1px solid rgba(239, 68, 68, 0.2); text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem;"
+                                        OnClientClick="return confirm('Are you sure you want to cancel this request?');">
+                                        <i class="fa-solid fa-times"></i> Cancel Request
+                                    </asp:LinkButton>
+                                    <span class="request-date" style="font-size:0.85rem; color:var(--c-text-muted);">
                                         <i class="fa-solid fa-user-tie"></i> Leader: <%# Eval("LeaderName") %>
                                     </span>
                                 </div>
