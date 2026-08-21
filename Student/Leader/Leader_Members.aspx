@@ -16,6 +16,7 @@
                     </div>
 
                     <div class="data-section">
+                        <asp:Label ID="lblMessage" runat="server" EnableViewState="false" style="display:none; padding: 0.75rem 1rem; margin-bottom: 1rem; border-radius: 0.5rem; font-weight: 500;"></asp:Label>
                         <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
                             <h2>Active Members</h2>
                             <div style="display:flex; gap:10px; align-items:center;">
@@ -37,10 +38,11 @@
                                         <th>Enrollment No.</th>
                                         <th>Email</th>
                                         <th>Status</th>
+                                        <th style="text-align: right;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <asp:Repeater ID="rptGroups" runat="server">
+                                    <asp:Repeater ID="rptGroups" runat="server" OnItemCommand="rptGroups_ItemCommand">
                                         <ItemTemplate>
                                             <tr>
                                                 <td><strong>
@@ -60,6 +62,22 @@
                                                         class='badge status-<%# Eval("JoinStatus").ToString().ToLower() %>'>
                                                         <%# Eval("JoinStatus") %>
                                                     </span>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <asp:PlaceHolder runat="server" Visible='<%# Convert.ToInt32(Eval("UserId")) == CurrentLeaderId %>'>
+                                                        <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.2); font-weight: 600;">
+                                                            Group Leader
+                                                        </span>
+                                                    </asp:PlaceHolder>
+                                                    <asp:PlaceHolder runat="server" Visible='<%# Convert.ToInt32(Eval("UserId")) != CurrentLeaderId %>'>
+                                                        <asp:Button ID="btnDropMember" runat="server" 
+                                                            CssClass="btn-secondary" 
+                                                            Text="Drop Member" 
+                                                            CommandName="DropMember" 
+                                                            CommandArgument='<%# Eval("UserId") %>' 
+                                                            OnClientClick="return confirm('Are you sure you want to remove this member from your group?');" 
+                                                            style="background-color: #ef4444; color: white; border: none; padding: 0.35rem 0.75rem; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: background 0.2s;" />
+                                                    </asp:PlaceHolder>
                                                 </td>
                                             </tr>
                                         </ItemTemplate>

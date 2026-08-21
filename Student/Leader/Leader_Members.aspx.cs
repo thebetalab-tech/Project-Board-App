@@ -17,6 +17,7 @@ namespace Project_Board.Student.Leader
         protected global::System.Web.UI.WebControls.Panel pnlInviteSection;
         protected global::System.Web.UI.WebControls.Panel pnlRequests;
         protected global::System.Web.UI.WebControls.Button btnToggleStatus;
+        protected global::System.Web.UI.WebControls.Label lblMessage;
         
         protected global::System.Web.UI.WebControls.CheckBox chkColMemberId;
         protected global::System.Web.UI.WebControls.CheckBox chkColMemberName;
@@ -26,6 +27,7 @@ namespace Project_Board.Student.Leader
 
         protected string UserInitials { get; set; } = "TL";
         protected bool MemberNeeded { get; set; } = true;
+        protected int CurrentLeaderId { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -34,6 +36,8 @@ namespace Project_Board.Student.Leader
                 Response.Redirect("~/Default.aspx");
                 return;
             }
+
+            CurrentLeaderId = Convert.ToInt32(Session["UserId"]);
 
             if (!IsPostBack)
             {
@@ -204,6 +208,147 @@ namespace Project_Board.Student.Leader
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+                LoadMembers();
+            }
+        }
+
+        protected void rptGroups_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName == "DropMember")
+            {
+                int targetUserId = Convert.ToInt32(e.CommandArgument);
+                int leaderId = Convert.ToInt32(Session["UserId"]);
+
+                if (targetUserId == leaderId)
+                {
+                    lblMessage.Text = "Group Leaders cannot drop themselves from the group.";
+                    lblMessage.CssClass = "error-message";
+                    lblMessage.Style["display"] = "block";
+                    lblMessage.Style["background-color"] = "#fee2e2";
+                    lblMessage.Style["color"] = "#991b1b";
+                    lblMessage.Style["border"] = "1px solid #fecaca";
+                    return;
+                }
+
+                string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    conn.Open();
+                    int groupId = GetGroupId(conn);
+                    if (groupId == 0) return;
+
+                    string verifyMemberSql = "SELECT COUNT(1) FROM GroupMembers WHERE GroupId = @GroupId AND UserId = @UserId";
+                    using (SqlCommand verifyCmd = new SqlCommand(verifyMemberSql, conn))
+                    {
+                        verifyCmd.Parameters.AddWithValue("@GroupId", groupId);
+                        verifyCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                        int count = Convert.ToInt32(verifyCmd.ExecuteScalar());
+                        if (count == 0)
+                        {
+                            lblMessage.Text = "The specified user is not a member of your group.";
+                            lblMessage.CssClass = "error-message";
+                            lblMessage.Style["display"] = "block";
+                            lblMessage.Style["background-color"] = "#fee2e2";
+                            lblMessage.Style["color"] = "#991b1b";
+                            lblMessage.Style["border"] = "1px solid #fecaca";
+                            return;
+                        }
+                    }
+
+                    string memberName = "";
+                    string memberEmail = "";
+                    string groupName = "";
+                    string detailsSql = @"
+                        SELECT u.FullName, u.Email, g.GroupName 
+                        FROM Users u, Groups g 
+                        WHERE u.UserId = @UserId AND g.GroupId = @GroupId";
+                    using (SqlCommand detCmd = new SqlCommand(detailsSql, conn))
+                    {
+                        detCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                        detCmd.Parameters.AddWithValue("@GroupId", groupId);
+                        using (SqlDataReader rdr = detCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                memberName = rdr["FullName"].ToString();
+                                memberEmail = rdr["Email"].ToString();
+                                groupName = rdr["GroupName"].ToString();
+                            }
+                        }
+                    }
+
+                    using (SqlTransaction trans = conn.BeginTransaction())
+                    {
+                        try
+                        {
+                            // 1. Remove user from GroupMembers
+                            string deleteMemberSql = "DELETE FROM GroupMembers WHERE GroupId = @GroupId AND UserId = @UserId";
+                            using (SqlCommand delCmd = new SqlCommand(deleteMemberSql, conn, trans))
+                            {
+                                delCmd.Parameters.AddWithValue("@GroupId", groupId);
+                                delCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                                delCmd.ExecuteNonQuery();
+                            }
+
+                            // 2. Reassign non-completed tasks assigned to this dropped member back to Leader
+                            string reassignTaskSql = @"
+                                UPDATE Task 
+                                SET AssignedTo = @LeaderId, UpdatedAt = GETDATE() 
+                                WHERE GroupId = @GroupId AND AssignedTo = @UserId AND Status != 'Completed'";
+                            using (SqlCommand taskCmd = new SqlCommand(reassignTaskSql, conn, trans))
+                            {
+                                taskCmd.Parameters.AddWithValue("@GroupId", groupId);
+                                taskCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                                taskCmd.Parameters.AddWithValue("@LeaderId", leaderId);
+                                taskCmd.ExecuteNonQuery();
+                            }
+
+                            // 3. Insert In-App Notification for dropped member
+                            string notifySql = @"
+                                INSERT INTO Notifications (UserId, Message, Link) 
+                                VALUES (@UserId, @Message, '~/Student/Member/Dashboard.aspx')";
+                            using (SqlCommand notifCmd = new SqlCommand(notifySql, conn, trans))
+                            {
+                                notifCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                                notifCmd.Parameters.AddWithValue("@Message", $"You have been removed from group '{groupName}' by the team leader.");
+                                notifCmd.ExecuteNonQuery();
+                            }
+
+                            // 4. Update MemberNeeded = 1 in Groups table so leader can invite a replacement
+                            string updateGroupSql = "UPDATE Groups SET MemberNeeded = 1 WHERE GroupId = @GroupId";
+                            using (SqlCommand updateGroupCmd = new SqlCommand(updateGroupSql, conn, trans))
+                            {
+                                updateGroupCmd.Parameters.AddWithValue("@GroupId", groupId);
+                                updateGroupCmd.ExecuteNonQuery();
+                            }
+
+                            trans.Commit();
+
+                            if (!string.IsNullOrEmpty(memberEmail))
+                            {
+                                string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
+                                Project_Board.Services.EmailService.SendMemberDroppedNotification(memberEmail, memberName, leaderName, groupName);
+                            }
+
+                            lblMessage.Text = $"Member <strong>{System.Web.HttpUtility.HtmlEncode(memberName)}</strong> has been successfully removed from your group.";
+                            lblMessage.CssClass = "success-message";
+                            lblMessage.Style["display"] = "block";
+                            lblMessage.Style["background-color"] = "#dcfce7";
+                            lblMessage.Style["color"] = "#166534";
+                            lblMessage.Style["border"] = "1px solid #bbf7d0";
+                        }
+                        catch (Exception ex)
+                        {
+                            trans.Rollback();
+                            lblMessage.Text = "An error occurred while dropping member: " + ex.Message;
+                            lblMessage.CssClass = "error-message";
+                            lblMessage.Style["display"] = "block";
+                            lblMessage.Style["background-color"] = "#fee2e2";
+                            lblMessage.Style["color"] = "#991b1b";
+                            lblMessage.Style["border"] = "1px solid #fecaca";
                         }
                     }
                 }

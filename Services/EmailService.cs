@@ -200,6 +200,27 @@ namespace Project_Board.Services
         }
         #endregion
 
+        #region Member Dropped Notification
+        public static void SendMemberDroppedNotification(string toEmail, string memberName, string leaderName, string groupName)
+        {
+            string title = "Removed from Group";
+            string badgeText = "Member Dropped";
+            string badgeColor = "#ef4444";
+
+            StringBuilder body = new StringBuilder();
+            body.Append($"<p>Hello <strong>{WebUtility.HtmlEncode(memberName)}</strong>,</p>");
+            body.Append($"<p>You have been removed from the group <strong>{WebUtility.HtmlEncode(groupName)}</strong> by team leader <strong>{WebUtility.HtmlEncode(leaderName)}</strong>.</p>");
+            body.Append("<div class='info-box'>");
+            body.Append($"<div class='info-row'><span class='info-label'>Group Name:</span><span class='info-value'>{WebUtility.HtmlEncode(groupName)}</span></div>");
+            body.Append($"<div class='info-row'><span class='info-label'>Team Leader:</span><span class='info-value'>{WebUtility.HtmlEncode(leaderName)}</span></div>");
+            body.Append("</div>");
+            body.Append("<p>Any active tasks assigned to you under this group have been reassigned back to the team leader. You can now join or form another group on the Project Board platform.</p>");
+
+            string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
+            SendEmailAsync(toEmail, $"Group Update: Removed from {groupName}", html);
+        }
+        #endregion
+
         #region 4. Member Submits Report -> Leader Gets Mail
         public static void SendMemberReportSubmitted(string toEmail, string leaderName, string memberName, string taskTitle, string reportText)
         {
