@@ -66,9 +66,17 @@ BEGIN
     CREATE TABLE GroupMembers (
         GroupId INT FOREIGN KEY REFERENCES Groups(GroupId),
         UserId INT FOREIGN KEY REFERENCES Users(UserId),
-        JoinStatus NVARCHAR(15) DEFAULT 'Pending', 
-        PRIMARY KEY (GroupId, UserId) 
+        JoinStatus NVARCHAR(15) DEFAULT 'Pending',
+        RequestedAt DATETIME DEFAULT GETDATE(),
+        PRIMARY KEY (GroupId, UserId)
     );
+END
+GO
+
+-- Add RequestedAt column if it doesn't exist (for existing databases)
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('GroupMembers') AND name = 'RequestedAt')
+BEGIN
+    ALTER TABLE GroupMembers ADD RequestedAt DATETIME DEFAULT GETDATE();
 END
 GO
 

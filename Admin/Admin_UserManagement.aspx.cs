@@ -81,9 +81,19 @@ namespace Project_Board.Admin
             string email = txtEmail.Text.Trim();
             string enrollment = txtEnrollment.Text.Trim();
             string role = ddlRole.SelectedValue;
-            
+
             // Grabbing the password from the new frontend field
             string password = txtPassword.Text;
+
+            // Validate enrollment number - must be 20 digits for students
+            if (!string.IsNullOrEmpty(enrollment))
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(enrollment, @"^[0-9]{20}$"))
+                {
+                    ShowModalWithMessage("Enrollment number must be exactly 20 digits.", true);
+                    return;
+                }
+            }
 
             if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
@@ -170,7 +180,17 @@ namespace Project_Board.Admin
         {
             lblMessage.Text = message;
             lblMessage.ForeColor = isError ? System.Drawing.ColorTranslator.FromHtml("#ff4d4d") : System.Drawing.Color.Green;
-            ClientScript.RegisterStartupScript(this.GetType(), "KeepModalOpen", "<script>window.onload = function() { openModal('userModal'); };</script>");
+
+            if (isError)
+            {
+                // Keep modal open on error
+                ClientScript.RegisterStartupScript(this.GetType(), "KeepModalOpen", "<script>window.onload = function() { openModal('userModal'); };</script>");
+            }
+            else
+            {
+                // Close modal on success
+                ClientScript.RegisterStartupScript(this.GetType(), "CloseModal", "<script>window.onload = function() { closeModal('userModal'); };</script>");
+            }
         }
 
         protected void rptUsers_ItemCommand(object source, RepeaterCommandEventArgs e)

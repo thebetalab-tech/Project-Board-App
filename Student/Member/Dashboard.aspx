@@ -86,7 +86,11 @@
                     <div class="stat-card" style="padding:2rem; text-align:center;">
                         <i class="fa-solid fa-users-slash" style="font-size:3rem; color:var(--c-text-dim); margin-bottom:1rem; display:block;"></i>
                         <h2 style="margin-bottom:0.5rem;">You haven't joined a team yet</h2>
-                        <p style="color:var(--c-text-dim);">Check your <a href='<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>' style="color:var(--c-accent); text-decoration:underline;">Invitations</a> or request to join a team to see team details and tasks.</p>
+                        <p style="color:var(--c-text-dim); margin-bottom:1.5rem;">Check your <a href='<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>' style="color:var(--c-accent); text-decoration:underline;">Invitations</a> or join a team to see team details and tasks.</p>
+                        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+                            <a href='<%= ResolveUrl("~/JoinGroup.aspx") %>' class="btn-primary" style="padding:0.75rem 1.5rem; font-size:1rem; font-weight:600; border-radius:8px; text-decoration:none; background:var(--c-accent); color:#fff; display:inline-block;">Join a Group</a>
+                            <a href='<%= ResolveUrl("~/Student/Member/MyRequests.aspx") %>' class="btn-secondary" style="padding:0.75rem 1.5rem; font-size:1rem; font-weight:600; border-radius:8px; text-decoration:none; background:var(--c-bg-muted); color:var(--c-text); display:inline-block;">My Requests</a>
+                        </div>
                     </div>
                 <% } else { %>
 

@@ -37,8 +37,9 @@ CREATE TABLE Groups (
 CREATE TABLE GroupMembers (
     GroupId INT FOREIGN KEY REFERENCES Groups(GroupId),
     UserId INT FOREIGN KEY REFERENCES Users(UserId),
-    JoinStatus NVARCHAR(15) DEFAULT 'Pending', 
-    PRIMARY KEY (GroupId, UserId) 
+    JoinStatus NVARCHAR(15) DEFAULT 'Pending',
+    RequestedAt DATETIME DEFAULT GETDATE(),
+    PRIMARY KEY (GroupId, UserId)
 );
 
 CREATE TABLE Projects (

@@ -48,6 +48,8 @@ namespace Project_Board.Student.Member
             {
                 LoadDashboardData();
             }
+            // Don't redirect in Page_Load - let the page render and show "Not in a Team" message
+            // The user can click "Join Group" from the dashboard if they want to join one
         }
 
         private void LoadDashboardData()

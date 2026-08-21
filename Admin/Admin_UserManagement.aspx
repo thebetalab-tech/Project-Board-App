@@ -116,7 +116,9 @@
                 <div style="display:flex; gap:1rem;">
                     <div class="form-group" style="flex:1;">
                         <label>Enrollment / Faculty ID</label>
-                        <asp:TextBox ID="txtEnrollment" runat="server" CssClass="form-control" placeholder="e.g. ENR2023..."></asp:TextBox>
+                        <asp:TextBox ID="txtEnrollment" runat="server" CssClass="form-control" placeholder="e.g. 24020201071" MaxLength="20"></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="reqEnrollment" runat="server" ControlToValidate="txtEnrollment" ErrorMessage="Enrollment number is required" ForeColor="Red" Display="Dynamic" />
+                        <asp:RegularExpressionValidator ID="regexEnrollment" runat="server" ControlToValidate="txtEnrollment" ErrorMessage="Enrollment must be exactly 20 digits" ValidationExpression="^[0-9]{20}$" ForeColor="Red" Display="Dynamic" />
                     </div>
                     
                     <div class="form-group" style="flex:1;">

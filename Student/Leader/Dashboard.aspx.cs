@@ -54,6 +54,8 @@ namespace Project_Board.Student.Leader
             {
                 LoadDashboardData();
             }
+            // Don't redirect in Page_Load - let the page render
+            // If user is not assigned a group, they'll see the dashboard with empty data
         }
 
         private void LoadDashboardData()

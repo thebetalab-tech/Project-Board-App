@@ -124,8 +124,6 @@
                                     <th>Leader Name</th>
                                     <th>Technology</th>
                                     <th>Team Size</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -136,12 +134,6 @@
                                             <td><%# Eval("LeaderName") %></td>
                                             <td><span class="badge status-forming"><%# Eval("TechName") %></span></td>
                                             <td><%# Eval("MemberCount") %></td>
-                                            <td>
-                                                <div class="table-actions">
-                                                    <a href='<%# ResolveUrl("~/Faculty/Details/Group_Details.aspx?GroupId=" + Eval("GroupId")) %>' class="icon-btn" title="View Details">
-                                                        <i class="fa-solid fa-eye" style="color: var(--c-primary);"></i> <span> </span></a>
-                                                </div>
-                                            </td>
                                         </tr>
                                     </ItemTemplate>
                                     <FooterTemplate>

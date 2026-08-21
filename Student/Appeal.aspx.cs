@@ -36,7 +36,7 @@ namespace Project_Board.Student
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 string query = @"
-                    SELECT t.TaskTitle, t.FeedbackText, t.TaskDescription, t.AssignedTo, u.FullName AS AssignedByName
+                    SELECT t.TaskTitle, t.FeedbackText, t.TaskDescription, t.AssignedTo, u.FullName AS AssignedByName, t.DueDate
                     FROM Task t
                     INNER JOIN Users u ON t.AssignedBy = u.UserId
                     WHERE t.TaskId = @TaskId";
@@ -60,12 +60,26 @@ namespace Project_Board.Student
                                 btnSubmit.Enabled = false;
                             }
 
+                            // Deadline check
+                            DateTime? dueDate = reader["DueDate"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["DueDate"]);
+                            if (dueDate.HasValue && dueDate.Value < DateTime.Now)
+                            {
+                                lblMessage.Text = "The deadline for this task has passed. You cannot submit an appeal.";
+                                lblMessage.CssClass = "alert alert-danger";
+                                lblMessage.Visible = true;
+                                btnSubmit.Enabled = false;
+                                txtReason.Enabled = false;
+                                txtChangesMade.Enabled = false;
+                                txtExplanation.Enabled = false;
+                                chkIsCompleted.Enabled = false;
+                            }
+
                             lblTaskTitle.Text = reader["TaskTitle"].ToString();
                             lblAssignorName.Text = reader["AssignedByName"].ToString();
-                            
+
                             string feedback = reader["FeedbackText"] != DBNull.Value ? reader["FeedbackText"].ToString() : "";
                             string description = reader["TaskDescription"] != DBNull.Value ? reader["TaskDescription"].ToString() : "";
-                            
+
                             lblFeedback.Text = string.IsNullOrEmpty(feedback) ? (string.IsNullOrEmpty(description) ? "No details provided." : description) : feedback;
                         }
                     }
@@ -203,9 +217,20 @@ namespace Project_Board.Student
                 }
             }
 
-            // Redirect back to dashboard
-            string role = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? "";
-            if (role == "Leader")
+            // Redirect back to dashboard based on user role
+            string adminRole = Session["Role"]?.ToString() ?? "";
+            string studentRole = Session["UserRole"]?.ToString() ?? "";
+            string isLeader = Session["IsLeader"]?.ToString() ?? "";
+
+            if (adminRole == "Admin")
+            {
+                Response.Redirect("~/Admin/Admin_TaskManagement.aspx");
+            }
+            else if (adminRole == "Faculty")
+            {
+                Response.Redirect("~/Faculty/TaskManagement.aspx");
+            }
+            else if (studentRole == "Student" && isLeader == "True")
             {
                 Response.Redirect("~/Student/Leader/Leader_TaskManagement.aspx");
             }
@@ -217,8 +242,20 @@ namespace Project_Board.Student
 
         protected void btnBack_Click(object sender, EventArgs e)
         {
-            string role = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? "";
-            if (role == "Leader")
+            // Redirect back to dashboard based on user role
+            string adminRole = Session["Role"]?.ToString() ?? "";
+            string studentRole = Session["UserRole"]?.ToString() ?? "";
+            string isLeader = Session["IsLeader"]?.ToString() ?? "";
+
+            if (adminRole == "Admin")
+            {
+                Response.Redirect("~/Admin/Admin_TaskManagement.aspx");
+            }
+            else if (adminRole == "Faculty")
+            {
+                Response.Redirect("~/Faculty/TaskManagement.aspx");
+            }
+            else if (studentRole == "Student" && isLeader == "True")
             {
                 Response.Redirect("~/Student/Leader/Leader_TaskManagement.aspx");
             }

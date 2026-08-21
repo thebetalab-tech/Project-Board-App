@@ -300,28 +300,62 @@ namespace Project_Board.Admin
             string status = ddlEditTaskStatus.SelectedValue;
 
             int taskId;
-            if (!int.TryParse(taskIdStr, out taskId)) return;
+            if (!int.TryParse(taskIdStr, out taskId))
+            {
+                lblEditMessage.ForeColor = System.Drawing.Color.Red;
+                lblEditMessage.Text = "Invalid task ID.";
+                return;
+            }
 
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
-                // Note: handling both 'Task' and 'Tasks' depending on schema
-                string query = "UPDATE Tasks SET TaskTitle = @Title, TaskDescription = @Desc, Status = @Status WHERE TaskId = @TaskId";
+                // First, verify the task exists
+                string verifyQuery = "SELECT TaskId FROM Task WHERE TaskId = @TaskId";
+                using (SqlCommand verifyCmd = new SqlCommand(verifyQuery, conn))
+                {
+                    verifyCmd.Parameters.AddWithValue("@TaskId", taskId);
+                    conn.Open();
+                    object result = verifyCmd.ExecuteScalar();
+                    if (result == null)
+                    {
+                        // Try Tasks table
+                        verifyCmd.CommandText = "SELECT TaskId FROM Tasks WHERE TaskId = @TaskId";
+                        result = verifyCmd.ExecuteScalar();
+                    }
+
+                    if (result == null)
+                    {
+                        lblEditMessage.ForeColor = System.Drawing.Color.Red;
+                        lblEditMessage.Text = "Task not found.";
+                        return;
+                    }
+                }
+
+                // Now update the task - use the correct table name
+                string query = "UPDATE Task SET TaskTitle = @Title, TaskDescription = @Desc, Status = @Status WHERE TaskId = @TaskId";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Title", title);
                     cmd.Parameters.AddWithValue("@Desc", desc);
                     cmd.Parameters.AddWithValue("@Status", status);
                     cmd.Parameters.AddWithValue("@TaskId", taskId);
+
                     try
                     {
-                        conn.Open();
                         int rowsAffected = cmd.ExecuteNonQuery();
-                        
-                        // Fallback if the table is named Task instead of Tasks
+
                         if (rowsAffected == 0)
                         {
-                            cmd.CommandText = "UPDATE Task SET TaskTitle = @Title, TaskDescription = @Desc, Status = @Status WHERE TaskId = @TaskId";
-                            cmd.ExecuteNonQuery();
+                            // Try Tasks table as fallback
+                            cmd.CommandText = "UPDATE Tasks SET TaskTitle = @Title, TaskDescription = @Desc, Status = @Status WHERE TaskId = @TaskId";
+                            rowsAffected = cmd.ExecuteNonQuery();
+                        }
+
+                        if (rowsAffected == 0)
+                        {
+                            lblEditMessage.ForeColor = System.Drawing.Color.Red;
+                            lblEditMessage.Text = "No changes were made to the task.";
+                            return;
                         }
 
                         LoadGlobalTasks();

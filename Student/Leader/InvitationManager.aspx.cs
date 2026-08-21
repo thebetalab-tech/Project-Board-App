@@ -112,12 +112,38 @@ namespace Project_Board.Student.Leader
                 }
                 else if (e.CommandName == "Reject")
                 {
-                    string rejectSql = "DELETE FROM GroupMembers WHERE GroupId = @GroupId AND UserId = @UserId AND JoinStatus = 'Requested'";
-                    using (SqlCommand cmd = new SqlCommand(rejectSql, conn))
+                    // Get user info for notification
+                    string userInfoSql = "SELECT u.FullName, u.Email FROM Users u WHERE u.UserId = @UserId";
+                    using (SqlCommand infoCmd = new SqlCommand(userInfoSql, conn))
                     {
-                        cmd.Parameters.AddWithValue("@GroupId", groupId);
-                        cmd.Parameters.AddWithValue("@UserId", targetUserId);
-                        cmd.ExecuteNonQuery();
+                        infoCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                        using (SqlDataReader rdr = infoCmd.ExecuteReader())
+                        {
+                            if (rdr.Read())
+                            {
+                                string memberName = rdr["FullName"].ToString();
+                                string memberEmail = rdr["Email"].ToString();
+
+                                // Update status to 'Rejected' instead of deleting
+                                string rejectSql = "UPDATE GroupMembers SET JoinStatus = 'Rejected' WHERE GroupId = @GroupId AND UserId = @UserId AND JoinStatus = 'Requested'";
+                                using (SqlCommand rejectCmd = new SqlCommand(rejectSql, conn))
+                                {
+                                    rejectCmd.Parameters.AddWithValue("@GroupId", groupId);
+                                    rejectCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                                    rejectCmd.ExecuteNonQuery();
+                                }
+
+                                // Send rejection notification to user
+                                string notificationSql = "INSERT INTO Notifications (UserId, Message, Link) VALUES (@UserId, @Message, @Link)";
+                                using (SqlCommand notifyCmd = new SqlCommand(notificationSql, conn))
+                                {
+                                    notifyCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                                    notifyCmd.Parameters.AddWithValue("@Message", "Your request to join group has been rejected by " + Session["FullName"]);
+                                    notifyCmd.Parameters.AddWithValue("@Link", "~/Student/Member/MyRequests.aspx");
+                                    notifyCmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
                     }
                 }
 
