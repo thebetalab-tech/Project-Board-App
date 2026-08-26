@@ -39,7 +39,7 @@ namespace Project_Board.Student.Leader
                     SELECT t.TaskTitle, t.FeedbackText, t.TaskDescription, t.Status, t.AssignedBy, 
                            g.GroupName, u.FullName AS AssignedByName
                     FROM Task t
-                    LEFT JOIN Groups g ON t.GroupId = g.GroupId
+                    LEFT JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     INNER JOIN Users u ON t.AssignedBy = u.UserId
                     WHERE t.TaskId = @TaskId";
 

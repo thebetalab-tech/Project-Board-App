@@ -85,12 +85,12 @@ namespace Project_Board.Admin
             // Grabbing the password from the new frontend field
             string password = txtPassword.Text;
 
-            // Validate enrollment number - must be 20 digits for students
+            // Validate enrollment number - must be 11 digits
             if (!string.IsNullOrEmpty(enrollment))
             {
-                if (!System.Text.RegularExpressions.Regex.IsMatch(enrollment, @"^[0-9]{20}$"))
+                if (!System.Text.RegularExpressions.Regex.IsMatch(enrollment, @"^[0-9]{11}$"))
                 {
-                    ShowModalWithMessage("Enrollment number must be exactly 20 digits.", true);
+                    ShowModalWithMessage("Enrollment number must be exactly 11 digits.", true);
                     return;
                 }
             }
@@ -181,6 +181,8 @@ namespace Project_Board.Admin
             lblMessage.Text = message;
             lblMessage.ForeColor = isError ? System.Drawing.ColorTranslator.FromHtml("#ff4d4d") : System.Drawing.Color.Green;
 
+            string safeMessage = message.Replace("'", "\\'");
+
             if (isError)
             {
                 // Keep modal open on error
@@ -188,8 +190,8 @@ namespace Project_Board.Admin
             }
             else
             {
-                // Close modal on success
-                ClientScript.RegisterStartupScript(this.GetType(), "CloseModal", "<script>window.onload = function() { closeModal('userModal'); };</script>");
+                // Close modal and alert on success
+                ClientScript.RegisterStartupScript(this.GetType(), "CloseModal", $"<script>window.onload = function() {{ alert('{safeMessage}'); closeModal('userModal'); }};</script>");
             }
         }
 
@@ -247,7 +249,7 @@ namespace Project_Board.Admin
                     string getGroupsSql = @"
                         SELECT g.GroupId, g.GroupName, g.Status,
                                ISNULL(m.FullName,'Not Assigned') AS MentorName
-                        FROM Groups g
+                        FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                         LEFT JOIN Users m ON g.MentorId = m.UserId
                         WHERE g.LeaderId = @UserId";
                     using (SqlCommand grpCmd = new SqlCommand(getGroupsSql, conn))
@@ -268,44 +270,17 @@ namespace Project_Board.Admin
                         }
                     }
 
-                    // ── HARD DELETE CASCADE ──────────────────────────────────────────────
+                    // ── SOFT DELETE CASCADE ──────────────────────────────────────────────
                     string deleteCascadeQuery = @"
-                        IF OBJECT_ID('Task', 'U') IS NOT NULL
-                        BEGIN
-                            DELETE FROM Task WHERE ParentTaskId IN (SELECT TaskId FROM Task WHERE AssignedTo = @UserId OR AssignedBy = @UserId);
-                            DELETE FROM Task WHERE AssignedTo = @UserId OR AssignedBy = @UserId;
-                        END;
-                        IF OBJECT_ID('Tasks', 'U') IS NOT NULL
-                        BEGIN
-                            DELETE FROM Tasks WHERE ParentTaskId IN (SELECT TaskId FROM Tasks WHERE AssignedTo = @UserId OR AssignedBy = @UserId);
-                            DELETE FROM Tasks WHERE AssignedTo = @UserId OR AssignedBy = @UserId;
-                        END;
-
-                        DELETE FROM GroupMembers WHERE UserId = @UserId;
-                        DELETE FROM GroupMentorRejections WHERE FacultyId = @UserId;
-                        DELETE FROM Faculty WHERE FacultyId = @UserId;
+                        -- Soft delete the user
+                        UPDATE Users SET IsActive = 0 WHERE UserId = @UserId;
+                        
+                        -- Remove them as a mentor from any groups, revert group status
                         UPDATE Groups SET MentorId = NULL, Status = 'Forming' WHERE MentorId = @UserId;
-
-                        DECLARE @GroupIds TABLE (GroupId INT);
-                        INSERT INTO @GroupIds SELECT GroupId FROM Groups WHERE LeaderId = @UserId;
-
-                        IF OBJECT_ID('ProjectKeywords', 'U') IS NOT NULL
-                            DELETE FROM ProjectKeywords WHERE ProjectId IN (SELECT ProjectId FROM Projects WHERE GroupId IN (SELECT GroupId FROM @GroupIds));
-
-                        IF OBJECT_ID('Projects', 'U') IS NOT NULL
-                            DELETE FROM Projects WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
-
-                        IF OBJECT_ID('Task', 'U') IS NOT NULL
-                            DELETE FROM Task WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
-
-                        IF OBJECT_ID('Tasks', 'U') IS NOT NULL
-                            DELETE FROM Tasks WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
-
-                        DELETE FROM GroupMentorRejections WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
-                        DELETE FROM GroupMembers WHERE GroupId IN (SELECT GroupId FROM @GroupIds);
-                        DELETE FROM Groups WHERE LeaderId = @UserId;
-
-                        DELETE FROM Users WHERE UserId = @UserId;";
+                        
+                        -- Deactivate any groups they lead (this puts their group members in lockdown)
+                        UPDATE Groups SET IsActive = 0 WHERE LeaderId = @UserId;
+                    ";
 
                     using (SqlCommand cmd = new SqlCommand(deleteCascadeQuery, conn))
                     {
@@ -316,17 +291,29 @@ namespace Project_Board.Admin
                         {
                             cmd.ExecuteNonQuery();
 
-                            // Send email notification to deleted user
+                            // Send email notification to deleted user (silently catch if email fails)
                             if (!string.IsNullOrEmpty(targetEmail))
                             {
-                                Project_Board.Services.EmailService.SendAccountDeletedNotification(targetEmail, targetName, targetRole);
+                                try 
+                                {
+                                    Project_Board.Services.EmailService.SendAccountDeletedNotification(targetEmail, targetName, targetRole);
+                                }
+                                catch (Exception emailEx) 
+                                {
+                                    System.Diagnostics.Debug.WriteLine("Email failed: " + emailEx.Message);
+                                }
                             }
 
                             LoadUsers();
+                            
+                            string safeMsg = $"User {targetName} has been successfully deactivated and removed.".Replace("'", "\\'");
+                            ScriptManager.RegisterStartupScript(this, GetType(), "DeleteSuccess", $"alert('{safeMsg}');", true);
                         }
                         catch (Exception ex)
                         {
                             System.Diagnostics.Debug.WriteLine("Error deleting user completely: " + ex.Message);
+                            string errorMsg = "Error deleting user: " + ex.Message.Replace("'", "\\'").Replace("\r", "").Replace("\n", " ");
+                            ScriptManager.RegisterStartupScript(this, GetType(), "DeleteError", $"alert('{errorMsg}');", true);
                         }
                     }
                 }
@@ -384,6 +371,15 @@ namespace Project_Board.Admin
             {
                 lblEditMessage.Text = "Name and Email are required.";
                 return;
+            }
+
+            if (!string.IsNullOrEmpty(enrollment))
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(enrollment, @"^[0-9]{11}$"))
+                {
+                    lblEditMessage.Text = "Enrollment number must be exactly 11 digits.";
+                    return;
+                }
             }
 
             using (SqlConnection conn = new SqlConnection(connString))

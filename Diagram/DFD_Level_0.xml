@@ -1,0 +1,70 @@
+<mxfile version="21.6.8">
+  <diagram name="DFD Level 0">
+    <mxGraphModel dx="1200" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- System Process -->
+        <mxCell id="sys" value="0.0&lt;br&gt;Project Board System" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="500" y="300" width="160" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- Admin Entity -->
+        <mxCell id="admin" value="Admin" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="350" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- User Entity -->
+        <mxCell id="user" value="User" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="940" y="350" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Flows: Admin to System -->
+        <mxCell id="f1" value="Login Request" style="endArrow=classic;html=1;exitX=1;exitY=0.1;entryX=0;entryY=0.1;" edge="1" parent="1" source="admin" target="sys">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="f2" value="Manage Users &amp; Groups" style="endArrow=classic;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.3;" edge="1" parent="1" source="admin" target="sys">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="f3" value="Manage Projects &amp; Tasks" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="admin" target="sys">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="f4" value="Manage Technologies" style="endArrow=classic;html=1;exitX=1;exitY=0.7;entryX=0;entryY=0.7;" edge="1" parent="1" source="admin" target="sys">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Flows: System to Admin -->
+        <mxCell id="f5" value="Dashboard Data" style="endArrow=classic;html=1;exitX=0;exitY=0.9;entryX=1;entryY=0.9;" edge="1" parent="1" source="sys" target="admin">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="f6" value="System Responses" style="endArrow=classic;html=1;exitX=0;exitY=0.8;entryX=1;entryY=0.8;" edge="1" parent="1" source="sys" target="admin">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Flows: User to System -->
+        <mxCell id="f7" value="Registration / Login" style="endArrow=classic;html=1;exitX=0;exitY=0.1;entryX=1;entryY=0.1;" edge="1" parent="1" source="user" target="sys">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="f8" value="Manage Profile &amp; Groups" style="endArrow=classic;html=1;exitX=0;exitY=0.3;entryX=1;entryY=0.3;" edge="1" parent="1" source="user" target="sys">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="f9" value="Submit Projects &amp; Tasks" style="endArrow=classic;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="user" target="sys">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="f10" value="Make Appeals" style="endArrow=classic;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.7;" edge="1" parent="1" source="user" target="sys">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Flows: System to User -->
+        <mxCell id="f11" value="Dashboard &amp; Status" style="endArrow=classic;html=1;exitX=1;exitY=0.9;entryX=0;entryY=0.9;" edge="1" parent="1" source="sys" target="user">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="f12" value="Notifications" style="endArrow=classic;html=1;exitX=1;exitY=0.8;entryX=0;entryY=0.8;" edge="1" parent="1" source="sys" target="user">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

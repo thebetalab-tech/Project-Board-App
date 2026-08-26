@@ -65,10 +65,14 @@ namespace Project_Board.Student.Leader
                 }
             }
 
-            if (CurrentGroupId == 0 || CurrentGroupStatus != "Assigned Mentor")
+            bool isMentorAssigned = CurrentGroupStatus.Equals("Assigned Mentor", StringComparison.OrdinalIgnoreCase) || 
+                                    CurrentGroupStatus.Equals("Accepted", StringComparison.OrdinalIgnoreCase) || 
+                                    CurrentGroupStatus.Equals("Active", StringComparison.OrdinalIgnoreCase);
+
+            if (CurrentGroupId == 0 || !isMentorAssigned)
             {
                 pnlSubmissionForm.Visible = false;
-                if (CurrentGroupId != 0 && CurrentGroupStatus != "Assigned Mentor")
+                if (CurrentGroupId != 0 && !isMentorAssigned)
                 {
                     lblMessage.Text = "Notice: You can only submit a project proposal after your mentor request has been accepted.";
                     lblMessage.CssClass = "alert-warning-box";
@@ -203,7 +207,11 @@ namespace Project_Board.Student.Leader
                 return;
             }
 
-            if (CurrentGroupStatus != "Assigned Mentor")
+            bool isMentorAssigned = CurrentGroupStatus.Equals("Assigned Mentor", StringComparison.OrdinalIgnoreCase) || 
+                                    CurrentGroupStatus.Equals("Accepted", StringComparison.OrdinalIgnoreCase) || 
+                                    CurrentGroupStatus.Equals("Active", StringComparison.OrdinalIgnoreCase);
+
+            if (!isMentorAssigned)
             {
                 lblMessage.Text = "Error: You cannot submit a project proposal until a mentor has accepted your group's request.";
                 lblMessage.CssClass = "alert alert-danger";
@@ -273,7 +281,7 @@ namespace Project_Board.Student.Leader
 
                 string facultyQuery = @"
                     SELECT u.Email, u.FullName, g.GroupName
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     INNER JOIN Users u ON g.MentorId = u.UserId
                     WHERE g.GroupId = @GroupId";
 

@@ -189,6 +189,8 @@
     <Content Include="Web.config" />
     <Content Include="Admin\ReviewAppeal.aspx" />
     <Content Include="Student\Appeal.aspx" />
+    <Content Include="Student\Lockdown.aspx" />
+    <Content Include="Student\Lockdown.aspx.cs" />
     <Content Include="Faculty\ReviewAppeal.aspx" />
     <Content Include="Student\Leader\ReviewAppeal.aspx" />
     <Content Include="Faculty\RejectionForm.aspx" />

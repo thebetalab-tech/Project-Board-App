@@ -47,7 +47,7 @@ namespace Project_Board.Student.Member
                         g.GroupName, t.TechName, g.Status AS GroupStatus,
                         l.FullName AS LeaderName, l.Email AS LeaderEmail
                     FROM GroupMembers gm
-                    INNER JOIN Groups g ON gm.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON gm.GroupId = g.GroupId
                     LEFT JOIN Technologies t ON g.TechId = t.TechId
                     INNER JOIN Users l ON g.LeaderId = l.UserId
                     WHERE gm.UserId = @UserId

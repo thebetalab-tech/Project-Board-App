@@ -56,7 +56,7 @@ namespace Project_Board.Admin
                 // If Admin, can view/assign to all groups with leaders. If Faculty/Mentor, assigned groups.
                 string query = @"
                     SELECT g.GroupId, g.GroupName, u.FullName AS LeaderName 
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     INNER JOIN Users u ON g.LeaderId = u.UserId
                     WHERE (@Role = 'Admin' OR g.MentorId = @MentorId)
                     ORDER BY g.GroupName";
@@ -212,7 +212,7 @@ namespace Project_Board.Admin
                     string infoSql = @"
                         SELECT u.FullName AS LeaderName, u.Email AS LeaderEmail, g.GroupName
                         FROM Users u
-                        INNER JOIN Groups g ON u.UserId = g.LeaderId
+                        INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON u.UserId = g.LeaderId
                         WHERE g.GroupId = @GroupId";
                     using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
                     {
@@ -290,7 +290,7 @@ namespace Project_Board.Admin
                                uTo.FullName AS AssignedToName,
                                uBy.FullName AS AssignedByName
                         FROM Task t
-                        INNER JOIN Groups g ON t.GroupId = g.GroupId
+                        INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                         INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                         INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
                         WHERE t.TaskId = @TaskId";

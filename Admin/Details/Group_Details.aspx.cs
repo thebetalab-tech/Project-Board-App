@@ -50,7 +50,7 @@ namespace Project_Board.Admin.Details
             {
                 string queryDetails = @"
                     SELECT g.GroupName, g.Status, t.TechName, u.FullName AS LeaderName
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     INNER JOIN Technologies t ON g.TechId = t.TechId
                     INNER JOIN Users u ON g.LeaderId = u.UserId
                     WHERE g.GroupId = @GroupId";

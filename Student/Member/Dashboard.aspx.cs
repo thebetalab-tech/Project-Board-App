@@ -75,7 +75,7 @@ namespace Project_Board.Student.Member
                         l.FullName AS LeaderName,
                         l.EnrollmentNo AS LeaderEnrollment,
                         l.Email AS LeaderEmail
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     LEFT JOIN GroupMembers gm ON g.GroupId = gm.GroupId AND gm.UserId = @UserId AND (gm.JoinStatus = 'Accepted' OR gm.JoinStatus = 'accepted')
                     LEFT JOIN Technologies t ON g.TechId = t.TechId
                     LEFT JOIN Users l ON g.LeaderId = l.UserId
@@ -143,7 +143,7 @@ namespace Project_Board.Student.Member
                                CASE WHEN g.LeaderId = u.UserId THEN 'Leader' ELSE 'Member' END AS Role
                         FROM Users u
                         LEFT JOIN GroupMembers gm ON u.UserId = gm.UserId AND gm.GroupId = @GroupId AND (gm.JoinStatus = 'Accepted' OR gm.JoinStatus = 'accepted')
-                        LEFT JOIN Groups g ON g.GroupId = @GroupId AND g.LeaderId = u.UserId
+                        LEFT JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON g.GroupId = @GroupId AND g.LeaderId = u.UserId
                         WHERE (gm.GroupId IS NOT NULL OR g.LeaderId IS NOT NULL)
                         ORDER BY CASE WHEN g.LeaderId = u.UserId THEN 0 ELSE 1 END, u.FullName ASC";
 

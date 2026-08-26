@@ -58,7 +58,7 @@ namespace Project_Board.Faculty
             {
                 string query = @"
                     SELECT g.GroupId, g.GroupName, u.FullName AS LeaderName 
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     INNER JOIN Users u ON g.LeaderId = u.UserId
                     WHERE g.MentorId = @FacultyId
                     ORDER BY g.GroupName";
@@ -111,7 +111,7 @@ namespace Project_Board.Faculty
                     SELECT DISTINCT u.UserId, u.FullName, u.IsLeader
                     FROM Users u
                     LEFT JOIN GroupMembers gm ON u.UserId = gm.UserId AND gm.GroupId = @GroupId AND (gm.JoinStatus = 'Accepted' OR gm.JoinStatus = 'accepted')
-                    LEFT JOIN Groups g ON g.GroupId = @GroupId AND g.LeaderId = u.UserId
+                    LEFT JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON g.GroupId = @GroupId AND g.LeaderId = u.UserId
                     WHERE (gm.GroupId IS NOT NULL OR g.LeaderId IS NOT NULL)
                     ORDER BY u.IsLeader DESC, u.FullName ASC";
 
@@ -150,7 +150,7 @@ namespace Project_Board.Faculty
                     SELECT t.TaskId, t.TaskTitle, t.TaskDescription, t.DueDate, t.Status,
                            g.GroupName, uTo.FullName AS AssignedToName, uBy.FullName AS AssignedByName
                     FROM Task t
-                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
                     WHERE g.MentorId = @FacultyId
@@ -257,7 +257,7 @@ namespace Project_Board.Faculty
                         SELECT u.FullName AS LeaderName, u.Email AS LeaderEmail, g.GroupName, f.FullName AS FacultyName
                         FROM Users u
                         CROSS JOIN Users f
-                        INNER JOIN Groups g ON g.GroupId = @GroupId
+                        INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON g.GroupId = @GroupId
                         WHERE u.UserId = @LeaderId AND f.UserId = @FacultyId";
 
                     using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
@@ -329,7 +329,7 @@ namespace Project_Board.Faculty
                         t.DueDate AS [Due Date],
                         t.Status AS [Status]
                     FROM Task t
-                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     WHERE g.MentorId = @FacultyId
                       AND (@GroupId = 0 OR t.GroupId = @GroupId)";

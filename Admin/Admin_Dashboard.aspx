@@ -15,36 +15,36 @@
             </div>
 
             <div class="stats-grid">
-                <div class="stat-card">
+                <div class="stat-card" style="cursor:pointer;" onclick="window.location='<%= ResolveUrl("~/Admin/Admin_UserManagement.aspx") %>'">
                     <div class="stat-header">
                         <div class="stat-icon users"><i class="fa-solid fa-users"></i></div>
                     </div>
                     <div class="stat-value"><asp:Label ID="lblTotalUsers" runat="server" Text="0"></asp:Label></div>
-                    <div class="stat-label">Total Active Users</div>
+                    <div class="stat-label">Total Active Users <i class="fa-solid fa-arrow-right" style="font-size:.7rem;margin-left:.25rem;"></i></div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card" style="cursor:pointer;" onclick="window.location='<%= ResolveUrl("~/Admin/Admin_GroupsManagement.aspx") %>'">
                     <div class="stat-header">
                         <div class="stat-icon groups"><i class="fa-solid fa-user-group"></i></div>
                     </div>
                     <div class="stat-value"><asp:Label ID="lblTotalGroups" runat="server" Text="0"></asp:Label></div>
-                    <div class="stat-label">Total Groups</div>
+                    <div class="stat-label">Total Groups <i class="fa-solid fa-arrow-right" style="font-size:.7rem;margin-left:.25rem;"></i></div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card" style="cursor:pointer;" onclick="window.location='<%= ResolveUrl("~/Admin/Admin_ProjectsManagement.aspx") %>'">
                     <div class="stat-header">
                         <div class="stat-icon projects"><i class="fa-solid fa-folder-open"></i></div>
                     </div>
                     <div class="stat-value"><asp:Label ID="lblPendingProjects" runat="server" Text="0"></asp:Label></div>
-                    <div class="stat-label">Pending Projects</div>
+                    <div class="stat-label">Pending Projects <i class="fa-solid fa-arrow-right" style="font-size:.7rem;margin-left:.25rem;"></i></div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card" style="cursor:pointer;" onclick="window.location='<%= ResolveUrl("~/Admin/Admin_TechManagement.aspx") %>'">
                     <div class="stat-header">
                         <div class="stat-icon tech"><i class="fa-solid fa-microchip"></i></div>
                     </div>
                     <div class="stat-value"><asp:Label ID="lblTotalTechs" runat="server" Text="0"></asp:Label></div>
-                    <div class="stat-label">Registered Technologies</div>
+                    <div class="stat-label">Registered Technologies <i class="fa-solid fa-arrow-right" style="font-size:.7rem;margin-left:.25rem;"></i></div>
                 </div>
 
                 <div class="stat-card" style="cursor:pointer;" onclick="window.location='<%= ResolveUrl("~/Admin/Admin_DeletedRecords.aspx") %>'">

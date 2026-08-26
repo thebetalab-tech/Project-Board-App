@@ -81,9 +81,9 @@ namespace Project_Board
                 lblEnrollmentError.Text = "Enrollment Number is required.";
                 isValid = false;
             }
-            else if (enrollmentNoValue.Length != 20 || !System.Text.RegularExpressions.Regex.IsMatch(enrollmentNoValue, @"^[0-9]{20}$"))
+            else if (enrollmentNoValue.Length != 11 || !System.Text.RegularExpressions.Regex.IsMatch(enrollmentNoValue, @"^[0-9]{11}$"))
             {
-                lblEnrollmentError.Text = "Enrollment number must be exactly 20 digits (e.g., 24020201071).";
+                lblEnrollmentError.Text = "Enrollment number must be exactly 11 digits (e.g., 24020201071).";
                 isValid = false;
             }
 

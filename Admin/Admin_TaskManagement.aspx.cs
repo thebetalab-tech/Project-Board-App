@@ -44,7 +44,7 @@ namespace Project_Board.Admin
             {
                 string query = @"
                     SELECT g.GroupId, g.GroupName, u.FullName AS LeaderName 
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     INNER JOIN Users u ON g.LeaderId = u.UserId
                     ORDER BY g.GroupName";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -73,7 +73,7 @@ namespace Project_Board.Admin
                     SELECT t.TaskId, t.TaskTitle, t.TaskDescription, t.DueDate, t.Status, t.TaskLevel,
                            g.GroupName, uTo.FullName AS AssignedToName, uBy.FullName AS AssignedByName
                     FROM Task t
-                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId";
                 
@@ -175,7 +175,7 @@ namespace Project_Board.Admin
                     string infoSql = @"
                         SELECT u.FullName AS LeaderName, u.Email AS LeaderEmail, g.GroupName
                         FROM Users u
-                        INNER JOIN Groups g ON u.UserId = g.LeaderId
+                        INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON u.UserId = g.LeaderId
                         WHERE g.GroupId = @GroupId";
                     using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
                     {
@@ -242,7 +242,7 @@ namespace Project_Board.Admin
                                uTo.FullName AS AssignedToName,
                                uBy.FullName AS AssignedByName
                         FROM Task t
-                        INNER JOIN Groups g ON t.GroupId = g.GroupId
+                        INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                         INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                         INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
                         WHERE t.TaskId = @TaskId";
@@ -390,7 +390,7 @@ namespace Project_Board.Admin
                         t.Status AS [Status],
                         t.DueDate AS [Due Date]
                     FROM Tasks t
-                    LEFT JOIN Groups g ON t.GroupId = g.GroupId
+                    LEFT JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     LEFT JOIN Users u_to ON t.AssignedTo = u_to.UserId
                     LEFT JOIN Users u_by ON t.AssignedBy = u_by.UserId";
 

@@ -14,17 +14,7 @@ namespace Project_Board.Admin
         private string connString = ConfigurationManager.ConnectionStrings["ProjectBoardDB"]?.ConnectionString
             ?? ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"]?.ConnectionString;
 
-        private const int PageSize = 25;
-
-        private int CurrentPage
-        {
-            get
-            {
-                int p;
-                return int.TryParse(hdnCurrentPage.Value, out p) && p > 0 ? p : 1;
-            }
-            set { hdnCurrentPage.Value = value.ToString(); }
-        }
+        private const int PageSize = 10000;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -96,23 +86,8 @@ namespace Project_Board.Admin
         {
             if (string.IsNullOrEmpty(connString)) return;
 
-            string typeFilter   = ddlTypeFilter.SelectedValue;
-            string searchKw     = txtSearch.Text.Trim();
-            string dateFromStr  = txtDateFrom.Text.Trim();
-            string dateToStr    = txtDateTo.Text.Trim();
-
-            // Determine action
+            // No server-side filters anymore. Fetch all records.
             string action = "ALL";
-            if (!string.IsNullOrEmpty(searchKw))
-                action = "SEARCH";
-            else if (!string.IsNullOrEmpty(dateFromStr) || !string.IsNullOrEmpty(dateToStr))
-                action = "BY_DATE_RANGE";
-            else if (typeFilter != "All")
-                action = "BY_TYPE";
-
-            DateTime? dateFrom = null, dateTo = null;
-            if (!string.IsNullOrEmpty(dateFromStr)) { DateTime d; if (DateTime.TryParse(dateFromStr, out d)) dateFrom = d; }
-            if (!string.IsNullOrEmpty(dateToStr))   { DateTime d; if (DateTime.TryParse(dateToStr, out d))   dateTo   = d; }
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
@@ -120,11 +95,11 @@ namespace Project_Board.Admin
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Action",       action);
-                    cmd.Parameters.AddWithValue("@EntityType",   (typeFilter != "All") ? (object)typeFilter : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@SearchKeyword", !string.IsNullOrEmpty(searchKw) ? (object)searchKw : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@DateFrom",     dateFrom.HasValue ? (object)dateFrom.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@DateTo",       dateTo.HasValue   ? (object)dateTo.Value   : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@PageNumber",   CurrentPage);
+                    cmd.Parameters.AddWithValue("@EntityType",   DBNull.Value);
+                    cmd.Parameters.AddWithValue("@SearchKeyword", DBNull.Value);
+                    cmd.Parameters.AddWithValue("@DateFrom",     DBNull.Value);
+                    cmd.Parameters.AddWithValue("@DateTo",       DBNull.Value);
+                    cmd.Parameters.AddWithValue("@PageNumber",   1);
                     cmd.Parameters.AddWithValue("@PageSize",     PageSize);
 
                     try
@@ -146,27 +121,7 @@ namespace Project_Board.Admin
                         rptDeletedRecords.DataBind();
 
                         pnlEmpty.Visible = dt.Rows.Count == 0;
-                        lblResultCount.Text = totalRows.ToString();
 
-                        // Pagination info
-                        int totalPages = (int)Math.Ceiling((double)totalRows / PageSize);
-                        if (totalPages < 1) totalPages = 1;
-                        lblPageInfo.Text = $"Page {CurrentPage} of {totalPages}";
-                        btnPrevPage.Enabled = CurrentPage > 1;
-                        btnNextPage.Enabled = CurrentPage < totalPages;
-
-                        // Filter description
-                        var parts = new List<string>();
-                        if (typeFilter != "All") parts.Add($"Type: <strong>{typeFilter}</strong>");
-                        if (!string.IsNullOrEmpty(searchKw)) parts.Add($"Search: <strong>\"{System.Web.HttpUtility.HtmlEncode(searchKw)}\"</strong>");
-                        if (dateFrom.HasValue || dateTo.HasValue)
-                        {
-                            string range = "";
-                            if (dateFrom.HasValue) range += $"from {dateFrom.Value:dd MMM yyyy} ";
-                            if (dateTo.HasValue) range += $"to {dateTo.Value:dd MMM yyyy}";
-                            parts.Add($"Date: <strong>{range.Trim()}</strong>");
-                        }
-                        lblFilterDesc.Text = parts.Count > 0 ? " — " + string.Join(", ", parts) : "";
                     }
                     catch (Exception ex)
                     {
@@ -180,41 +135,7 @@ namespace Project_Board.Admin
         // -----------------------------------------------------------------------
         //  EVENTS
         // -----------------------------------------------------------------------
-        protected void ddlTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            CurrentPage = 1;
-            LoadRecords();
-        }
-
-        protected void btnSearch_Click(object sender, EventArgs e)
-        {
-            CurrentPage = 1;
-            LoadStats();
-            LoadRecords();
-        }
-
-        protected void btnClear_Click(object sender, EventArgs e)
-        {
-            ddlTypeFilter.SelectedValue = "All";
-            txtSearch.Text = string.Empty;
-            txtDateFrom.Text = string.Empty;
-            txtDateTo.Text = string.Empty;
-            CurrentPage = 1;
-            LoadStats();
-            LoadRecords();
-        }
-
-        protected void btnPrevPage_Click(object sender, EventArgs e)
-        {
-            if (CurrentPage > 1) CurrentPage--;
-            LoadRecords();
-        }
-
-        protected void btnNextPage_Click(object sender, EventArgs e)
-        {
-            CurrentPage++;
-            LoadRecords();
-        }
+        // No server-side pagination events anymore
 
         protected void rptDeletedRecords_ItemCommand(object source, RepeaterCommandEventArgs e)
         {

@@ -36,7 +36,7 @@ namespace Project_Board
                 // Get Group details
                 string qGroup = @"
                     SELECT G.GroupId, G.GroupName, G.MentorId, G.Status, G.TechId, T.TechName 
-                    FROM Groups G
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     LEFT JOIN Technologies T ON G.TechId = T.TechId
                     WHERE G.LeaderId = @LeaderId";
 
@@ -212,7 +212,7 @@ namespace Project_Board
                         string infoSql = @"
                             SELECT u.FullName AS FacultyName, u.Email AS FacultyEmail, g.GroupName, ISNULL(t.TechName, 'General') AS TechName
                             FROM Users u
-                            INNER JOIN Groups g ON g.GroupId = @GroupId
+                            INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON g.GroupId = @GroupId
                             LEFT JOIN Technologies t ON g.TechId = t.TechId
                             WHERE u.UserId = @FacultyId";
                         using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))

@@ -56,7 +56,7 @@ namespace Project_Board.Faculty
                 string taskSql = @"
                     SELECT t.*, g.GroupName, uTo.FullName AS AssignedToName, uTo.IsLeader, uBy.FullName AS AssignedByName
                     FROM Task t
-                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
                     WHERE t.TaskId = @TaskId";

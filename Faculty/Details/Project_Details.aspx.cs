@@ -53,7 +53,7 @@ namespace Project_Board.Faculty.Details
                 string queryDetails = @"
                     SELECT p.ProjectTitle, p.ProjectType, p.Functionality, p.Status, p.SubmittedAt, g.GroupName
                     FROM Projects p
-                    INNER JOIN Groups g ON p.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId
                     WHERE p.ProjectId = @ProjectId AND g.MentorId = @FacultyId";
 
                 using (SqlCommand cmd = new SqlCommand(queryDetails, conn))
@@ -146,29 +146,38 @@ namespace Project_Board.Faculty.Details
                     cmd.ExecuteNonQuery();
                 }
 
+                // Retrieve all group members and leader for notification
+                string facultyName = Session["FullName"]?.ToString() ?? "Faculty Mentor";
+                
                 string infoQuery = @"
-                    SELECT p.ProjectTitle, g.GroupName, u.Email AS LeaderEmail, u.FullName AS LeaderName
+                    SELECT p.ProjectTitle, g.GroupName, u.Email, u.FullName 
                     FROM Projects p
-                    INNER JOIN Groups g ON p.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId
                     INNER JOIN Users u ON g.LeaderId = u.UserId
-                    WHERE p.ProjectId = @ProjectId";
+                    WHERE p.ProjectId = @ProjectId
+                    UNION
+                    SELECT p.ProjectTitle, g.GroupName, u.Email, u.FullName 
+                    FROM Projects p
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId
+                    INNER JOIN GroupMembers gm ON g.GroupId = gm.GroupId
+                    INNER JOIN Users u ON gm.UserId = u.UserId
+                    WHERE p.ProjectId = @ProjectId AND gm.JoinStatus = 'Accepted'";
 
                 using (SqlCommand iCmd = new SqlCommand(infoQuery, conn))
                 {
                     iCmd.Parameters.AddWithValue("@ProjectId", projectId);
                     using (SqlDataReader rdr = iCmd.ExecuteReader())
                     {
-                        if (rdr.Read())
+                        while (rdr.Read())
                         {
                             string projectTitle = rdr["ProjectTitle"].ToString();
                             string groupName = rdr["GroupName"].ToString();
-                            string leaderEmail = rdr["LeaderEmail"].ToString();
-                            string leaderName = rdr["LeaderName"].ToString();
-                            string facultyName = Session["FullName"]?.ToString() ?? "Faculty Mentor";
+                            string memberEmail = rdr["Email"].ToString();
+                            string memberName = rdr["FullName"].ToString();
 
-                            EmailService.SendProjectStatusNotificationToLeader(
-                                leaderEmail,
-                                leaderName,
+                            EmailService.SendProjectStatusNotificationToGroupMember(
+                                memberEmail,
+                                memberName,
                                 facultyName,
                                 groupName,
                                 projectTitle,
@@ -179,7 +188,7 @@ namespace Project_Board.Faculty.Details
                 }
             }
 
-            lblMessage.Text = $"Project has been successfully marked as '{newStatus}'. Notification email sent to Leader.";
+            lblMessage.Text = $"Project has been successfully marked as '{newStatus}'. Notification email sent to all members.";
             lblMessage.CssClass = "form-message success";
             lblMessage.Visible = true;
 

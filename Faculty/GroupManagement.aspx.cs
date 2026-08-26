@@ -44,7 +44,7 @@ namespace Project_Board.Faculty
                         u.FullName AS LeaderName, 
                         t.TechName,
                         (SELECT COUNT(*) FROM GroupMembers gm WHERE gm.GroupId = g.GroupId AND gm.JoinStatus = 'Accepted') AS MemberCount
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     INNER JOIN Users u ON g.LeaderId = u.UserId
                     INNER JOIN Technologies t ON g.TechId = t.TechId
                     WHERE g.MentorId = @FacultyId AND g.Status != 'Pending Faculty Approval' AND g.Status != 'Forming'";
@@ -76,7 +76,7 @@ namespace Project_Board.Faculty
                         u.FullName AS [Leader Name], 
                         t.TechName AS [Technology],
                         (SELECT COUNT(*) FROM GroupMembers gm WHERE gm.GroupId = g.GroupId AND gm.JoinStatus = 'Accepted') AS [Team Size]
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     INNER JOIN Users u ON g.LeaderId = u.UserId
                     INNER JOIN Technologies t ON g.TechId = t.TechId
                     WHERE g.MentorId = @FacultyId AND g.Status != 'Pending Faculty Approval' AND g.Status != 'Forming'";

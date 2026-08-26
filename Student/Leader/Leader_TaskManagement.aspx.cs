@@ -162,7 +162,7 @@ namespace Project_Board.Student.Leader
                     FROM Task t
                     INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
-                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     LEFT JOIN Task p ON t.ParentTaskId = p.TaskId
                     WHERE t.TaskLevel IN ('MentorToLeader', 'AdminToLeader', 'AdminToAll')
                       AND (t.AssignedBy = @UserId OR t.AssignedTo = @UserId)
@@ -391,7 +391,7 @@ namespace Project_Board.Student.Leader
                                uTo.FullName AS AssignedToName,
                                uBy.FullName AS AssignedByName
                         FROM Task t
-                        INNER JOIN Groups g ON t.GroupId = g.GroupId
+                        INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                         INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                         INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
                         WHERE t.TaskId = @TaskId";
@@ -448,7 +448,7 @@ namespace Project_Board.Student.Leader
                         t.DueDate AS [Due Date],
                         t.Status AS [Status]
                     FROM Task t
-                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
                     WHERE t.AssignedTo = @LeaderId AND t.TaskLevel IN ('MentorToLeader', 'AdminToLeader', 'AdminToAll')
@@ -499,7 +499,7 @@ namespace Project_Board.Student.Leader
                         t.DueDate AS [Due Date],
                         t.Status AS [Status]
                     FROM Task t
-                    INNER JOIN Groups g ON t.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     WHERE t.AssignedBy = @LeaderId AND t.TaskLevel = 'LeaderToMember'
                     ORDER BY t.CreatedAt DESC";

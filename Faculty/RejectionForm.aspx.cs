@@ -86,8 +86,49 @@ namespace Project_Board.Faculty
                         cmd.Parameters.AddWithValue("@Id", id);
                         cmd.ExecuteNonQuery();
                     }
-                    // Find Leader
-                    using (SqlCommand cmd = new SqlCommand("SELECT g.LeaderId FROM Projects p JOIN Groups g ON p.GroupId = g.GroupId WHERE p.ProjectId = @Id", conn))
+                    
+                    // Send Email to all members and leader
+                    string facultyName = Session["FullName"]?.ToString() ?? "Faculty Mentor";
+                    string infoQuery = @"
+                        SELECT p.ProjectTitle, g.GroupName, u.Email, u.FullName 
+                        FROM Projects p
+                        INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId
+                        INNER JOIN Users u ON g.LeaderId = u.UserId
+                        WHERE p.ProjectId = @ProjectId
+                        UNION
+                        SELECT p.ProjectTitle, g.GroupName, u.Email, u.FullName 
+                        FROM Projects p
+                        INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId
+                        INNER JOIN GroupMembers gm ON g.GroupId = gm.GroupId
+                        INNER JOIN Users u ON gm.UserId = u.UserId
+                        WHERE p.ProjectId = @ProjectId AND gm.JoinStatus = 'Accepted'";
+
+                    using (SqlCommand iCmd = new SqlCommand(infoQuery, conn))
+                    {
+                        iCmd.Parameters.AddWithValue("@ProjectId", id);
+                        using (SqlDataReader rdr = iCmd.ExecuteReader())
+                        {
+                            while (rdr.Read())
+                            {
+                                string projectTitle = rdr["ProjectTitle"].ToString();
+                                string groupName = rdr["GroupName"].ToString();
+                                string memberEmail = rdr["Email"].ToString();
+                                string memberName = rdr["FullName"].ToString();
+
+                                Project_Board.Services.EmailService.SendProjectStatusNotificationToGroupMember(
+                                    memberEmail,
+                                    memberName,
+                                    facultyName,
+                                    groupName,
+                                    projectTitle,
+                                    "Rejected"
+                                );
+                            }
+                        }
+                    }
+
+                    // Find Leader for System Notification
+                    using (SqlCommand cmd = new SqlCommand("SELECT g.LeaderId FROM Projects p JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId WHERE p.ProjectId = @Id", conn))
                     {
                         cmd.Parameters.AddWithValue("@Id", id);
                         object result = cmd.ExecuteScalar();

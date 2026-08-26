@@ -369,6 +369,25 @@ namespace Project_Board.Services
             string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
             SendEmailAsync(toEmail, $"{memberName} Joined Your Group {groupName}", html);
         }
+
+        public static void SendMemberJoinRequestRejectedNotification(string toEmail, string memberName, string leaderName, string groupName)
+        {
+            string title = "Group Join Request Declined";
+            string badgeText = "Request Declined";
+            string badgeColor = "#ef4444";
+
+            StringBuilder body = new StringBuilder();
+            body.Append($"<p>Hello <strong>{WebUtility.HtmlEncode(memberName)}</strong>,</p>");
+            body.Append($"<p>Your request to join the group <strong>{WebUtility.HtmlEncode(groupName)}</strong> has been declined by team leader <strong>{WebUtility.HtmlEncode(leaderName)}</strong>.</p>");
+            body.Append("<div class='info-box'>");
+            body.Append($"<div class='info-row'><span class='info-label'>Group Name:</span><span class='info-value'>{WebUtility.HtmlEncode(groupName)}</span></div>");
+            body.Append($"<div class='info-row'><span class='info-label'>Team Leader:</span><span class='info-value'>{WebUtility.HtmlEncode(leaderName)}</span></div>");
+            body.Append("</div>");
+            body.Append("<p>You can browse other available groups and send a new request from your dashboard.</p>");
+
+            string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
+            SendEmailAsync(toEmail, $"Group Request Declined - {groupName}", html);
+        }
         #endregion
 
         #region 11. Leader Gets Mail Back That Member Joins Or Rejects
@@ -515,8 +534,8 @@ namespace Project_Board.Services
         }
         #endregion
 
-        #region 16. Faculty Approves / Rejects Proposal -> Leader Gets Mail
-        public static void SendProjectStatusNotificationToLeader(string toEmail, string leaderName, string facultyName, string groupName, string projectTitle, string status)
+        #region 16. Faculty Approves / Rejects Proposal -> Members Get Mail
+        public static void SendProjectStatusNotificationToGroupMember(string toEmail, string memberName, string facultyName, string groupName, string projectTitle, string status)
         {
             bool isApproved = status.Equals("Approved", StringComparison.OrdinalIgnoreCase);
             string title = isApproved ? "Project Proposal Approved!" : "Project Proposal Update";
@@ -524,7 +543,7 @@ namespace Project_Board.Services
             string badgeColor = isApproved ? "#10b981" : (status.Equals("Rejected", StringComparison.OrdinalIgnoreCase) ? "#ef4444" : "#f59e0b");
 
             StringBuilder body = new StringBuilder();
-            body.Append($"<p>Hello <strong>{WebUtility.HtmlEncode(leaderName)}</strong>,</p>");
+            body.Append($"<p>Hello <strong>{WebUtility.HtmlEncode(memberName)}</strong>,</p>");
             if (isApproved)
             {
                 body.Append($"<p>Great news! Faculty mentor <strong>{WebUtility.HtmlEncode(facultyName)}</strong> has <strong style='color:#10b981;'>Approved</strong> your project proposal <strong>{WebUtility.HtmlEncode(projectTitle)}</strong> for group <strong>{WebUtility.HtmlEncode(groupName)}</strong>.</p>");
@@ -539,7 +558,7 @@ namespace Project_Board.Services
             body.Append($"<div class='info-row'><span class='info-label'>Status:</span><span class='info-value'>{WebUtility.HtmlEncode(status)}</span></div>");
             body.Append($"<div class='info-row'><span class='info-label'>Faculty Mentor:</span><span class='info-value'>{WebUtility.HtmlEncode(facultyName)}</span></div>");
             body.Append("</div>");
-            body.Append("<p>Log in to your leader dashboard to view your active projects and details.</p>");
+            body.Append("<p>Log in to your dashboard to view your active projects and details.</p>");
 
             string html = WrapTemplate(title, badgeText, badgeColor, body.ToString());
             SendEmailAsync(toEmail, $"Project Proposal Update: {projectTitle} ({status})", html);

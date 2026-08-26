@@ -40,7 +40,7 @@ namespace Project_Board.Faculty
             {
                 string query = @"
                     SELECT g.GroupId, g.GroupName, u.FullName AS LeaderName, t.TechName 
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     INNER JOIN Users u ON g.LeaderId = u.UserId
                     INNER JOIN Technologies t ON g.TechId = t.TechId
                     WHERE g.MentorId = @FacultyId AND g.Status = 'Pending Faculty Approval'";
@@ -90,7 +90,7 @@ namespace Project_Board.Faculty
                     bool isAccepted = e.CommandName == "Accept";
                     string infoSql = @"
                         SELECT g.GroupName, u.FullName AS LeaderName, u.Email AS LeaderEmail
-                        FROM Groups g
+                        FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                         INNER JOIN Users u ON g.LeaderId = u.UserId
                         WHERE g.GroupId = @GroupId";
                     using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))

@@ -1,0 +1,166 @@
+<mxfile version="21.6.8">
+  <diagram name="DFD Level 1 Admin">
+    <mxGraphModel dx="1200" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Admin Entity -->
+        <mxCell id="actor" value="Admin" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="300" width="120" height="300" as="geometry" />
+        </mxCell>
+
+        <!-- Process 1.0 -->
+        <mxCell id="p0" value="1.0&lt;br&gt;Check Login" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="100" width="100" height="100" as="geometry" />
+        </mxCell>
+        <!-- Data Store 1 -->
+        <mxCell id="s0" value="Users Data" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="130" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Edges Actor <-> Process -->
+        <mxCell id="e_req_0" value="Request" style="endArrow=classic;html=1;exitX=1;exitY=0.0625;entryX=0;entryY=0.3;" edge="1" parent="1" source="actor" target="p0">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_res_0" value="Response" style="endArrow=classic;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.0875;" edge="1" parent="1" source="p0" target="actor">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edges Process <-> Store -->
+        <mxCell id="e_write_0" value="Update/Write" style="endArrow=classic;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.25;" edge="1" parent="1" source="p0" target="s0">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_read_0" value="Fetch/Read" style="endArrow=classic;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.7;" edge="1" parent="1" source="s0" target="p0">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Process 2.0 -->
+        <mxCell id="p1" value="2.0&lt;br&gt;Admin Dashboard" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="230" width="100" height="100" as="geometry" />
+        </mxCell>
+        <!-- Data Store 2 -->
+        <mxCell id="s1" value="System Data" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="260" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Edges Actor <-> Process -->
+        <mxCell id="e_req_1" value="Request" style="endArrow=classic;html=1;exitX=1;exitY=0.225;entryX=0;entryY=0.3;" edge="1" parent="1" source="actor" target="p1">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_res_1" value="Response" style="endArrow=classic;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.25;" edge="1" parent="1" source="p1" target="actor">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edges Process <-> Store -->
+        <mxCell id="e_write_1" value="Update/Write" style="endArrow=classic;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.25;" edge="1" parent="1" source="p1" target="s1">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_read_1" value="Fetch/Read" style="endArrow=classic;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.7;" edge="1" parent="1" source="s1" target="p1">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Process 3.0 -->
+        <mxCell id="p2" value="3.0&lt;br&gt;Manage Users" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="360" width="100" height="100" as="geometry" />
+        </mxCell>
+        <!-- Data Store 3 -->
+        <mxCell id="s2" value="Users Data" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="390" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Edges Actor <-> Process -->
+        <mxCell id="e_req_2" value="Request" style="endArrow=classic;html=1;exitX=1;exitY=0.3875;entryX=0;entryY=0.3;" edge="1" parent="1" source="actor" target="p2">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_res_2" value="Response" style="endArrow=classic;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.4125;" edge="1" parent="1" source="p2" target="actor">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edges Process <-> Store -->
+        <mxCell id="e_write_2" value="Update/Write" style="endArrow=classic;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.25;" edge="1" parent="1" source="p2" target="s2">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_read_2" value="Fetch/Read" style="endArrow=classic;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.7;" edge="1" parent="1" source="s2" target="p2">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Process 4.0 -->
+        <mxCell id="p3" value="4.0&lt;br&gt;Manage Groups & Projects" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="490" width="100" height="100" as="geometry" />
+        </mxCell>
+        <!-- Data Store 4 -->
+        <mxCell id="s3" value="Groups/Projects Data" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="520" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Edges Actor <-> Process -->
+        <mxCell id="e_req_3" value="Request" style="endArrow=classic;html=1;exitX=1;exitY=0.55;entryX=0;entryY=0.3;" edge="1" parent="1" source="actor" target="p3">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_res_3" value="Response" style="endArrow=classic;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.575;" edge="1" parent="1" source="p3" target="actor">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edges Process <-> Store -->
+        <mxCell id="e_write_3" value="Update/Write" style="endArrow=classic;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.25;" edge="1" parent="1" source="p3" target="s3">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_read_3" value="Fetch/Read" style="endArrow=classic;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.7;" edge="1" parent="1" source="s3" target="p3">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Process 5.0 -->
+        <mxCell id="p4" value="5.0&lt;br&gt;Manage Tasks" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="620" width="100" height="100" as="geometry" />
+        </mxCell>
+        <!-- Data Store 5 -->
+        <mxCell id="s4" value="Tasks Data" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="650" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Edges Actor <-> Process -->
+        <mxCell id="e_req_4" value="Request" style="endArrow=classic;html=1;exitX=1;exitY=0.7125;entryX=0;entryY=0.3;" edge="1" parent="1" source="actor" target="p4">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_res_4" value="Response" style="endArrow=classic;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.7375;" edge="1" parent="1" source="p4" target="actor">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edges Process <-> Store -->
+        <mxCell id="e_write_4" value="Update/Write" style="endArrow=classic;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.25;" edge="1" parent="1" source="p4" target="s4">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_read_4" value="Fetch/Read" style="endArrow=classic;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.7;" edge="1" parent="1" source="s4" target="p4">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Process 6.0 -->
+        <mxCell id="p5" value="6.0&lt;br&gt;Manage Technologies" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="750" width="100" height="100" as="geometry" />
+        </mxCell>
+        <!-- Data Store 6 -->
+        <mxCell id="s5" value="Technologies Data" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="780" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Edges Actor <-> Process -->
+        <mxCell id="e_req_5" value="Request" style="endArrow=classic;html=1;exitX=1;exitY=0.875;entryX=0;entryY=0.3;" edge="1" parent="1" source="actor" target="p5">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_res_5" value="Response" style="endArrow=classic;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.9;" edge="1" parent="1" source="p5" target="actor">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edges Process <-> Store -->
+        <mxCell id="e_write_5" value="Update/Write" style="endArrow=classic;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.25;" edge="1" parent="1" source="p5" target="s5">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="-10" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_read_5" value="Fetch/Read" style="endArrow=classic;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.7;" edge="1" parent="1" source="s5" target="p5">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" y="10" /></mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

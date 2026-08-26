@@ -16,6 +16,11 @@
             padding: 1.5rem;
             margin-bottom: 1.25rem;
             transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .group-card:hover {
@@ -27,7 +32,8 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin-bottom: 1rem;
+            flex: 1;
+            min-width: 300px;
         }
 
         .group-avatar {
@@ -109,7 +115,12 @@
     </style>
 </head>
 
-<body>
+<body class='preload <%= Session["Role"] != null ? (Session["Role"].ToString() == "Student" ? (Session["IsLeader"] != null && (Session["IsLeader"].ToString().Equals("True", StringComparison.OrdinalIgnoreCase) || Session["IsLeader"].ToString() == "1") ? "role-leader" : "role-member") : "role-" + Session["Role"].ToString().ToLower()) : "" %>'>
+    <script>
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    </script>
     <form id="form1" runat="server">
         <!-- SIDEBAR -->
         <aside class="sidebar">
@@ -123,28 +134,28 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
                     <a href='<%= ResolveUrl("~/Student/Member/Dashboard.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-chart-pie"></i> Overview
+                        <i class="fa-solid fa-chart-pie"></i> <span>Overview</span>
                     </a>
-                    <a href='<%= ResolveUrl("~/JoinGroup.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-users"></i> Join Group
+                    <a href='<%= ResolveUrl("~/JoinGroup.aspx") %>' class="nav-link active">
+                        <i class="fa-solid fa-users"></i> <span>Join Group</span>
                     </a>
-                    <a href='<%= ResolveUrl("~/Student/Member/MyRequests.aspx") %>' class="nav-link active">
-                        <i class="fa-solid fa-file-circle-check"></i> My Requests
+                    <a href='<%= ResolveUrl("~/Student/Member/MyRequests.aspx") %>' class="nav-link">
+                        <i class="fa-solid fa-file-circle-check"></i> <span>My Requests</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Student/Member/InvitationManager.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-envelope"></i> Invitations
+                        <i class="fa-solid fa-envelope"></i> <span>Invitations</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Student/Member/Member_TaskManagement.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-list-check"></i> My Tasks
+                        <i class="fa-solid fa-list-check"></i> <span>My Tasks</span>
                     </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Preferences</div>
                     <a href='<%= ResolveUrl("~/User/Profile.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-user"></i> Profile
+                        <i class="fa-solid fa-user"></i> <span>Profile</span>
                     </a>
                     <a href='<%= ResolveUrl("~/Logout.aspx") %>' class="nav-link">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span>
                     </a>
                 </div>
             </nav>

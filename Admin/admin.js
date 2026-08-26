@@ -221,3 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Remove preload class after page load to re-enable transitions
+window.addEventListener('load', () => {
+    document.body.classList.remove('preload');
+});
+

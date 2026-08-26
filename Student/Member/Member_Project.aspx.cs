@@ -46,7 +46,7 @@ namespace Project_Board.Student.Member
 
                 string groupSql = @"
                     SELECT TOP 1 g.GroupId, g.GroupName 
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     LEFT JOIN GroupMembers gm ON g.GroupId = gm.GroupId AND gm.UserId = @UserId AND (gm.JoinStatus = 'Accepted' OR gm.JoinStatus = 'accepted')
                     WHERE g.LeaderId = @UserId OR (gm.UserId = @UserId AND (gm.JoinStatus = 'Accepted' OR gm.JoinStatus = 'accepted'))
                     ORDER BY CASE WHEN g.LeaderId = @UserId THEN 0 ELSE 1 END;";

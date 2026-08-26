@@ -6,10 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><asp:ContentPlaceHolder ID="TitleContent" runat="server">Project Board Dashboard</asp:ContentPlaceHolder></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="~/Admin/admin.css?v=latest_v5" runat="server" />
+    <link rel="stylesheet" href="~/Admin/admin.css?v=latest_v6" runat="server" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
-<body class='<%= Session["Role"] != null ? "role-" + Session["Role"].ToString().ToLower() : "" %>'>
+<body class='preload <%= Session["Role"] != null ? (Session["Role"].ToString() == "Student" ? (Session["IsLeader"] != null && (Session["IsLeader"].ToString().Equals("True", StringComparison.OrdinalIgnoreCase) || Session["IsLeader"].ToString() == "1") ? "role-leader" : "role-member") : "role-" + Session["Role"].ToString().ToLower()) : "" %>'>
+    <script>
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    </script>
     <form id="form1" runat="server">
         <asp:ScriptManager runat="server"></asp:ScriptManager>
         <aside class="sidebar" id="sidebar">

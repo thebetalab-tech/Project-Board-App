@@ -189,7 +189,7 @@ namespace Project_Board.Student.Leader
                             // Fetch target user & group details for email notification
                             string detailsSql = @"
                                 SELECT u.FullName AS MemberName, u.Email AS MemberEmail, g.GroupName
-                                FROM Users u, Groups g
+                                FROM Users u, (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                                 WHERE u.UserId = @UserId AND g.GroupId = @GroupId";
                             using (SqlCommand detCmd = new SqlCommand(detailsSql, conn))
                             {
@@ -263,7 +263,7 @@ namespace Project_Board.Student.Leader
                     string groupName = "";
                     string detailsSql = @"
                         SELECT u.FullName, u.Email, g.GroupName 
-                        FROM Users u, Groups g 
+                        FROM Users u, (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g 
                         WHERE u.UserId = @UserId AND g.GroupId = @GroupId";
                     using (SqlCommand detCmd = new SqlCommand(detailsSql, conn))
                     {

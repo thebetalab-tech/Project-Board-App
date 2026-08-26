@@ -4,6 +4,10 @@
     Deleted Records — Audit Log
 </asp:Content>
 
+<asp:Content ID="ContentTopbar" ContentPlaceHolderID="TopbarTitle" runat="server">
+    Deleted Records
+</asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 <div class="dashboard-container">
   <div class="view-section active">
@@ -78,50 +82,44 @@
         <!-- Entity Type Filter -->
         <div style="display:flex;flex-direction:column;gap:.4rem;min-width:160px;">
           <label style="font-size:.78rem;font-weight:600;color:var(--c-text-muted);text-transform:uppercase;letter-spacing:.05em;">Entity Type</label>
-          <asp:DropDownList ID="ddlTypeFilter" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="ddlTypeFilter_SelectedIndexChanged">
-            <asp:ListItem Value="All" Text="All Types" />
-            <asp:ListItem Value="User" Text="Users" />
-            <asp:ListItem Value="Group" Text="Groups" />
-            <asp:ListItem Value="Project" Text="Projects" />
-            <asp:ListItem Value="Task" Text="Tasks" />
-            <asp:ListItem Value="Technology" Text="Technologies" />
-          </asp:DropDownList>
+          <select id="ddlTypeFilter" class="form-control">
+            <option value="">All Types</option>
+            <option value="USER">Users</option>
+            <option value="GROUP">Groups</option>
+            <option value="PROJECT">Projects</option>
+            <option value="TASK">Tasks</option>
+            <option value="TECHNOLOGY">Technologies</option>
+          </select>
         </div>
 
         <!-- Search -->
         <div style="display:flex;flex-direction:column;gap:.4rem;flex:1;min-width:200px;">
           <label style="font-size:.78rem;font-weight:600;color:var(--c-text-muted);text-transform:uppercase;letter-spacing:.05em;">Search</label>
-          <asp:TextBox ID="txtSearch" runat="server" CssClass="form-input" placeholder="Search by name, details, or deleted by..." />
+          <input type="text" id="txtSearch" class="form-control" placeholder="Search by name, details, or deleted by..." />
         </div>
 
         <!-- Date From -->
         <div style="display:flex;flex-direction:column;gap:.4rem;min-width:150px;">
           <label style="font-size:.78rem;font-weight:600;color:var(--c-text-muted);text-transform:uppercase;letter-spacing:.05em;">From Date</label>
-          <asp:TextBox ID="txtDateFrom" runat="server" CssClass="form-input" TextMode="Date" />
+          <input type="date" id="txtDateFrom" class="form-control" />
         </div>
 
         <!-- Date To -->
         <div style="display:flex;flex-direction:column;gap:.4rem;min-width:150px;">
           <label style="font-size:.78rem;font-weight:600;color:var(--c-text-muted);text-transform:uppercase;letter-spacing:.05em;">To Date</label>
-          <asp:TextBox ID="txtDateTo" runat="server" CssClass="form-input" TextMode="Date" />
+          <input type="date" id="txtDateTo" class="form-control" />
         </div>
 
         <!-- Search Button -->
-        <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-primary" OnClick="btnSearch_Click" style="min-width:100px;" />
-        <asp:Button ID="btnClear" runat="server" Text="Clear" CssClass="btn btn-outline" OnClick="btnClear_Click" style="min-width:80px;" />
+        <button type="button" id="btnClear" class="btn-secondary" style="min-width:80px; height:48px;">Clear</button>
       </div>
     </div>
 
     <!-- Results Count -->
     <div style="margin:1rem 0 .5rem;display:flex;align-items:center;justify-content:space-between;">
-      <p style="color:var(--c-text-muted);font-size:.875rem;">
-        Showing <strong><asp:Label ID="lblResultCount" runat="server" Text="0" /></strong> records
-        <asp:Label ID="lblFilterDesc" runat="server" Text="" />
+      <p style="color:var(--c-text-muted);font-size:.875rem;" id="tableInfo">
       </p>
-      <div style="display:flex;gap:.5rem;align-items:center;">
-        <asp:Label ID="lblPageInfo" runat="server" Text="Page 1 of 1" style="font-size:.8rem;color:var(--c-text-muted);" />
-        <asp:Button ID="btnPrevPage" runat="server" Text="← Prev" CssClass="btn btn-outline" OnClick="btnPrevPage_Click" style="font-size:.8rem;padding:.3rem .7rem;" />
-        <asp:Button ID="btnNextPage" runat="server" Text="Next →" CssClass="btn btn-outline" OnClick="btnNextPage_Click" style="font-size:.8rem;padding:.3rem .7rem;" />
+      <div id="tablePagination" style="display:flex;gap:.5rem;align-items:center;">
       </div>
     </div>
 
@@ -130,7 +128,7 @@
       <div style="overflow-x:auto;">
         <asp:Repeater ID="rptDeletedRecords" runat="server" OnItemCommand="rptDeletedRecords_ItemCommand">
           <HeaderTemplate>
-            <table class="data-table" style="width:100%;border-collapse:collapse;min-width:600px;">
+            <table id="recordsTable" class="data-table" style="width:100%;border-collapse:collapse;min-width:600px;">
             <thead>
               <tr>
                 <th style="width:130px;">Type</th>
@@ -192,9 +190,11 @@
 <!-- Detail Modal -->
 <div id="detailModal" class="modal-overlay" onclick="if(event.target===this)closeModal('detailModal')">
   <div class="modal-box" style="max-width:600px;max-height:80vh;overflow-y:auto;">
-    <div class="modal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
-      <h2 style="margin:0;font-size:1.25rem;">Deletion Details</h2>
-      <button class="btn btn-outline" onclick="closeModal('detailModal')" style="padding:.3rem .7rem;">✕</button>
+    <div class="modal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem; border-bottom:1px solid var(--c-border); padding-bottom: 1rem;">
+      <h2 style="margin:0;font-size:1.35rem; font-weight:700; color:var(--c-text);">Deletion Details</h2>
+      <button type="button" class="icon-btn" onclick="closeModal('detailModal')" title="Close" style="font-size:1.2rem; color:var(--c-text-muted); background:transparent; border:none; cursor:pointer;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
     </div>
     <div id="detailContent">
       <div style="display:grid;gap:.75rem;">
@@ -206,9 +206,9 @@
         <div class="detail-row"><span class="detail-label">Reason</span><span id="dReason" class="detail-val"></span></div>
         <div class="detail-row"><span class="detail-label">Cascade From</span><span id="dParent" class="detail-val"></span></div>
       </div>
-      <div style="margin-top:1.25rem;">
-        <div class="detail-label" style="margin-bottom:.5rem;">Full Snapshot</div>
-        <pre id="dDetails" style="background:var(--c-sidebar);border:1px solid var(--c-border);border-radius:.5rem;padding:1rem;font-size:.8rem;color:var(--c-text);overflow-x:auto;white-space:pre-wrap;word-break:break-word;"></pre>
+      <div style="margin-top:1.5rem;">
+        <div class="detail-label" style="margin-bottom:.75rem;">Full Snapshot</div>
+        <pre id="dDetails" style="background:#1e293b;border:1px solid #334155;border-radius:.5rem;padding:1.25rem;font-size:.85rem;color:#e2e8f0;overflow-x:auto;white-space:pre-wrap;word-break:break-word; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);"></pre>
       </div>
     </div>
   </div>
@@ -228,10 +228,10 @@
 
 <style>
 .del-record-row:hover { background: var(--c-sidebar-hover, rgba(255,255,255,.03)) !important; }
-.detail-row { display:flex; gap:1rem; padding:.5rem 0; border-bottom:1px solid var(--c-border); }
+.detail-row { display:flex; gap:1.5rem; padding:.75rem 0; border-bottom:1px solid var(--c-border); align-items: flex-start; }
 .detail-row:last-child { border-bottom:none; }
-.detail-label { font-size:.78rem; font-weight:700; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:.05em; min-width:110px; padding-top:.1rem; }
-.detail-val { font-size:.9rem; color:var(--c-text); }
+.detail-label { font-size:.78rem; font-weight:700; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:.05em; min-width:130px; padding-top:.15rem; }
+.detail-val { font-size:.95rem; color:var(--c-text); font-weight:500; }
 .badge { display:inline-flex; align-items:center; gap:.35rem; padding:.25rem .65rem; border-radius:.375rem; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
 .badge-user    { background:rgba(99,102,241,.15); color:#818cf8; }
 .badge-group   { background:rgba(16,185,129,.15); color:#34d399; }
@@ -243,7 +243,92 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="ScriptsContent" runat="server">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 <script>
+  $(document).ready(function() {
+      // Initialize DataTables
+      var table = $('#recordsTable').DataTable({
+          "dom": 't<"bottom"p>',
+          "pageLength": 25,
+          "info": false,
+          "ordering": true,
+          "order": [[3, "desc"]], // Default order by Deleted At (column index 3)
+          "language": {
+              "emptyTable": "No deleted records found.",
+              "paginate": {
+                  "previous": "← Prev",
+                  "next": "Next →"
+              }
+          }
+      });
+
+      // Move pagination to our custom div
+      table.on('draw', function() {
+          var info = table.page.info();
+          $('#tableInfo').html('Showing <strong>' + info.recordsDisplay + '</strong> records');
+          $('#tablePagination').empty().append($('.dataTables_paginate'));
+      });
+      table.draw();
+
+      // Custom Filtering function for Date Range
+      $.fn.dataTable.ext.search.push(
+          function(settings, data, dataIndex) {
+              var minStr = $('#txtDateFrom').val();
+              var maxStr = $('#txtDateTo').val();
+              
+              if (!minStr && !maxStr) return true;
+              
+              var min = minStr ? new Date(minStr).getTime() : null;
+              var max = maxStr ? new Date(maxStr).setHours(23,59,59,999) : null;
+              
+              var rowDate = new Date(data[3]).getTime();
+              
+              if (isNaN(rowDate)) return true; // If parsing fails, don't filter it out
+
+              if (min && max) {
+                  return rowDate >= min && rowDate <= max;
+              } else if (min) {
+                  return rowDate >= min;
+              } else if (max) {
+                  return rowDate <= max;
+              }
+              return true;
+          }
+      );
+
+      // Event listeners for our custom inputs
+      $('#txtSearch').on('keyup', function() {
+          table.search(this.value).draw();
+      });
+
+      $('#ddlTypeFilter').on('change', function() {
+          var val = $.fn.dataTable.util.escapeRegex($(this).val());
+          table.column(0).search(val ? val : '', true, false).draw();
+      });
+
+      $('#txtDateFrom').on('change', function() {
+          $('#txtDateTo').attr('min', this.value);
+          table.draw();
+      });
+
+      $('#txtDateTo').on('change', function() {
+          $('#txtDateFrom').attr('max', this.value);
+          table.draw();
+      });
+
+      $('#btnClear').on('click', function() {
+          $('#txtSearch').val('');
+          $('#ddlTypeFilter').val('');
+          $('#txtDateFrom').val('').removeAttr('max');
+          $('#txtDateTo').val('').removeAttr('min');
+          table.search('');
+          table.column(0).search('');
+          table.draw();
+      });
+  });
+
   // Populate and open detail modal on server postback signal
   window.addEventListener('DOMContentLoaded', function () {
     var show = document.getElementById('<%= hdnShowModal.ClientID %>').value;
@@ -261,4 +346,13 @@
     }
   });
 </script>
+
+<style>
+/* Custom DataTables Pagination Styling */
+.dataTables_paginate { display: flex; gap: 0.5rem; align-items: center; }
+.paginate_button { cursor: pointer; padding: 0.3rem 0.7rem; border: 1px solid var(--c-border); border-radius: 0.375rem; font-size: 0.8rem; color: var(--c-text); background: transparent; transition: all 0.2s; text-decoration: none; }
+.paginate_button.current { background: var(--c-surface); font-weight: 600; border-color: var(--c-border-strong); }
+.paginate_button:hover:not(.current):not(.disabled) { background: var(--c-bg-card-hover); border-color: var(--c-border-strong); }
+.paginate_button.disabled { opacity: 0.5; cursor: not-allowed; }
+</style>
 </asp:Content>

@@ -51,7 +51,7 @@ namespace Project_Board.Admin
                             FOR XML PATH('')
                         ) AS KeywordHtml
                     FROM Projects p
-                    JOIN Groups g ON p.GroupId = g.GroupId";
+                    JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId";
                 
                 if (filter != "All")
                 {
@@ -123,7 +123,7 @@ namespace Project_Board.Admin
                                    FOR XML PATH('')
                                ), 1, 2, '') AS Keywords
                         FROM Projects p
-                        JOIN Groups g ON p.GroupId = g.GroupId
+                        JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId
                         WHERE p.ProjectId = @ProjectId";
 
                     string projectTitle = $"Project #{projectId}";
@@ -250,7 +250,7 @@ namespace Project_Board.Admin
                         g.GroupName AS [Group Name],
                         p.Status AS [Status]
                     FROM Projects p
-                    LEFT JOIN Groups g ON p.GroupId = g.GroupId";
+                    LEFT JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId";
 
                 if (filter != "All")
                 {

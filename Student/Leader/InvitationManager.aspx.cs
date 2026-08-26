@@ -113,6 +113,8 @@ namespace Project_Board.Student.Leader
                 else if (e.CommandName == "Reject")
                 {
                     // Get user info for notification
+                    string memberName = "";
+                    string memberEmail = "";
                     string userInfoSql = "SELECT u.FullName, u.Email FROM Users u WHERE u.UserId = @UserId";
                     using (SqlCommand infoCmd = new SqlCommand(userInfoSql, conn))
                     {
@@ -121,28 +123,45 @@ namespace Project_Board.Student.Leader
                         {
                             if (rdr.Read())
                             {
-                                string memberName = rdr["FullName"].ToString();
-                                string memberEmail = rdr["Email"].ToString();
-
-                                // Update status to 'Rejected' instead of deleting
-                                string rejectSql = "UPDATE GroupMembers SET JoinStatus = 'Rejected' WHERE GroupId = @GroupId AND UserId = @UserId AND JoinStatus = 'Requested'";
-                                using (SqlCommand rejectCmd = new SqlCommand(rejectSql, conn))
-                                {
-                                    rejectCmd.Parameters.AddWithValue("@GroupId", groupId);
-                                    rejectCmd.Parameters.AddWithValue("@UserId", targetUserId);
-                                    rejectCmd.ExecuteNonQuery();
-                                }
-
-                                // Send rejection notification to user
-                                string notificationSql = "INSERT INTO Notifications (UserId, Message, Link) VALUES (@UserId, @Message, @Link)";
-                                using (SqlCommand notifyCmd = new SqlCommand(notificationSql, conn))
-                                {
-                                    notifyCmd.Parameters.AddWithValue("@UserId", targetUserId);
-                                    notifyCmd.Parameters.AddWithValue("@Message", "Your request to join group has been rejected by " + Session["FullName"]);
-                                    notifyCmd.Parameters.AddWithValue("@Link", "~/Student/Member/MyRequests.aspx");
-                                    notifyCmd.ExecuteNonQuery();
-                                }
+                                memberName = rdr["FullName"].ToString();
+                                memberEmail = rdr["Email"].ToString();
                             }
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(memberEmail))
+                    {
+                        // Update status to 'Rejected' instead of deleting
+                        string rejectSql = "UPDATE GroupMembers SET JoinStatus = 'Rejected' WHERE GroupId = @GroupId AND UserId = @UserId AND JoinStatus = 'Requested'";
+                        using (SqlCommand rejectCmd = new SqlCommand(rejectSql, conn))
+                        {
+                            rejectCmd.Parameters.AddWithValue("@GroupId", groupId);
+                            rejectCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                            rejectCmd.ExecuteNonQuery();
+                        }
+
+                        // Send rejection notification to user
+                        string notificationSql = "INSERT INTO Notifications (UserId, Message, Link) VALUES (@UserId, @Message, @Link)";
+                        using (SqlCommand notifyCmd = new SqlCommand(notificationSql, conn))
+                        {
+                            notifyCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                            notifyCmd.Parameters.AddWithValue("@Message", "Your request to join group has been rejected by " + Session["FullName"]);
+                            notifyCmd.Parameters.AddWithValue("@Link", "~/Student/Member/MyRequests.aspx");
+                            notifyCmd.ExecuteNonQuery();
+                        }
+                        
+                        // Send Email
+                        string groupNameSql = "SELECT GroupName FROM Groups WHERE GroupId = @GroupId";
+                        using (SqlCommand grpCmd = new SqlCommand(groupNameSql, conn))
+                        {
+                            grpCmd.Parameters.AddWithValue("@GroupId", groupId);
+                            string groupName = grpCmd.ExecuteScalar()?.ToString() ?? "Group";
+                            Project_Board.Services.EmailService.SendMemberJoinRequestRejectedNotification(
+                                memberEmail,
+                                memberName,
+                                Session["FullName"]?.ToString() ?? "Leader",
+                                groupName
+                            );
                         }
                     }
                 }
@@ -154,7 +173,7 @@ namespace Project_Board.Student.Leader
                     {
                         string infoSql = @"
                             SELECT u.FullName AS MemberName, g.GroupName, l.FullName AS LeaderName, l.Email AS LeaderEmail
-                            FROM Users u, Groups g, Users l
+                            FROM Users u, (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g, Users l
                             WHERE u.UserId = @UserId AND g.GroupId = @GroupId AND g.LeaderId = l.UserId";
                         using (SqlCommand infoCmd = new SqlCommand(infoSql, conn))
                         {

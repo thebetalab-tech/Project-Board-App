@@ -51,7 +51,7 @@ namespace Project_Board.Admin.Details
                 string queryDetails = @"
                     SELECT p.ProjectTitle, p.ProjectType, p.Functionality, p.Status, p.SubmittedAt, g.GroupName
                     FROM Projects p
-                    INNER JOIN Groups g ON p.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId
                     WHERE p.ProjectId = @ProjectId";
 
                 using (SqlCommand cmd = new SqlCommand(queryDetails, conn))

@@ -87,7 +87,7 @@ namespace Project_Board.Admin
                         cmd.ExecuteNonQuery();
                     }
                     // Find Leader
-                    using (SqlCommand cmd = new SqlCommand("SELECT g.LeaderId FROM Projects p JOIN Groups g ON p.GroupId = g.GroupId WHERE p.ProjectId = @Id", conn))
+                    using (SqlCommand cmd = new SqlCommand("SELECT g.LeaderId FROM Projects p JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId WHERE p.ProjectId = @Id", conn))
                     {
                         cmd.Parameters.AddWithValue("@Id", id);
                         object result = cmd.ExecuteScalar();

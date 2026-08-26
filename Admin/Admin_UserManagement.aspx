@@ -25,7 +25,7 @@
                                 <asp:ListItem Text="Faculty" Value="Faculty"></asp:ListItem>
                                 <asp:ListItem Text="Admins" Value="Admin"></asp:ListItem>
                             </asp:DropDownList>
-                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click">
+                            <asp:LinkButton ID="btnExportReport" runat="server" CssClass="btn-secondary" OnClick="btnExportReport_Click" CausesValidation="false">
                                 <i class="fa-solid fa-file-export"></i> Export Report
                             </asp:LinkButton>
                             <div class="search-bar" style="width: 250px;">
@@ -69,7 +69,7 @@
                                                 <button type="button" class="icon-btn edit" onclick="openEditUserModal('<%# Eval("UserId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("FullName").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Email").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("EnrollmentNo"))) %>', '<%# Eval("Role") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit User">
                                                     <i class="fa-solid fa-edit"></i>
                                                 </button>
-                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to deactivate this user?');">
+                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to deactivate this user?');" CausesValidation="false">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </asp:LinkButton>
                                             </div>
@@ -116,12 +116,12 @@
                 <div style="display:flex; gap:1rem;">
                     <div class="form-group" style="flex:1;">
                         <label>Enrollment / Faculty ID</label>
-                        <asp:TextBox ID="txtEnrollment" runat="server" CssClass="form-control" placeholder="e.g. 24020201071" MaxLength="20"></asp:TextBox>
+                        <asp:TextBox ID="txtEnrollment" runat="server" CssClass="form-control" placeholder="e.g. 24020201071" MaxLength="11"></asp:TextBox>
                         <asp:RequiredFieldValidator ID="reqEnrollment" runat="server" ControlToValidate="txtEnrollment" ErrorMessage="Enrollment number is required" ForeColor="Red" Display="Dynamic" />
-                        <asp:RegularExpressionValidator ID="regexEnrollment" runat="server" ControlToValidate="txtEnrollment" ErrorMessage="Enrollment must be exactly 20 digits" ValidationExpression="^[0-9]{20}$" ForeColor="Red" Display="Dynamic" />
+                        <asp:RegularExpressionValidator ID="regexEnrollment" runat="server" ControlToValidate="txtEnrollment" ErrorMessage="Enrollment must be exactly 11 digits" ValidationExpression="^[0-9]{11}$" ForeColor="Red" Display="Dynamic" />
                         <div style="margin-top:0.5rem; font-size:0.75rem; color:var(--c-text-muted);">
                             <i class="fa-solid fa-info-circle" style="color:var(--c-primary);"></i>
-                            <strong>Requirement:</strong> 20-digit enrollment number (e.g., 24020201071, 23020201099)
+                            <strong>Requirement:</strong> 11-digit enrollment number (e.g., 24020201071, 23020201091)
                         </div>
                     </div>
                     
@@ -164,7 +164,7 @@
                 <div style="display:flex; gap:1rem;">
                     <div class="form-group" style="flex:1;">
                         <label>Enrollment / Faculty ID</label>
-                        <asp:TextBox ID="txtEditEnrollment" runat="server" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox ID="txtEditEnrollment" runat="server" CssClass="form-control" MaxLength="11"></asp:TextBox>
                     </div>
                     
                     <div class="form-group" style="flex:1;">

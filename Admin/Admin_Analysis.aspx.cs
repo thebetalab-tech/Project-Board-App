@@ -42,7 +42,7 @@ namespace Project_Board.Admin
                     SELECT Status, COUNT(1) as Cnt FROM Task GROUP BY Status;
                     SELECT t.TechName, COUNT(p.ProjectId) as Cnt 
                     FROM Technologies t 
-                    LEFT JOIN Groups g ON t.TechId = g.TechId 
+                    LEFT JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.TechId = g.TechId 
                     LEFT JOIN Projects p ON g.GroupId = p.GroupId 
                     GROUP BY t.TechName HAVING COUNT(p.ProjectId) > 0;
                 ";

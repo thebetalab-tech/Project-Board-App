@@ -39,18 +39,18 @@ namespace Project_Board.Faculty
                     
                     SELECT p.Status, COUNT(1) as Cnt 
                     FROM Projects p 
-                    INNER JOIN Groups g ON p.GroupId = g.GroupId 
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId 
                     WHERE g.MentorId = @FacultyId 
                     GROUP BY p.Status;
                     
                     SELECT t.Status, COUNT(1) as Cnt 
                     FROM Task t 
-                    INNER JOIN Groups g ON t.GroupId = g.GroupId 
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId 
                     WHERE g.MentorId = @FacultyId 
                     GROUP BY t.Status;
 
                     SELECT tech.TechName, COUNT(1) as Cnt 
-                    FROM Groups g 
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g 
                     INNER JOIN Technologies tech ON g.TechId = tech.TechId 
                     WHERE g.MentorId = @FacultyId 
                     GROUP BY tech.TechName;

@@ -62,7 +62,7 @@ namespace Project_Board.Faculty
                 // Active projects from mentored groups
                 string qProjects = @"
                     SELECT COUNT(*) FROM Projects p
-                    INNER JOIN Groups g ON p.GroupId = g.GroupId
+                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId
                     WHERE g.MentorId = @FacultyId AND g.Status != 'Pending Faculty Approval'";
                 using (SqlCommand cmd = new SqlCommand(qProjects, conn))
                 {
@@ -72,8 +72,8 @@ namespace Project_Board.Faculty
 
                 string chartQuery = @"
                     SELECT Status, COUNT(1) as Cnt FROM Groups WHERE MentorId = @FacultyId GROUP BY Status;
-                    SELECT p.Status, COUNT(1) as Cnt FROM Projects p INNER JOIN Groups g ON p.GroupId = g.GroupId WHERE g.MentorId = @FacultyId GROUP BY p.Status;
-                    SELECT t.Status, COUNT(1) as Cnt FROM Task t INNER JOIN Groups g ON t.GroupId = g.GroupId WHERE g.MentorId = @FacultyId GROUP BY t.Status;
+                    SELECT p.Status, COUNT(1) as Cnt FROM Projects p INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId WHERE g.MentorId = @FacultyId GROUP BY p.Status;
+                    SELECT t.Status, COUNT(1) as Cnt FROM Task t INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId WHERE g.MentorId = @FacultyId GROUP BY t.Status;
                 ";
 
                 using (SqlCommand cmd = new SqlCommand(chartQuery, conn))

@@ -48,6 +48,35 @@ namespace Project_Board
                     }
                 }
 
+                // Check for Lockdown
+                bool isLockedDown = false;
+                if (!string.IsNullOrEmpty(connString))
+                {
+                    using (SqlConnection conn = new SqlConnection(connString))
+                    {
+                        conn.Open();
+                        string sqlLockdown = @"
+                            SELECT 1 FROM Groups g WHERE g.LeaderId = @UserId AND g.IsActive = 0
+                            UNION
+                            SELECT 1 FROM Groups g INNER JOIN GroupMembers gm ON g.GroupId = gm.GroupId WHERE gm.UserId = @UserId AND gm.JoinStatus = 'Accepted' AND g.IsActive = 0";
+                        using (SqlCommand cmd = new SqlCommand(sqlLockdown, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@UserId", Session["UserId"]);
+                            object result = cmd.ExecuteScalar();
+                            if (result != null)
+                            {
+                                isLockedDown = true;
+                            }
+                        }
+                    }
+                }
+
+                if (isLockedDown)
+                {
+                    Response.Redirect("~/Student/Lockdown.aspx");
+                    return;
+                }
+
                 LoadTechnologies();
                 LoadAvailableGroups();
             }

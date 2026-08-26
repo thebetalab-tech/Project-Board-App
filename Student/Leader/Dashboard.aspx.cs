@@ -69,7 +69,7 @@ namespace Project_Board.Student.Leader
                     SELECT g.GroupName, t.TechName, g.GroupId, g.MemberNeeded,
                            m.FullName AS MentorName, m.Email AS MentorEmail,
                            g.Status AS GroupStatus
-                    FROM Groups g
+                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     LEFT JOIN Technologies t ON g.TechId = t.TechId
                     LEFT JOIN Users m ON g.MentorId = m.UserId
                     WHERE g.LeaderId = @LeaderId";
@@ -104,6 +104,20 @@ namespace Project_Board.Student.Leader
                     }
                 }
 
+                if (groupId == 0)
+                {
+                    // User is marked as Leader but has no group (orphan leader). Reset and redirect.
+                    string resetSql = "UPDATE Users SET IsLeader = 0 WHERE UserId = @UserId";
+                    using (SqlCommand resetCmd = new SqlCommand(resetSql, conn))
+                    {
+                        resetCmd.Parameters.AddWithValue("@UserId", leaderId);
+                        resetCmd.ExecuteNonQuery();
+                    }
+                    Session["IsLeader"] = "False";
+                    Response.Redirect("~/Student/Member/Dashboard.aspx");
+                    return;
+                }
+                
                 if (groupId > 0)
                 {
                     // Load Members
@@ -113,7 +127,7 @@ namespace Project_Board.Student.Leader
                                CASE WHEN g.LeaderId = u.UserId THEN 'Leader' ELSE 'Member' END AS Role
                         FROM Users u
                         LEFT JOIN GroupMembers gm ON u.UserId = gm.UserId AND gm.GroupId = @GroupId AND (gm.JoinStatus = 'Accepted' OR gm.JoinStatus = 'accepted')
-                        LEFT JOIN Groups g ON g.GroupId = @GroupId AND g.LeaderId = u.UserId
+                        LEFT JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON g.GroupId = @GroupId AND g.LeaderId = u.UserId
                         WHERE (gm.GroupId IS NOT NULL OR g.LeaderId IS NOT NULL)
                         ORDER BY CASE WHEN g.LeaderId = u.UserId THEN 0 ELSE 1 END, u.FullName ASC";
 
