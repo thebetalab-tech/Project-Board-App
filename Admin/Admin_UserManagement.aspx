@@ -15,10 +15,39 @@
                     </button>
                 </div>
 
+                <div class="stats-grid" style="margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon users"><i class="fa-solid fa-users"></i></div>
+                        </div>
+                        <div class="stat-value"><asp:Label ID="lblTotalUsers" runat="server" Text="0"></asp:Label></div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background:rgba(16,185,129,.12);color:#10b981;"><i class="fa-solid fa-user-check"></i></div>
+                        </div>
+                        <div class="stat-value"><asp:Label ID="lblActiveUsers" runat="server" Text="0"></asp:Label></div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background:rgba(239,68,68,.12);color:#ef4444;"><i class="fa-solid fa-user-xmark"></i></div>
+                        </div>
+                        <div class="stat-value"><asp:Label ID="lblInactiveUsers" runat="server" Text="0"></asp:Label></div>
+                        <div class="stat-label">Inactive Users</div>
+                    </div>
+                </div>
+
                 <div class="data-section">
                     <div class="section-header">
                         <h2>All Users</h2>
                         <div style="display:flex; gap: 10px; align-items:center;">
+                            <asp:DropDownList ID="ddlStatusFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-control" style="width:auto; padding: 0.5rem;">
+                                <asp:ListItem Text="All Status" Value="All"></asp:ListItem>
+                                <asp:ListItem Text="Active" Value="1"></asp:ListItem>
+                                <asp:ListItem Text="Inactive" Value="0"></asp:ListItem>
+                            </asp:DropDownList>
                             <asp:DropDownList ID="ddlReportFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-control" style="width:auto; padding: 0.5rem;">
                                 <asp:ListItem Text="All Roles" Value="All"></asp:ListItem>
                                 <asp:ListItem Text="Students" Value="Student"></asp:ListItem>
@@ -40,6 +69,7 @@
                                 <th>User</th>
                                 <th>Enrollment/ID</th>
                                 <th>Role</th>
+                                <th>Status</th>
                                 <th>Leader Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -62,6 +92,11 @@
                                         <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("EnrollmentNo"))) ? "N/A" : Eval("EnrollmentNo") %></td>
                                         <td><span class='badge <%# Eval("Role").ToString().ToLower() %>'><%# Eval("Role") %></span></td>
                                         <td>
+                                            <%# Convert.ToBoolean(Eval("IsActive")) 
+                                                ? "<span class='badge' style='background:rgba(16,185,129,.12);color:#10b981;'>Active</span>" 
+                                                : "<span class='badge' style='background:rgba(239,68,68,.12);color:#ef4444;'>Inactive</span>" %>
+                                        </td>
+                                        <td>
                                             <%# Convert.ToBoolean(Eval("IsLeader")) ? "<i class='fa-solid fa-crown' style='color: var(--c-yellow);' title='Group Leader'></i> Yes" : "-" %>
                                         </td>
                                         <td>
@@ -69,7 +104,10 @@
                                                 <button type="button" class="icon-btn edit" onclick="openEditUserModal('<%# Eval("UserId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("FullName").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Email").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("EnrollmentNo"))) %>', '<%# Eval("Role") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit User">
                                                     <i class="fa-solid fa-edit"></i>
                                                 </button>
-                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to deactivate this user?');" CausesValidation="false">
+                                                <asp:LinkButton ID="btnActivate" runat="server" CssClass="icon-btn edit" CommandName="ActivateUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to activate this user?');" CausesValidation="false" Visible='<%# !Convert.ToBoolean(Eval("IsActive")) %>' style="color:#10b981;" title="Activate User">
+                                                    <i class="fa-solid fa-user-check"></i>
+                                                </asp:LinkButton>
+                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to deactivate this user?');" CausesValidation="false" Visible='<%# Convert.ToBoolean(Eval("IsActive")) %>' title="Deactivate User">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </asp:LinkButton>
                                             </div>
