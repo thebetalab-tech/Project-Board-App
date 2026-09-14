@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Web;
 
 namespace Project_Board.Admin.Details
 {
@@ -63,15 +64,17 @@ namespace Project_Board.Admin.Details
                     {
                         if (reader.Read())
                         {
-                            litProjectTitle.Text = reader["ProjectTitle"].ToString();
-                            litGroupName.Text = reader["GroupName"].ToString();
+                            litProjectTitle.Text = HttpUtility.HtmlEncode(reader["ProjectTitle"].ToString());
+                            litGroupName.Text = HttpUtility.HtmlEncode(reader["GroupName"].ToString());
                             litProjectType.Text = reader["ProjectType"].ToString() == "IDP" ? "Industry Defined Project (IDP)" : "User Defined Project (UDP)";
-                            
+
                             string status = reader["Status"].ToString();
-                            litStatus.Text = $"<span class='badge status-{status.ToLower()}'>{status}</span>";
-                            
-                            litSubmittedAt.Text = Convert.ToDateTime(reader["SubmittedAt"]).ToString("MMM dd, yyyy hh:mm tt");
-                            litFunctionality.Text = reader["Functionality"].ToString().Replace("\n", "<br/>");
+                            litStatus.Text = $"<span class='badge status-{HttpUtility.HtmlEncode(status.ToLower())}'>{HttpUtility.HtmlEncode(status)}</span>";
+
+                            litSubmittedAt.Text = reader["SubmittedAt"] != DBNull.Value
+                                ? Convert.ToDateTime(reader["SubmittedAt"]).ToString("MMM dd, yyyy hh:mm tt")
+                                : "N/A";
+                            litFunctionality.Text = HttpUtility.HtmlEncode(reader["Functionality"].ToString()).Replace("\n", "<br/>");
                         }
                         else
                         {

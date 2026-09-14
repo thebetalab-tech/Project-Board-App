@@ -56,7 +56,7 @@ namespace Project_Board.User
                                 
                                 string fullName = reader["FullName"].ToString();
                                 string role = reader["Role"].ToString();
-                                bool isLeader = Convert.ToBoolean(reader["IsLeader"]);
+                                bool isLeader = reader["IsLeader"] != DBNull.Value && Convert.ToBoolean(reader["IsLeader"]);
                                 string email = reader["Email"].ToString();
                                 string enrollmentNo = reader["EnrollmentNo"]?.ToString();
 
@@ -84,7 +84,8 @@ namespace Project_Board.User
             }
             catch (Exception ex)
             {
-                lblError.Text = "Could not load profile: " + ex.Message;
+                System.Diagnostics.Trace.TraceError("[PublicProfile] " + ex);
+                lblError.Text = "Could not load profile. Please try again.";
             }
         }
     }

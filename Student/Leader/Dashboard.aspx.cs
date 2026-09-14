@@ -164,36 +164,38 @@ namespace Project_Board.Student.Leader
 
                                 if (dueDate.HasValue && dueDate.Value < DateTime.Now && st != "Completed") OverdueTasks++;
                             }
-                            
-                            var dictTasks = new System.Collections.Generic.Dictionary<string, int>();
-                            dictTasks["Pending"] = PendingTasks;
-                            dictTasks["In Progress"] = InProgressTasks;
-                            dictTasks["Completed"] = CompletedTasks;
-                            dictTasks["Appealed"] = AppealedTasks;
-                            System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
-                            TasksByStatusJson = js.Serialize(dictTasks);
+                        }
+                        // tRdr is closed here (end of its using block) before any other
+                        // command runs on the same connection.
+                    }
 
-                            // Get Stats
-                            string statsQuery = @"
-                                SELECT 
-                                    COUNT(UserId) AS Total,
-                                    SUM(CASE WHEN JoinStatus = 'Pending' THEN 1 ELSE 0 END) AS Pending,
-                                    SUM(CASE WHEN JoinStatus = 'Accepted' THEN 1 ELSE 0 END) AS Accepted
-                                FROM GroupMembers
-                                WHERE GroupId = @GroupId
-                            ";
-                            using (SqlCommand statsCmd = new SqlCommand(statsQuery, conn))
+                    var dictTasks = new System.Collections.Generic.Dictionary<string, int>();
+                    dictTasks["Pending"] = PendingTasks;
+                    dictTasks["In Progress"] = InProgressTasks;
+                    dictTasks["Completed"] = CompletedTasks;
+                    dictTasks["Appealed"] = AppealedTasks;
+                    System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
+                    TasksByStatusJson = js.Serialize(dictTasks);
+
+                    // Get Stats
+                    string statsQuery = @"
+                        SELECT
+                            COUNT(UserId) AS Total,
+                            SUM(CASE WHEN JoinStatus = 'Pending' THEN 1 ELSE 0 END) AS Pending,
+                            SUM(CASE WHEN JoinStatus = 'Accepted' THEN 1 ELSE 0 END) AS Accepted
+                        FROM GroupMembers
+                        WHERE GroupId = @GroupId
+                    ";
+                    using (SqlCommand statsCmd = new SqlCommand(statsQuery, conn))
+                    {
+                        statsCmd.Parameters.AddWithValue("@GroupId", groupId);
+                        using (SqlDataReader statsReader = statsCmd.ExecuteReader())
+                        {
+                            if (statsReader.Read())
                             {
-                                statsCmd.Parameters.AddWithValue("@GroupId", groupId);
-                                using (SqlDataReader statsReader = statsCmd.ExecuteReader())
-                                {
-                                    if (statsReader.Read())
-                                    {
-                                        TotalMembers = statsReader["Total"] != DBNull.Value ? Convert.ToInt32(statsReader["Total"]) : 0;
-                                        PendingInvites = statsReader["Pending"] != DBNull.Value ? Convert.ToInt32(statsReader["Pending"]) : 0;
-                                        AcceptedInvites = statsReader["Accepted"] != DBNull.Value ? Convert.ToInt32(statsReader["Accepted"]) : 0;
-                                    }
-                                }
+                                TotalMembers = statsReader["Total"] != DBNull.Value ? Convert.ToInt32(statsReader["Total"]) : 0;
+                                PendingInvites = statsReader["Pending"] != DBNull.Value ? Convert.ToInt32(statsReader["Pending"]) : 0;
+                                AcceptedInvites = statsReader["Accepted"] != DBNull.Value ? Convert.ToInt32(statsReader["Accepted"]) : 0;
                             }
                         }
                     }

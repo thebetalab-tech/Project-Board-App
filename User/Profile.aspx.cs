@@ -156,7 +156,7 @@ namespace Project_Board.User
                     
                     if (!string.IsNullOrEmpty(newPass))
                     {
-                        cmd.Parameters.AddWithValue("@PasswordHash", HashPassword(newPass));
+                        cmd.Parameters.AddWithValue("@PasswordHash", Project_Board.Utils.AuthHelper.HashPassword(newPass));
                     }
 
                     try
@@ -192,21 +192,6 @@ namespace Project_Board.User
                         ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Error updating profile.');", true);
                     }
                 }
-            }
-        }
-
-        // PBKDF2 Password Hashing
-        private static string HashPassword(string password)
-        {
-            byte[] salt = new byte[16];
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(salt);
-            }
-            using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, 100000))
-            {
-                byte[] hash = deriveBytes.GetBytes(32);
-                return $"QKDF2$100000${Convert.ToBase64String(salt)}${Convert.ToBase64String(hash)}";
             }
         }
     }

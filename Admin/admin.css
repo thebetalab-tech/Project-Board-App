@@ -599,6 +599,60 @@ td {
     overflow-wrap: anywhere;
 }
 
+/* Text Preview / Truncation — shared across Admin, Faculty, and Student modules for any
+   long free-text DB field (descriptions, feedback, report text, notification messages,
+   appeal reasons, etc.) shown inside a list row or card. Clamps the text to a few lines
+   so a large pasted block can't stretch the row or misalign sibling columns, and offers
+   a "View more" toggle (see toggleTextPreview() in admin.js) to reveal the full text. */
+.text-preview {
+    max-width: 100%;
+}
+
+.text-preview-content {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 4.5em;
+    line-height: 1.5em;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.text-preview.expanded .text-preview-content {
+    -webkit-line-clamp: unset;
+    max-height: none;
+    overflow: visible;
+}
+
+.text-preview-toggle {
+    display: inline-block;
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--c-primary);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.text-preview-toggle:hover {
+    opacity: 0.8;
+}
+
+/* Safety net for the detail-card / detail-grid layout used across the Admin, Faculty,
+   and Student "*_Details.aspx" and "TaskDetails.aspx" pages, so a long DB text value
+   (e.g. project functionality, reviewer remarks) wraps within its card instead of
+   overflowing or stretching a grid row out of alignment with its siblings. */
+.detail-card p,
+.detail-grid .detail-item span {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
 tbody tr {
     transition: var(--transition);
 }

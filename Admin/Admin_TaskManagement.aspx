@@ -158,15 +158,15 @@
                             <asp:Repeater ID="rptAdminTasks" runat="server" OnItemCommand="rptAdminTasks_ItemCommand">
                                 <ItemTemplate>
                                     <tr>
-                                        <td><strong><%# Eval("TaskTitle") %></strong></td>
-                                        <td><%# Eval("GroupName") %></td>
-                                        <td><%# Eval("AssignedToName") %></td>
-                                        <td><%# Eval("AssignedByName") %></td>
-                                        <td><span class="badge-status badge-progress"><%# Eval("TaskLevel") %></span></td>
+                                        <td><strong><%# HttpUtility.HtmlEncode(Eval("TaskTitle").ToString()) %></strong></td>
+                                        <td><%# HttpUtility.HtmlEncode(Eval("GroupName").ToString()) %></td>
+                                        <td><%# HttpUtility.HtmlEncode(Eval("AssignedToName").ToString()) %></td>
+                                        <td><%# HttpUtility.HtmlEncode(Eval("AssignedByName").ToString()) %></td>
+                                        <td><span class="badge-status badge-progress"><%# HttpUtility.HtmlEncode(Eval("TaskLevel").ToString()) %></span></td>
                                         <td><%# Eval("DueDate") != DBNull.Value ? Convert.ToDateTime(Eval("DueDate")).ToString("MMM dd, yyyy") : "No Due Date" %></td>
                                         <td>
                                             <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "Appealed" ? "badge-appealed" : "badge-progress") %>'>
-                                                <%# Eval("Status") %>
+                                                <%# HttpUtility.HtmlEncode(Eval("Status").ToString()) %>
                                             </span>
                                         </td>
                                         <td>

@@ -15,15 +15,6 @@ namespace Project_Board.Admin
     {
 
         /// <summary>
-        /// form1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-
-        /// <summary>
         /// rptUsers control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Repeater rptUsers;
@@ -65,32 +56,7 @@ namespace Project_Board.Admin
         /// btnAddUser control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Button btnAddUser;
-        /// <summary>
-        /// userNameLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label userNameLabel;
 
-        /// <summary>
-        /// userEmailLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label userEmailLabel;
-        /// <summary>
-        /// userintial control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label userintial;
-        
         protected global::System.Web.UI.WebControls.HiddenField hdnEditUserId;
         protected global::System.Web.UI.WebControls.TextBox txtEditFullName;
         protected global::System.Web.UI.WebControls.TextBox txtEditEmail;

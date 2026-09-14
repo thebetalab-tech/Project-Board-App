@@ -30,11 +30,6 @@ namespace Project_Board.Faculty
         protected global::System.Web.UI.WebControls.Label lblReviewerRemarks;
 
         // Actions
-        protected global::System.Web.UI.WebControls.TextBox txtRemarks;
-        protected global::System.Web.UI.WebControls.Button btnMarkCompleted;
-        protected global::System.Web.UI.WebControls.Button btnRejectCompletion;
-        protected global::System.Web.UI.WebControls.Button btnAcceptAppeal;
-        protected global::System.Web.UI.WebControls.Button btnRejectAppeal;
         protected global::System.Web.UI.WebControls.Label lblMessage;
     }
 }

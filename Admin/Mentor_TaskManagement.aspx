@@ -352,13 +352,13 @@
                             <ItemTemplate>
                                 <tr>
                                     <td>
-                                        <strong><%# Eval("TaskTitle") %></strong>
+                                        <strong><%# HttpUtility.HtmlEncode(Eval("TaskTitle").ToString()) %></strong>
                                         <div style="font-size: 0.8rem; color: var(--c-text-muted); margin-top: 0.2rem;">
-                                            <%# Eval("TaskDescription") != DBNull.Value && !string.IsNullOrEmpty(Eval("TaskDescription").ToString()) ? Eval("TaskDescription") : "No details" %>
+                                            <%# Project_Board.Utils.UiHelper.TextPreview(Eval("TaskDescription"), "No details") %>
                                         </div>
                                     </td>
-                                    <td><%# Eval("GroupName") %></td>
-                                    <td><%# Eval("AssignedToName") %></td>
+                                    <td><%# HttpUtility.HtmlEncode(Eval("GroupName").ToString()) %></td>
+                                    <td><%# HttpUtility.HtmlEncode(Eval("AssignedToName").ToString()) %></td>
                                     <td><%# Eval("DueDate") != DBNull.Value ? Convert.ToDateTime(Eval("DueDate")).ToString("MMM dd, yyyy") : "No due date" %></td>
                                     <td>
                                         <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "Appealed" ? "badge-appealed" : (Eval("Status").ToString() == "Revision Needed" || Eval("Status").ToString() == "Failed" ? "badge-danger" : "badge-progress")) %>'>

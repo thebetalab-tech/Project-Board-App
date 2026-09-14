@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0" DefaultTargets="Build">
   <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -118,7 +118,6 @@
     <Content Include="Login.aspx" />
     <Content Include="User\profile.css" />
     <Content Include="User\forget_password.css" />
-    <Content Include="Student\Leader\Task\TaskManagement.aspx" />
     <Content Include="Admin\admin.js" />
     <Content Include="Admin\Admin_Dashboard.aspx" />
     <Content Include="Admin\Admin_GroupsManagement.aspx" />
@@ -173,7 +172,6 @@
     <Content Include="Student\Leader\Leader_Mentor.aspx" />
     <Content Include="Student\Leader\Leader_Project.aspx" />
     <Content Include="Student\Leader\Leader_TaskManagement.aspx" />
-    <Content Include="Student\Leader\Project_Management.aspx" />
     <Content Include="Student\Member\Dashboard.aspx" />
     <Content Include="Student\Member\InvitationManager.aspx" />
     <Content Include="Student\Member\Member_Project.aspx" />
@@ -313,7 +311,6 @@
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Services\EmailService.cs" />
-    <Compile Include="App_Code\ReportService.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -487,13 +484,6 @@
     <Compile Include="Student\Leader\Leader_TaskManagement.aspx.designer.cs">
       <DependentUpon>Leader_TaskManagement.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Student\Leader\Project_Management.aspx.cs">
-      <DependentUpon>Project_Management.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Student\Leader\Project_Management.aspx.designer.cs">
-      <DependentUpon>Project_Management.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Student\Member\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -573,18 +563,14 @@
     <Compile Include="Student\Leader\ReviewAppeal.aspx.designer.cs">
       <DependentUpon>ReviewAppeal.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Student\Leader\Task\TaskManagement.aspx.cs">
-      <DependentUpon>TaskManagement.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Student\Leader\Task\TaskManagement.aspx.designer.cs">
-      <DependentUpon>TaskManagement.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Faculty\RejectionForm.aspx.cs">
       <DependentUpon>RejectionForm.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Utils\NotificationHelper.cs" />
+    <Compile Include="Utils\ReportService.cs" />
+    <Compile Include="Utils\AuthHelper.cs" />
+    <Compile Include="Utils\UiHelper.cs" />
     <Compile Include="User\Notifications.aspx.cs">
       <DependentUpon>Notifications.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

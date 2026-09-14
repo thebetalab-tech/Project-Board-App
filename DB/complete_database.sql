@@ -1,4 +1,4 @@
--- ============================================================================
+﻿-- ============================================================================
 -- Complete Master Database Setup Script
 -- Project Board Database Schema & Stored Procedures
 -- File: DB/complete_database.sql
@@ -56,7 +56,8 @@ BEGIN
         TechId INT FOREIGN KEY REFERENCES Technologies(TechId),
         MentorId INT FOREIGN KEY REFERENCES Users(UserId) NULL,
         Status NVARCHAR(30) DEFAULT 'Forming',
-        IsActive BIT DEFAULT 1
+        IsActive BIT DEFAULT 1,
+        MemberNeeded BIT NOT NULL DEFAULT 1
     );
 END
 GO
@@ -66,6 +67,11 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Groups') A
 BEGIN
     ALTER TABLE Groups ADD IsActive BIT DEFAULT 1;
 END
+GO
+
+-- Ensure MemberNeeded exists on databases created before this column was added
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Groups') AND name = 'MemberNeeded')
+    ALTER TABLE Groups ADD MemberNeeded BIT NOT NULL DEFAULT 1;
 GO
 
 -- Group Members Mapping
@@ -184,6 +190,43 @@ BEGIN
         IsRead BIT DEFAULT 0,
         CreatedAt DATETIME DEFAULT GETDATE()
     );
+END
+GO
+
+-- Reshape legacy Notifications tables (Title/NotificationType/TargetUrl) to the
+-- Message/Link shape the application code actually uses. Each step is independent
+-- so the block is safe to re-run, including after a partial application.
+IF OBJECT_ID('Notifications', 'U') IS NOT NULL
+BEGIN
+    -- TargetUrl -> Link
+    IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'TargetUrl')
+       AND NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'Link')
+        EXEC sp_rename 'Notifications.TargetUrl', 'Link', 'COLUMN';
+
+    -- Drop the legacy columns, clearing any default constraint that depends on them first
+    DECLARE @sql NVARCHAR(MAX);
+    DECLARE @col SYSNAME;
+    DECLARE legacy CURSOR LOCAL FAST_FORWARD FOR
+        SELECT name FROM sys.columns
+        WHERE object_id = OBJECT_ID('Notifications') AND name IN ('Title', 'NotificationType');
+    OPEN legacy;
+    FETCH NEXT FROM legacy INTO @col;
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SELECT @sql = 'ALTER TABLE Notifications DROP CONSTRAINT ' + QUOTENAME(dc.name)
+        FROM sys.default_constraints dc
+        JOIN sys.columns c ON c.object_id = dc.parent_object_id AND c.column_id = dc.parent_column_id
+        WHERE dc.parent_object_id = OBJECT_ID('Notifications') AND c.name = @col;
+        IF @sql IS NOT NULL EXEC sp_executesql @sql;
+        SET @sql = NULL;
+
+        SET @sql = N'ALTER TABLE Notifications DROP COLUMN ' + QUOTENAME(@col);
+        EXEC sp_executesql @sql;
+        SET @sql = NULL;
+        FETCH NEXT FROM legacy INTO @col;
+    END
+    CLOSE legacy;
+    DEALLOCATE legacy;
 END
 GO
 

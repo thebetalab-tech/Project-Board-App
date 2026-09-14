@@ -1,4 +1,5 @@
 using System;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
@@ -90,8 +91,8 @@ namespace Project_Board.Student.Leader
                         {
                             if (mRdr.Read())
                             {
-                                mentorName = mRdr["FullName"].ToString();
-                                mentorEmail = mRdr["Email"].ToString();
+                                mentorName = HttpUtility.HtmlEncode(mRdr["FullName"].ToString());
+                                mentorEmail = HttpUtility.HtmlEncode(mRdr["Email"].ToString());
                             }
                         }
                     }

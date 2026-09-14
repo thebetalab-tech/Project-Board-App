@@ -47,17 +47,17 @@
                                     <tr>
                                         <td>
                                             <div style="max-width: 300px;">
-                                                <strong><%# Eval("ProjectTitle") %></strong>
+                                                <strong><%# HttpUtility.HtmlEncode(Eval("ProjectTitle").ToString()) %></strong>
                                                 <p style="font-size:0.75rem; color:var(--c-text-muted); margin-top:0.25rem;">
-                                                    <%# Eval("Functionality") %>
+                                                    <%# Project_Board.Utils.UiHelper.TextPreview(Eval("Functionality")) %>
                                                 </p>
                                             </div>
                                         </td>
-                                        <td><%# Eval("GroupName") %></td>
+                                        <td><%# HttpUtility.HtmlEncode(Eval("GroupName").ToString()) %></td>
                                         <td>
-                                            <%# HttpUtility.HtmlDecode(Convert.ToString(Eval("KeywordHtml"))) %>
+                                            <%# RenderKeywordTags(Eval("Keywords")) %>
                                         </td>
-                                        <td><span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span></td>
+                                        <td><span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# HttpUtility.HtmlEncode(Eval("Status").ToString()) %></span></td>
                                         <td>
                                             <div class="table-actions">
                                                 <button type="button" class="icon-btn edit" onclick="openEditProjectModal('<%# Eval("ProjectId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("ProjectTitle").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Functionality").ToString()) %>', '<%# Eval("Status") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit Project">

@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -68,24 +69,22 @@ namespace Project_Board.Faculty
                     {
                         if (rdr.Read())
                         {
-                            lblTaskTitle.Text = rdr["TaskTitle"].ToString();
-                            lblGroupName.Text = rdr["GroupName"].ToString();
-                            lblAssignedTo.Text = rdr["AssignedToName"].ToString();
-                            
-                            bool isLeader = Convert.ToBoolean(rdr["IsLeader"]);
+                            lblTaskTitle.Text = HttpUtility.HtmlEncode(rdr["TaskTitle"].ToString());
+                            lblGroupName.Text = HttpUtility.HtmlEncode(rdr["GroupName"].ToString());
+                            lblAssignedTo.Text = HttpUtility.HtmlEncode(rdr["AssignedToName"].ToString());
+
+                            bool isLeader = rdr["IsLeader"] != DBNull.Value && Convert.ToBoolean(rdr["IsLeader"]);
                             lblStudentRole.Text = isLeader ? "Group Leader" : "Group Member";
 
-                            lblAssignedBy.Text = rdr["AssignedByName"].ToString();
+                            lblAssignedBy.Text = HttpUtility.HtmlEncode(rdr["AssignedByName"].ToString());
                             lblDueDate.Text = rdr["DueDate"] != DBNull.Value ? Convert.ToDateTime(rdr["DueDate"]).ToString("MMM dd, yyyy") : "No Due Date";
-                            lblStatus.Text = rdr["Status"].ToString();
+                            lblStatus.Text = HttpUtility.HtmlEncode(rdr["Status"].ToString());
 
-                            lblDescription.Text = rdr["TaskDescription"] != DBNull.Value ? rdr["TaskDescription"].ToString() : "N/A";
-                            lblPointsToCover.Text = rdr["PointsToCover"] != DBNull.Value ? rdr["PointsToCover"].ToString() : "N/A";
+                            lblDescription.Text = Project_Board.Utils.UiHelper.TextPreview(rdr["TaskDescription"], "N/A");
+                            lblPointsToCover.Text = Project_Board.Utils.UiHelper.TextPreview(rdr["PointsToCover"], "N/A");
 
-                            lblReportText.Text = rdr["ReportText"] != DBNull.Value ? rdr["ReportText"].ToString() : "No submission yet";
+                            lblReportText.Text = Project_Board.Utils.UiHelper.TextPreview(rdr["ReportText"], "No submission yet");
                             lblReportSubmittedAt.Text = rdr["ReportSubmittedAt"] != DBNull.Value ? Convert.ToDateTime(rdr["ReportSubmittedAt"]).ToString("MMM dd, yyyy hh:mm tt") : "N/A";
-
-                            string existingFeedback = rdr["FeedbackText"] != DBNull.Value ? rdr["FeedbackText"].ToString() : "";
                         }
                         else
                         {
@@ -114,11 +113,11 @@ namespace Project_Board.Faculty
                             CurrentAppealId = Convert.ToInt32(aRdr["AppealId"]);
                             ViewState["CurrentAppealId"] = CurrentAppealId;
 
-                            lblAppealReason.Text = aRdr["Reason"].ToString();
-                            lblAppealStatus.Text = aRdr["Status"].ToString();
-                            lblAppealCreatedAt.Text = Convert.ToDateTime(aRdr["CreatedAt"]).ToString("MMM dd, yyyy hh:mm tt");
-                            lblReviewerName.Text = aRdr["ReviewerName"] != DBNull.Value ? aRdr["ReviewerName"].ToString() : "Pending Review";
-                            lblReviewerRemarks.Text = aRdr["Remarks"] != DBNull.Value ? aRdr["Remarks"].ToString() : "No remarks provided";
+                            lblAppealReason.Text = Project_Board.Utils.UiHelper.TextPreview(aRdr["Reason"], "N/A");
+                            lblAppealStatus.Text = HttpUtility.HtmlEncode(aRdr["Status"].ToString());
+                            lblAppealCreatedAt.Text = aRdr["CreatedAt"] != DBNull.Value ? Convert.ToDateTime(aRdr["CreatedAt"]).ToString("MMM dd, yyyy hh:mm tt") : "N/A";
+                            lblReviewerName.Text = aRdr["ReviewerName"] != DBNull.Value ? HttpUtility.HtmlEncode(aRdr["ReviewerName"].ToString()) : "Pending Review";
+                            lblReviewerRemarks.Text = Project_Board.Utils.UiHelper.TextPreview(aRdr["Remarks"], "No remarks provided");
 
 
                         }

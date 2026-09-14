@@ -85,6 +85,7 @@ namespace Project_Board.Faculty
         protected void rptProjects_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int projectId = Convert.ToInt32(e.CommandArgument);
+            int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connString))
@@ -97,13 +98,27 @@ namespace Project_Board.Faculty
                 }
 
                 string newStatus = e.CommandName == "Approve" ? "Approved" : "Rejected";
-                
-                string update = "UPDATE Projects SET Status = @Status WHERE ProjectId = @ProjectId";
+
+                // Only the mentor assigned to this project's group may change its status.
+                string update = @"
+                    UPDATE p SET p.Status = @Status
+                    FROM Projects p
+                    INNER JOIN Groups g ON p.GroupId = g.GroupId
+                    WHERE p.ProjectId = @ProjectId AND g.MentorId = @FacultyId";
+                int rowsAffected;
                 using (SqlCommand cmd = new SqlCommand(update, conn))
                 {
                     cmd.Parameters.AddWithValue("@Status", newStatus);
                     cmd.Parameters.AddWithValue("@ProjectId", projectId);
-                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+
+                if (rowsAffected == 0)
+                {
+                    ShowMessage("You are not authorized to update this project.", false);
+                    LoadProjects();
+                    return;
                 }
 
                 // Retrieve all group members and leader for notification

@@ -70,11 +70,19 @@ namespace Project_Board.Faculty
                 conn.Open();
                 if (e.CommandName == "Accept")
                 {
-                    string update = "UPDATE Groups SET Status = 'Assigned Mentor' WHERE GroupId = @GroupId";
+                    string update = "UPDATE Groups SET Status = 'Assigned Mentor' WHERE GroupId = @GroupId AND MentorId = @FacultyId";
+                    int rowsAffected;
                     using (SqlCommand cmd = new SqlCommand(update, conn))
                     {
                         cmd.Parameters.AddWithValue("@GroupId", groupId);
-                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                        rowsAffected = cmd.ExecuteNonQuery();
+                    }
+
+                    if (rowsAffected == 0)
+                    {
+                        ShowMessage("You are not authorized to accept this request.", false);
+                        return;
                     }
                     ShowMessage("Mentor request accepted successfully.", true);
                 }

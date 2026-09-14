@@ -21,7 +21,6 @@ namespace Project_Board.Faculty
         protected global::System.Web.UI.WebControls.Repeater rptTasks;
         protected global::System.Web.UI.WebControls.Label lblNoTasks;
         protected global::System.Web.UI.WebControls.DropDownList ddlReportFilter;
-        protected global::System.Web.UI.WebControls.LinkButton btnExportReport;
         protected global::System.Web.UI.WebControls.CheckBox chkColTaskTitle;
         protected global::System.Web.UI.WebControls.CheckBox chkColTaskDescription;
         protected global::System.Web.UI.WebControls.CheckBox chkColGroupName;

@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
@@ -165,7 +166,7 @@ namespace Project_Board.Student.Leader
 
                             if (normPTitle.Contains(normInput) || normInput.Contains(normPTitle))
                             {
-                                matches.Add($"\"{pTitle}\" ({pStatus})");
+                                matches.Add($"\"{HttpUtility.HtmlEncode(pTitle)}\" ({HttpUtility.HtmlEncode(pStatus)})");
                                 continue;
                             }
 
@@ -175,7 +176,7 @@ namespace Project_Board.Student.Leader
                             int sharedCount = inputTokens.Count(t => pTokens.Contains(t));
                             if (sharedCount > 0 && (sharedCount >= 2 || (inputTokens.Count <= 2 && sharedCount >= 1)))
                             {
-                                matches.Add($"\"{pTitle}\" ({pStatus})");
+                                matches.Add($"\"{HttpUtility.HtmlEncode(pTitle)}\" ({HttpUtility.HtmlEncode(pStatus)})");
                             }
                         }
                     }

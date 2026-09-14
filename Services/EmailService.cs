@@ -11,34 +11,28 @@ namespace Project_Board.Services
 {
     public static class EmailService
     {
-        private const string DEFAULT_SMTP_EMAIL = "thebetalab.net@gmail.com";
-        private const string DEFAULT_SMTP_PASS = "sfmapkyjnitwbnvn";
-
         private static string SmtpHost => ConfigurationManager.AppSettings["SmtpHost"] ?? "smtp.gmail.com";
         private static int SmtpPort => int.TryParse(ConfigurationManager.AppSettings["SmtpPort"], out int p) ? p : 587;
-        
-        private static string SmtpUsername
-        {
-            get
-            {
-                string user = ConfigurationManager.AppSettings["SmtpUsername"];
-                return (string.IsNullOrWhiteSpace(user) || user.Contains("your-email")) ? DEFAULT_SMTP_EMAIL : user.Trim();
-            }
-        }
+
+        private static string SmtpUsername => ConfigurationManager.AppSettings["SmtpEmail"]?.Trim();
 
         private static string SmtpPassword
         {
             get
             {
                 string pass = ConfigurationManager.AppSettings["SmtpPassword"];
-                if (string.IsNullOrWhiteSpace(pass) || pass.Contains("your-app-password")) return DEFAULT_SMTP_PASS;
-                return pass.Replace("_", "").Replace(" ", "").Trim();
+                return string.IsNullOrWhiteSpace(pass) ? null : pass.Replace("_", "").Replace(" ", "").Trim();
             }
         }
 
-        private static string SenderEmail => ConfigurationManager.AppSettings["SenderEmail"] ?? DEFAULT_SMTP_EMAIL;
+        private static string SenderEmail => ConfigurationManager.AppSettings["SenderEmail"] ?? SmtpUsername;
         private static string SenderName => ConfigurationManager.AppSettings["SenderName"] ?? "Project Board Platform";
         private static bool EmailEnabled => bool.TryParse(ConfigurationManager.AppSettings["EmailNotificationsEnabled"], out bool enabled) ? enabled : true;
+
+        // No credentials are baked into the code: SMTP username/password must come from
+        // Web.config's appSettings (SmtpEmail / SmtpPassword). If they are not configured,
+        // email sending is skipped rather than falling back to a shared account.
+        private static bool IsConfigured => !string.IsNullOrWhiteSpace(SmtpUsername) && !string.IsNullOrWhiteSpace(SmtpPassword);
 
         /// <summary>
         /// Sends an email synchronously via MailKit.
@@ -46,6 +40,12 @@ namespace Project_Board.Services
         public static void SendEmail(string toEmail, string subject, string htmlBody)
         {
             if (!EmailEnabled || string.IsNullOrWhiteSpace(toEmail)) return;
+
+            if (!IsConfigured)
+            {
+                System.Diagnostics.Debug.WriteLine("[EmailService] SmtpEmail/SmtpPassword are not configured in Web.config — skipping email send.");
+                return;
+            }
 
             try
             {

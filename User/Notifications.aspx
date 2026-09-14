@@ -155,7 +155,7 @@
                                     <i class='fa-solid <%# Convert.ToBoolean(Eval("IsRead")) ? "fa-bell" : "fa-bell-ringing fa-shake" %>'></i>
                                 </div>
                                 <div class="notif-content">
-                                    <div class="notif-message"><%# Eval("Message") %></div>
+                                    <div class="notif-message"><%# Project_Board.Utils.UiHelper.TextPreview(Eval("Message")) %></div>
                                     <div class="notif-time">
                                         <i class="fa-regular fa-clock"></i> 
                                         <%# Convert.ToDateTime(Eval("CreatedAt")).ToString("MMM dd, yyyy h:mm tt") %>

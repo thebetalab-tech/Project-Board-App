@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Web;
 
 namespace Project_Board.Admin.Details
 {
@@ -64,10 +65,10 @@ namespace Project_Board.Admin.Details
                     {
                         if (reader.Read())
                         {
-                            litGroupName.Text = reader["GroupName"].ToString();
-                            litTechnology.Text = reader["TechName"].ToString();
-                            litStatus.Text = reader["Status"].ToString();
-                            litLeaderName.Text = reader["LeaderName"].ToString();
+                            litGroupName.Text = HttpUtility.HtmlEncode(reader["GroupName"].ToString());
+                            litTechnology.Text = HttpUtility.HtmlEncode(reader["TechName"].ToString());
+                            litStatus.Text = HttpUtility.HtmlEncode(reader["Status"].ToString());
+                            litLeaderName.Text = HttpUtility.HtmlEncode(reader["LeaderName"].ToString());
                         }
                         else
                         {

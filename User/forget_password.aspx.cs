@@ -82,15 +82,22 @@ namespace Project_Board.User
                                 userId = Convert.ToInt32(reader["UserId"]);
                                 fullName = reader["FullName"]?.ToString() ?? string.Empty;
                                 role = reader["Role"]?.ToString() ?? string.Empty;
-                                isLeader = Convert.ToBoolean(reader["IsLeader"]);
+                                isLeader = reader["IsLeader"] != DBNull.Value && Convert.ToBoolean(reader["IsLeader"]);
                                 userFound = true;
                             }
                         }
                     }
 
+                    // Always show the same response whether or not the account exists, so the
+                    // form cannot be used to enumerate registered email addresses.
+                    const string genericMessage = "If an account with that email address exists, a 6-digit verification code has been sent to it.";
+
                     if (!userFound)
                     {
-                        ShowError("No active account found with that email address.");
+                        // Advance to the same code-entry step as a real account so the UI
+                        // gives no observable signal about whether the email is registered.
+                        ShowSuccess(genericMessage);
+                        ShowCodeStep(email);
                         return;
                     }
 
@@ -102,20 +109,19 @@ namespace Project_Board.User
                     Session["ResetUserIsLeader"] = isLeader.ToString();
 
                     // Generate a random 6-digit verification code
-                    string code = GenerateRandomCode();
+                    string code = Project_Board.Utils.AuthHelper.GenerateRandomCode();
                     Session["ResetCode"] = code;
 
                     // Send the verification code via MailKit
                     try
                     {
                         SendVerificationEmail(email, fullName, code);
-                        ShowSuccess("A 6-digit verification code has been sent to your email address.");
+                        ShowSuccess(genericMessage);
                     }
                     catch (Exception mailEx)
                     {
-                        // Log the error but still allow proceeding (code is in session)
-                        System.Diagnostics.Debug.WriteLine("Mail sending failed: " + mailEx.Message);
-                        ShowError("Failed to send verification email. Please try again. Error: " + mailEx.Message);
+                        System.Diagnostics.Trace.TraceError("[ForgotPassword] Mail sending failed: " + mailEx);
+                        ShowError("Failed to send verification email. Please try again.");
                         return;
                     }
 
@@ -125,8 +131,8 @@ namespace Project_Board.User
             }
             catch (Exception ex)
             {
-                ShowError("An error occurred: " + ex.Message);
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                System.Diagnostics.Trace.TraceError("[ForgotPassword] " + ex);
+                ShowError("An error occurred. Please try again.");
             }
         }
 
@@ -223,7 +229,7 @@ namespace Project_Board.User
                 {
                     conn.Open();
 
-                    string passwordHash = HashPassword(newPassword);
+                    string passwordHash = Project_Board.Utils.AuthHelper.HashPassword(newPassword);
                     string updateQuery = "UPDATE Users SET PasswordHash = @PasswordHash WHERE UserId = @UserId";
 
                     using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
@@ -255,8 +261,8 @@ namespace Project_Board.User
             }
             catch (Exception ex)
             {
-                ShowError("An error occurred during password update: " + ex.Message);
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                System.Diagnostics.Trace.TraceError("[ForgotPassword] Password update failed: " + ex);
+                ShowError("An error occurred while updating your password. Please try again.");
             }
         }
 
@@ -407,20 +413,6 @@ namespace Project_Board.User
         // --- Helper Methods ---
 
         /// <summary>
-        /// Generates a cryptographically secure random 6-digit code.
-        /// </summary>
-        private static string GenerateRandomCode()
-        {
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                byte[] bytes = new byte[4];
-                rng.GetBytes(bytes);
-                int value = Math.Abs(BitConverter.ToInt32(bytes, 0)) % 900000 + 100000;
-                return value.ToString();
-            }
-        }
-
-        /// <summary>
         /// Sends a verification email using MailKit via Gmail SMTP.
         /// </summary>
         private static void SendVerificationEmail(string recipientEmail, string recipientName, string code)
@@ -455,21 +447,6 @@ namespace Project_Board.User
                 client.Authenticate(SMTP_EMAIL, SMTP_APP_PASSWORD.Replace("_", "").Replace(" ", ""));
                 client.Send(message);
                 client.Disconnect(true);
-            }
-        }
-
-        private static string HashPassword(string password)
-        {
-            byte[] salt = new byte[16];
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(salt);
-            }
-
-            using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, 100000))
-            {
-                byte[] hash = deriveBytes.GetBytes(32);
-                return $"QKDF2$100000${Convert.ToBase64String(salt)}${Convert.ToBase64String(hash)}";
             }
         }
 

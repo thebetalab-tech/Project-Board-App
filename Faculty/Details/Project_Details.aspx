@@ -266,7 +266,7 @@
                                 <asp:Repeater ID="rptKeywords" runat="server">
                                     <ItemTemplate>
                                         <span class="tag">
-                                            <i class="fa-solid fa-tag" style="margin-right:0.3rem;"></i><%# Eval("Keyword") %>
+                                            <i class="fa-solid fa-tag" style="margin-right:0.3rem;"></i><%# HttpUtility.HtmlEncode(Eval("Keyword").ToString()) %>
                                         </span>
                                     </ItemTemplate>
                                     <FooterTemplate>

@@ -384,10 +384,10 @@ namespace Project_Board.Student.Leader
                 {
                     conn.Open();
 
-                    // ── AUDIT: Snapshot task details before deletion ──────────────
+                    // ── AUDIT: Snapshot task details before deletion (also used to verify ownership) ──
                     string snapshotSql = @"
                         SELECT t.TaskTitle, t.TaskDescription, t.Status, t.TaskLevel, t.TaskCategory,
-                               t.DueDate, t.CreatedAt,
+                               t.DueDate, t.CreatedAt, t.GroupId,
                                uTo.FullName AS AssignedToName,
                                uBy.FullName AS AssignedByName
                         FROM Task t
@@ -398,6 +398,8 @@ namespace Project_Board.Student.Leader
 
                     string taskTitle = $"Task #{taskId}";
                     string taskDetails = "";
+                    bool taskFound = false;
+                    int taskGroupId = 0;
 
                     using (SqlCommand snapCmd = new SqlCommand(snapshotSql, conn))
                     {
@@ -406,6 +408,8 @@ namespace Project_Board.Student.Leader
                         {
                             if (rdr.Read())
                             {
+                                taskFound = true;
+                                taskGroupId = Convert.ToInt32(rdr["GroupId"]);
                                 taskTitle = rdr["TaskTitle"]?.ToString() ?? taskTitle;
                                 string dueDate = rdr["DueDate"] != DBNull.Value
                                     ? Convert.ToDateTime(rdr["DueDate"]).ToString("dd MMM yyyy")
@@ -416,6 +420,13 @@ namespace Project_Board.Student.Leader
                                 taskDetails = $"{{Title: {taskTitle}, AssignedTo: {rdr["AssignedToName"]}, AssignedBy: {rdr["AssignedByName"]}, Level: {rdr["TaskLevel"]}, Category: {rdr["TaskCategory"]}, Status: {rdr["Status"]}, DueDate: {dueDate}, CreatedAt: {createdAt}}}";
                             }
                         }
+                    }
+
+                    // A leader may only delete tasks that belong to their own group.
+                    if (!taskFound || taskGroupId != CurrentGroupId)
+                    {
+                        LoadMemberTasks();
+                        return;
                     }
 
                     Admin_DeletedRecords.LogDeletion(conn, "Task", taskId, taskTitle, taskDetails,

@@ -20,13 +20,13 @@ namespace Project_Board
         {
             // Code that runs when an unhandled error occurs
             Exception exc = Server.GetLastError();
-
-            // Here we could log the exception details to a file, database, or error tracking system like Elmah.
-            // For now, we just clear the error so we can let the CustomErrors config redirect, or handle it here.
-            // System.Diagnostics.Trace.WriteLine(exc.ToString());
-            
-            // Optionally, clear error if we want to handle response manually, 
-            // but letting it pass through allows Web.config <customErrors> to take over.
+            if (exc != null)
+            {
+                // Log server-side so the failure is visible to developers/ops without
+                // exposing stack traces to the end user. The response itself is handled
+                // by Web.config's <customErrors> redirect (Error.aspx / NotFoundPage.aspx).
+                System.Diagnostics.Trace.TraceError(exc.ToString());
+            }
         }
     }
 }

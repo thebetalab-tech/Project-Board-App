@@ -11,11 +11,8 @@ namespace Project_Board.Student.Leader
     public partial class Leader_Members : Page
     {
         protected global::System.Web.UI.WebControls.Repeater rptGroups;
-        protected global::System.Web.UI.WebControls.Repeater rptPending;
         protected global::System.Web.UI.WebControls.Repeater rptEligible;
-        protected global::System.Web.UI.WebControls.Repeater rptRequests;
         protected global::System.Web.UI.WebControls.Panel pnlInviteSection;
-        protected global::System.Web.UI.WebControls.Panel pnlRequests;
         protected global::System.Web.UI.WebControls.Button btnToggleStatus;
         protected global::System.Web.UI.WebControls.Label lblMessage;
         

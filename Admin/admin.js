@@ -13,6 +13,17 @@ function closeModal(modalId) {
     }
 }
 
+// Expand/collapse a long text preview (task descriptions, feedback, report text,
+// notification messages, appeal reasons, etc.) — used by the .text-preview component
+// shared across Admin, Faculty, and Student pages. See UiHelper.TextPreview() in
+// Utils/UiHelper.cs for the markup this toggles.
+function toggleTextPreview(btn) {
+    const container = btn.closest('.text-preview');
+    if (!container) return;
+    const expanded = container.classList.toggle('expanded');
+    btn.textContent = expanded ? 'View less' : 'View more';
+}
+
 // Close modal when clicking outside content
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.modal-overlay').forEach(overlay => {

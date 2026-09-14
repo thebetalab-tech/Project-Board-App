@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Web;
 using System.Web.UI;
 
 namespace Project_Board.Admin
@@ -64,15 +65,15 @@ namespace Project_Board.Admin
                                 btnSubmitDecision.Enabled = false;
                             }
 
-                            lblTaskTitle.Text = reader["TaskTitle"].ToString();
-                            lblGroupName.Text = reader["GroupName"] != DBNull.Value ? reader["GroupName"].ToString() : "No Group";
-                            lblStatus.Text = reader["Status"].ToString();
-                            
+                            lblTaskTitle.Text = HttpUtility.HtmlEncode(reader["TaskTitle"].ToString());
+                            lblGroupName.Text = HttpUtility.HtmlEncode(reader["GroupName"] != DBNull.Value ? reader["GroupName"].ToString() : "No Group");
+                            lblStatus.Text = HttpUtility.HtmlEncode(reader["Status"].ToString());
+
                             string feedback = reader["FeedbackText"] != DBNull.Value ? reader["FeedbackText"].ToString() : "";
-                            lblRequirements.Text = string.IsNullOrEmpty(feedback) ? "No previous feedback given." : feedback;
-                            
+                            lblRequirements.Text = Project_Board.Utils.UiHelper.TextPreview(feedback, "No previous feedback given.");
+
                             string desc = reader["TaskDescription"] != DBNull.Value ? reader["TaskDescription"].ToString() : "";
-                            lblTaskDescription.Text = string.IsNullOrEmpty(desc) ? "No description provided." : desc;
+                            lblTaskDescription.Text = Project_Board.Utils.UiHelper.TextPreview(desc, "No description provided.");
 
                             string currentStatus = reader["Status"].ToString();
                             if (ddlStatus.Items.FindByValue(currentStatus) != null)
@@ -92,9 +93,9 @@ namespace Project_Board.Admin
                     {
                         if (rdr.Read())
                         {
-                            lblReason.Text = rdr["Reason"] != DBNull.Value ? rdr["Reason"].ToString() : "N/A";
-                            lblChangesMade.Text = rdr["ChangesMade"] != DBNull.Value && !string.IsNullOrEmpty(rdr["ChangesMade"].ToString()) ? rdr["ChangesMade"].ToString() : "N/A";
-                            lblExplanation.Text = rdr["Explanation"] != DBNull.Value && !string.IsNullOrEmpty(rdr["Explanation"].ToString()) ? rdr["Explanation"].ToString() : "N/A";
+                            lblReason.Text = Project_Board.Utils.UiHelper.TextPreview(rdr["Reason"], "N/A");
+                            lblChangesMade.Text = Project_Board.Utils.UiHelper.TextPreview(rdr["ChangesMade"], "N/A");
+                            lblExplanation.Text = Project_Board.Utils.UiHelper.TextPreview(rdr["Explanation"], "N/A");
                             
                             bool isCompleted = rdr["IsCompleted"] != DBNull.Value && Convert.ToBoolean(rdr["IsCompleted"]);
                             lblIsCompleted.Text = isCompleted ? "Task is marked as completed by Student" : "Task is NOT marked as completed";
@@ -115,6 +116,25 @@ namespace Project_Board.Admin
             }
         }
 
+        // Re-verifies that the current user is allowed to decide this task's appeal.
+        // The check in LoadTaskAndAppealDetails only runs on the initial GET and merely
+        // disables the button client-side, which does not stop a forged postback, so the
+        // same check must be re-run here before any update is made.
+        private bool IsAuthorizedForTask(SqlConnection conn)
+        {
+            int currentUserId = Convert.ToInt32(Session["UserId"]);
+            string role = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? "";
+            if (role == "Admin") return true;
+
+            using (SqlCommand cmd = new SqlCommand("SELECT AssignedBy FROM Task WHERE TaskId = @TaskId", conn))
+            {
+                cmd.Parameters.AddWithValue("@TaskId", TaskId);
+                object result = cmd.ExecuteScalar();
+                if (result == null || result == DBNull.Value) return false;
+                return Convert.ToInt32(result) == currentUserId;
+            }
+        }
+
         protected void btnSubmitDecision_Click(object sender, EventArgs e)
         {
             if (TaskId == 0) return;
@@ -126,7 +146,16 @@ namespace Project_Board.Admin
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 conn.Open();
-                
+
+                if (!IsAuthorizedForTask(conn))
+                {
+                    lblMessage.Text = "You are not authorized to review this task.";
+                    lblMessage.CssClass = "alert alert-danger";
+                    lblMessage.Visible = true;
+                    btnSubmitDecision.Enabled = false;
+                    return;
+                }
+
                 string memberEmail = "";
                 string memberName = "";
                 string taskTitle = "";

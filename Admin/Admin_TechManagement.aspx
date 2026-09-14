@@ -34,7 +34,7 @@
                                 <ItemTemplate>
                                     <tr>
                                         <td>#<%# Eval("TechId") %></td>
-                                        <td><strong><%# Eval("TechName") %></strong></td>
+                                        <td><strong><%# HttpUtility.HtmlEncode(Eval("TechName").ToString()) %></strong></td>
                                         <td style="text-align: right;">
                                             <div class="table-actions" style="justify-content: flex-end;">
                                                 <button type="button" class="icon-btn edit" onclick="openEditTechModal('<%# Eval("TechId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("TechName").ToString()) %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;">
@@ -96,8 +96,8 @@
                             <asp:Repeater ID="rptFacultyTech" runat="server" OnItemCommand="rptTechs_ItemCommand">
                                 <ItemTemplate>
                                     <tr>
-                                        <td><strong><%# Eval("FacultyName") %></strong></td>
-                                        <td><%# Eval("TechName") %></td>
+                                        <td><strong><%# HttpUtility.HtmlEncode(Eval("FacultyName").ToString()) %></strong></td>
+                                        <td><%# HttpUtility.HtmlEncode(Eval("TechName").ToString()) %></td>
                                         <td style="text-align: right;">
                                             <asp:LinkButton ID="btnDeleteAssign" runat="server" CssClass="icon-btn delete" CommandName="DeleteAssignment" CommandArgument='<%# Eval("FacultyId") + "|" + Eval("TechId") %>' OnClientClick="return confirm('Are you sure you want to remove this assignment?');">
                                                 <i class="fa-solid fa-trash"></i>

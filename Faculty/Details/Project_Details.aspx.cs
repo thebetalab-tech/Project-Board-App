@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Web;
 using Project_Board.Services;
 
 namespace Project_Board.Faculty.Details
@@ -66,15 +67,15 @@ namespace Project_Board.Faculty.Details
                     {
                         if (reader.Read())
                         {
-                            litProjectTitle.Text = reader["ProjectTitle"].ToString();
-                            litGroupName.Text = reader["GroupName"].ToString();
+                            litProjectTitle.Text = HttpUtility.HtmlEncode(reader["ProjectTitle"].ToString());
+                            litGroupName.Text = HttpUtility.HtmlEncode(reader["GroupName"].ToString());
                             litProjectType.Text = reader["ProjectType"].ToString() == "IDP" ? "Industry Defined Project (IDP)" : "User Defined Project (UDP)";
-                            
+
                             string status = reader["Status"].ToString();
-                            litStatus.Text = $"<span class='badge status-{status.ToLower()}'>{status}</span>";
-                            
-                            litSubmittedAt.Text = Convert.ToDateTime(reader["SubmittedAt"]).ToString("MMM dd, yyyy hh:mm tt");
-                            litFunctionality.Text = reader["Functionality"].ToString().Replace("\n", "<br/>");
+                            litStatus.Text = $"<span class='badge status-{HttpUtility.HtmlEncode(status.ToLower())}'>{HttpUtility.HtmlEncode(status)}</span>";
+
+                            litSubmittedAt.Text = reader["SubmittedAt"] != DBNull.Value ? Convert.ToDateTime(reader["SubmittedAt"]).ToString("MMM dd, yyyy hh:mm tt") : "N/A";
+                            litFunctionality.Text = HttpUtility.HtmlEncode(reader["Functionality"].ToString()).Replace("\n", "<br/>");
 
                             // Set button visibility based on current status
                             if (status.Equals("Approved", StringComparison.OrdinalIgnoreCase))
@@ -134,16 +135,31 @@ namespace Project_Board.Faculty.Details
         {
             if (!int.TryParse(Request.QueryString["ProjectId"], out int projectId)) return;
 
+            int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 conn.Open();
-                string update = "UPDATE Projects SET Status = @Status WHERE ProjectId = @ProjectId";
+
+                // Only the mentor assigned to this project's group may change its status.
+                string update = @"
+                    UPDATE p SET p.Status = @Status
+                    FROM Projects p
+                    INNER JOIN Groups g ON p.GroupId = g.GroupId
+                    WHERE p.ProjectId = @ProjectId AND g.MentorId = @FacultyId";
+                int rowsAffected;
                 using (SqlCommand cmd = new SqlCommand(update, conn))
                 {
                     cmd.Parameters.AddWithValue("@Status", newStatus);
                     cmd.Parameters.AddWithValue("@ProjectId", projectId);
-                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+
+                if (rowsAffected == 0)
+                {
+                    ShowError("You are not authorized to update this project.");
+                    return;
                 }
 
                 // Retrieve all group members and leader for notification

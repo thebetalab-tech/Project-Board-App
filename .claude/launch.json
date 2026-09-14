@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "project-board-iisexpress",
+      "runtimeExecutable": "C:\\Program Files\\IIS Express\\iisexpress.exe",
+      "runtimeArgs": [
+        "/path:D:\\My side Projects\\Project-Board-App",
+        "/port:8733"
+      ],
+      "port": 8733
+    }
+  ]
+}

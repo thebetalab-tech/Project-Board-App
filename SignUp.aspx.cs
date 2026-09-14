@@ -138,18 +138,19 @@ namespace Project_Board
             }
             catch (Exception ex)
             {
-                ShowMessage($"Database error: {ex.Message}", false);
+                System.Diagnostics.Trace.TraceError("[SignUp] " + ex);
+                ShowMessage("Something went wrong. Please try again.", false);
                 return;
             }
 
             // --- 4. Generate verification code and send email ---
-            string code = GenerateRandomCode();
+            string code = Project_Board.Utils.AuthHelper.GenerateRandomCode();
 
             // Store form data and code in session for Step 2
             Session["SignupFullName"] = fullNameValue;
             Session["SignupEmail"] = emailValue;
             Session["SignupEnrollment"] = enrollmentNoValue;
-            Session["SignupPasswordHash"] = HashPassword(passwordValue);
+            Session["SignupPasswordHash"] = Project_Board.Utils.AuthHelper.HashPassword(passwordValue);
             Session["SignupVerifyCode"] = code;
 
             try
@@ -159,8 +160,8 @@ namespace Project_Board
             }
             catch (Exception mailEx)
             {
-                System.Diagnostics.Debug.WriteLine("Mail sending failed: " + mailEx.Message);
-                ShowMessage("Failed to send verification email: " + mailEx.Message, false);
+                System.Diagnostics.Trace.TraceError("[SignUp] Mail sending failed: " + mailEx);
+                ShowMessage("Failed to send verification email. Please try again.", false);
                 return;
             }
 
@@ -276,15 +277,18 @@ namespace Project_Board
             }
             catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
             {
-                ShowMessage($"That email is already in use. SQL error {ex.Number}: {ex.Message}", false);
+                System.Diagnostics.Trace.TraceError("[SignUp] " + ex);
+                ShowMessage("That email is already in use.", false);
             }
             catch (SqlException ex)
             {
-                ShowMessage($"Database error {ex.Number}: {ex.Message}", false);
+                System.Diagnostics.Trace.TraceError("[SignUp] " + ex);
+                ShowMessage("A database error occurred. Please try again.", false);
             }
             catch (Exception ex)
             {
-                ShowMessage($"Signup failed: {ex.Message}", false);
+                System.Diagnostics.Trace.TraceError("[SignUp] " + ex);
+                ShowMessage("Signup failed. Please try again.", false);
             }
         }
 
@@ -315,7 +319,7 @@ namespace Project_Board
             }
 
             // Generate a new code and store it
-            string newCode = GenerateRandomCode();
+            string newCode = Project_Board.Utils.AuthHelper.GenerateRandomCode();
             Session["SignupVerifyCode"] = newCode;
 
             try
@@ -325,8 +329,8 @@ namespace Project_Board
             }
             catch (Exception mailEx)
             {
-                System.Diagnostics.Debug.WriteLine("Mail resend failed: " + mailEx.Message);
-                ShowMessage("Failed to resend verification email: " + mailEx.Message, false);
+                System.Diagnostics.Trace.TraceError("[SignUp] Mail resend failed: " + mailEx);
+                ShowMessage("Failed to resend verification email. Please try again.", false);
             }
 
             // Keep the verify panel visible and refresh the masked email
@@ -336,20 +340,6 @@ namespace Project_Board
         }
 
         // --- Helper Methods ---
-
-        /// <summary>
-        /// Generates a cryptographically secure random 6-digit code.
-        /// </summary>
-        private static string GenerateRandomCode()
-        {
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                byte[] bytes = new byte[4];
-                rng.GetBytes(bytes);
-                int value = Math.Abs(BitConverter.ToInt32(bytes, 0)) % 900000 + 100000;
-                return value.ToString();
-            }
-        }
 
         /// <summary>
         /// Sends a verification email using MailKit via Gmail SMTP.
@@ -435,23 +425,6 @@ namespace Project_Board
             {
                 command.Parameters.Add("@Email", SqlDbType.NVarChar, 100).Value = email;
                 return Convert.ToInt32(command.ExecuteScalar()) > 0;
-            }
-        }
-
-        private static string HashPassword(string password)
-        {
-            byte[] salt = new byte[16];
-
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(salt);
-            }
-
-            using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, 100000))
-            {
-                byte[] hash = deriveBytes.GetBytes(32);
-                // String interpolation is cleaner than string.Format
-                return $"QKDF2$100000${Convert.ToBase64String(salt)}${Convert.ToBase64String(hash)}";
             }
         }
 

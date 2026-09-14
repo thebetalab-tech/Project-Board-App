@@ -9,7 +9,7 @@ namespace Project_Board.Student
     public partial class Appeal : Page
     {
         private string ConnString => ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
-        private int TaskId => Request.QueryString["TaskId"] != null ? Convert.ToInt32(Request.QueryString["TaskId"]) : 0;
+        private int TaskId => int.TryParse(Request.QueryString["TaskId"], out int taskId) ? taskId : 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -162,6 +162,23 @@ namespace Project_Board.Student
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 conn.Open();
+
+                // Re-verify the task is actually assigned to this student. The check in
+                // LoadTaskDetails only runs on the initial GET and merely disables the
+                // button client-side, which does not stop a forged postback.
+                using (SqlCommand ownerCmd = new SqlCommand("SELECT AssignedTo FROM Task WHERE TaskId = @TaskId", conn))
+                {
+                    ownerCmd.Parameters.AddWithValue("@TaskId", TaskId);
+                    object assignedToResult = ownerCmd.ExecuteScalar();
+                    if (assignedToResult == null || assignedToResult == DBNull.Value || Convert.ToInt32(assignedToResult) != studentId)
+                    {
+                        lblMessage.Text = "You are not authorized to appeal this task.";
+                        lblMessage.CssClass = "alert alert-danger";
+                        lblMessage.Visible = true;
+                        btnSubmit.Enabled = false;
+                        return;
+                    }
+                }
 
                 // Get GroupId and Reviewer Info
                 int groupId = 0;

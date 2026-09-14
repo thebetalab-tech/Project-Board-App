@@ -191,9 +191,9 @@
                                 <asp:Repeater ID="rptMembers" runat="server">
                                     <ItemTemplate>
                                         <tr>
-                                            <td><strong><%# Eval("FullName") %></strong></td>
-                                            <td><%# Eval("Email") %></td>
-                                            <td><%# Eval("EnrollmentNo") %></td>
+                                            <td><strong><%# HttpUtility.HtmlEncode(Eval("FullName").ToString()) %></strong></td>
+                                            <td><%# HttpUtility.HtmlEncode(Eval("Email").ToString()) %></td>
+                                            <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) %></td>
                                             <td>
                                                 <%# Convert.ToBoolean(Eval("IsLeader")) ? "<span class='badge status-approved'>Leader</span>" : "Member" %>
                                             </td>

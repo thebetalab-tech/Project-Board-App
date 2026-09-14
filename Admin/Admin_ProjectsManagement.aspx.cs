@@ -44,12 +44,12 @@ namespace Project_Board.Admin
                         p.Functionality,
                         p.Status,
                         g.GroupName,
-                        (
-                            SELECT '<span class=""tech-tag"">' + pk.Keyword + '</span>'
-                            FROM ProjectKeywords pk 
+                        STUFF((
+                            SELECT ',' + pk.Keyword
+                            FROM ProjectKeywords pk
                             WHERE pk.ProjectId = p.ProjectId
                             FOR XML PATH('')
-                        ) AS KeywordHtml
+                        ), 1, 1, '') AS Keywords
                     FROM Projects p
                     JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId";
                 
@@ -81,6 +81,27 @@ namespace Project_Board.Admin
                     }
                 }
             }
+        }
+
+        // Builds the "tech-tag" chip markup for a project's keywords. The Keywords column
+        // comes back XML-escaped from SQL's FOR XML PATH, so it is decoded once to recover
+        // the real keyword text, then each keyword is re-encoded before being embedded in
+        // HTML — this prevents a keyword containing markup from being rendered unescaped.
+        protected string RenderKeywordTags(object keywordsField)
+        {
+            string raw = (keywordsField == null || keywordsField == DBNull.Value) ? "" : Convert.ToString(keywordsField);
+            if (string.IsNullOrEmpty(raw)) return "";
+
+            string decoded = System.Net.WebUtility.HtmlDecode(raw);
+            var sb = new System.Text.StringBuilder();
+            foreach (string kw in decoded.Split(','))
+            {
+                if (string.IsNullOrWhiteSpace(kw)) continue;
+                sb.Append("<span class=\"tech-tag\">")
+                  .Append(System.Web.HttpUtility.HtmlEncode(kw))
+                  .Append("</span>");
+            }
+            return sb.ToString();
         }
 
         protected void ddlReportFilter_SelectedIndexChanged(object sender, EventArgs e)
@@ -242,10 +263,14 @@ namespace Project_Board.Admin
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string query = @"
-                    SELECT 
+                    SELECT
                         p.ProjectTitle AS [Project Title],
                         p.Functionality AS [Functionality],
-                        p.Keywords AS [Keywords],
+                        STUFF((
+                            SELECT ', ' + pk.Keyword
+                            FROM ProjectKeywords pk WHERE pk.ProjectId = p.ProjectId
+                            FOR XML PATH('')
+                        ), 1, 2, '') AS [Keywords],
                         p.ProjectType AS [Project Type],
                         g.GroupName AS [Group Name],
                         p.Status AS [Status]
@@ -256,8 +281,8 @@ namespace Project_Board.Admin
                 {
                     query += " WHERE p.Status = @Status";
                 }
-                
-                query += " ORDER BY p.CreatedAt DESC";
+
+                query += " ORDER BY p.SubmittedAt DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

@@ -205,7 +205,7 @@
                             <div class="tag-list">
                                 <asp:Repeater ID="rptKeywords" runat="server">
                                     <ItemTemplate>
-                                        <span class="tag"><%# Eval("Keyword") %></span>
+                                        <span class="tag"><%# HttpUtility.HtmlEncode(Eval("Keyword").ToString()) %></span>
                                     </ItemTemplate>
                                     <FooterTemplate>
                                         <%# rptKeywords.Items.Count == 0 ? "<span style='color:var(--c-text-muted); font-size: 0.875rem;'>No keywords specified.</span>" : "" %>

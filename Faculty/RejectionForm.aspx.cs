@@ -42,6 +42,36 @@ namespace Project_Board.Faculty
             else Response.Redirect("Dashboard.aspx");
         }
 
+        // Verifies the current faculty member actually owns the entity being rejected, so a
+        // faculty account cannot reject another mentor's project/task/group by editing the URL.
+        private bool IsAuthorizedForEntity(SqlConnection conn, string type, int id, int facultyId)
+        {
+            string query;
+            switch (type)
+            {
+                case "Project":
+                    query = "SELECT g.MentorId FROM Projects p JOIN Groups g ON p.GroupId = g.GroupId WHERE p.ProjectId = @Id";
+                    break;
+                case "Task":
+                case "Appeal":
+                    query = "SELECT AssignedBy FROM Task WHERE TaskId = @Id";
+                    break;
+                case "Group":
+                    query = "SELECT MentorId FROM Groups WHERE GroupId = @Id";
+                    break;
+                default:
+                    return false;
+            }
+
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@Id", id);
+                object result = cmd.ExecuteScalar();
+                if (result == null || result == DBNull.Value) return false;
+                return Convert.ToInt32(result) == facultyId;
+            }
+        }
+
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
             string reason = txtReason.Text.Trim();
@@ -60,6 +90,13 @@ namespace Project_Board.Faculty
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 conn.Open();
+
+                if (!IsAuthorizedForEntity(conn, type, id, facultyId))
+                {
+                    lblError.Text = "You are not authorized to reject this item.";
+                    lblError.Visible = true;
+                    return;
+                }
 
                 // 1. Log Rejection
                 using (SqlCommand cmd = new SqlCommand("sp_crud_rejectionlogs", conn))
@@ -132,7 +169,7 @@ namespace Project_Board.Faculty
                     {
                         cmd.Parameters.AddWithValue("@Id", id);
                         object result = cmd.ExecuteScalar();
-                        if (result != null) studentUserId = Convert.ToInt32(result);
+                        if (result != null && result != DBNull.Value) studentUserId = Convert.ToInt32(result);
                     }
                     redirectUrl = "ProjectManagement.aspx";
                 }
@@ -149,7 +186,7 @@ namespace Project_Board.Faculty
                     {
                         cmd.Parameters.AddWithValue("@Id", id);
                         object result = cmd.ExecuteScalar();
-                        if (result != null) studentUserId = Convert.ToInt32(result);
+                        if (result != null && result != DBNull.Value) studentUserId = Convert.ToInt32(result);
                     }
                     redirectUrl = "TaskDetails.aspx?id=" + id;
                 }
@@ -165,7 +202,7 @@ namespace Project_Board.Faculty
                     {
                         cmd.Parameters.AddWithValue("@Id", id);
                         object result = cmd.ExecuteScalar();
-                        if (result != null) studentUserId = Convert.ToInt32(result);
+                        if (result != null && result != DBNull.Value) studentUserId = Convert.ToInt32(result);
                     }
                     redirectUrl = "TaskDetails.aspx?id=" + id;
                 }
@@ -187,7 +224,7 @@ namespace Project_Board.Faculty
                     {
                         cmd.Parameters.AddWithValue("@Id", id);
                         object result = cmd.ExecuteScalar();
-                        if (result != null) studentUserId = Convert.ToInt32(result);
+                        if (result != null && result != DBNull.Value) studentUserId = Convert.ToInt32(result);
                     }
                     notificationMsg = $"Your mentor request was declined. Reason: {reason}";
                     redirectUrl = "InvitationManager.aspx";

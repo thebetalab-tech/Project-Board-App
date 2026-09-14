@@ -45,12 +45,12 @@
                             <asp:Repeater ID="rptGroups" runat="server" OnItemCommand="rptGroups_ItemCommand">
                                 <ItemTemplate>
                                     <tr>
-                                        <td><strong><%# Eval("GroupName") %></strong></td>
-                                        <td><%# Eval("LeaderName") %></td>
-                                        <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("Members"))) ? "<span style='color:var(--c-text-muted)'>None</span>" : Eval("Members") %></td>
-                                        <td><%# Eval("MentorName") != DBNull.Value ? Eval("MentorName") : "<span style='color:var(--c-text-muted)'>Not Assigned</span>" %></td>
+                                        <td><strong><%# System.Web.HttpUtility.HtmlEncode(Eval("GroupName").ToString()) %></strong></td>
+                                        <td><%# System.Web.HttpUtility.HtmlEncode(Eval("LeaderName").ToString()) %></td>
+                                        <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("Members"))) ? "<span style='color:var(--c-text-muted)'>None</span>" : System.Web.HttpUtility.HtmlEncode(Convert.ToString(Eval("Members"))) %></td>
+                                        <td><%# Eval("MentorName") != DBNull.Value ? System.Web.HttpUtility.HtmlEncode(Eval("MentorName").ToString()) : "<span style='color:var(--c-text-muted)'>Not Assigned</span>" %></td>
                                         <td>
-                                            <span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span>
+                                            <span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# System.Web.HttpUtility.HtmlEncode(Eval("Status").ToString()) %></span>
                                         </td>
                                         <td>
                                             <div class="table-actions">

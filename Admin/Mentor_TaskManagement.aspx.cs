@@ -277,16 +277,17 @@ namespace Project_Board.Admin
             {
                 int mentorId = Convert.ToInt32(Session["UserId"]);
                 string mentorName = Session["FullName"]?.ToString() ?? "Mentor";
+                string userRole = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? "";
 
                 using (SqlConnection conn = new SqlConnection(ConnString))
                 {
                     conn.Open();
 
-                    // ── AUDIT: Snapshot task details before deletion ──────────────
+                    // ── AUDIT: Snapshot task details before deletion (also used to verify ownership) ──
                     string snapshotSql = @"
                         SELECT t.TaskTitle, t.TaskDescription, t.Status, t.TaskLevel, t.TaskCategory,
                                t.DueDate, t.CreatedAt,
-                               g.GroupName,
+                               g.GroupName, g.MentorId,
                                uTo.FullName AS AssignedToName,
                                uBy.FullName AS AssignedByName
                         FROM Task t
@@ -297,6 +298,8 @@ namespace Project_Board.Admin
 
                     string taskTitle = $"Task #{taskId}";
                     string taskDetails = "";
+                    bool taskFound = false;
+                    int? taskMentorId = null;
 
                     using (SqlCommand snapCmd = new SqlCommand(snapshotSql, conn))
                     {
@@ -305,6 +308,8 @@ namespace Project_Board.Admin
                         {
                             if (rdr.Read())
                             {
+                                taskFound = true;
+                                taskMentorId = rdr["MentorId"] != DBNull.Value ? Convert.ToInt32(rdr["MentorId"]) : (int?)null;
                                 taskTitle = rdr["TaskTitle"]?.ToString() ?? taskTitle;
                                 string dueDate = rdr["DueDate"] != DBNull.Value
                                     ? Convert.ToDateTime(rdr["DueDate"]).ToString("dd MMM yyyy")
@@ -315,6 +320,16 @@ namespace Project_Board.Admin
                                 taskDetails = $"{{Title: {taskTitle}, Group: {rdr["GroupName"]}, AssignedTo: {rdr["AssignedToName"]}, AssignedBy: {rdr["AssignedByName"]}, Level: {rdr["TaskLevel"]}, Category: {rdr["TaskCategory"]}, Status: {rdr["Status"]}, DueDate: {dueDate}, CreatedAt: {createdAt}}}";
                             }
                         }
+                    }
+
+                    // Only Admins, or the mentor who owns the task's group, may delete it.
+                    if (!taskFound || (userRole != "Admin" && taskMentorId != mentorId))
+                    {
+                        lblMessage.Text = "You are not authorized to delete this task.";
+                        lblMessage.CssClass = "alert alert-danger";
+                        lblMessage.Visible = true;
+                        LoadTasks();
+                        return;
                     }
 
                     Admin_DeletedRecords.LogDeletion(conn, "Task", taskId, taskTitle, taskDetails,

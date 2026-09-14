@@ -9,7 +9,6 @@ namespace Project_Board.User
     public partial class Notifications : System.Web.UI.Page
     {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-        protected global::System.Web.UI.WebControls.LinkButton btnBack;
         protected global::System.Web.UI.WebControls.LinkButton btnMarkAllRead;
         protected global::System.Web.UI.WebControls.Repeater rptNotifications;
 
@@ -90,24 +89,6 @@ namespace Project_Board.User
                 }
             }
             LoadNotifications();
-        }
-
-        protected void btnBack_Click(object sender, EventArgs e)
-        {
-            string role = Session["Role"]?.ToString();
-            string isLeaderStr = Session["IsLeader"]?.ToString();
-            bool isLeader = false;
-            if (!string.IsNullOrEmpty(isLeaderStr))
-                isLeader = Convert.ToBoolean(isLeaderStr);
-
-            if (role == "Admin") Response.Redirect("~/Admin/Admin_Dashboard.aspx");
-            else if (role == "Faculty") Response.Redirect("~/Faculty/Dashboard.aspx");
-            else if (role == "Student")
-            {
-                if (isLeader) Response.Redirect("~/Student/Leader/Dashboard.aspx");
-                else Response.Redirect("~/Student/Member/Dashboard.aspx");
-            }
-            else Response.Redirect("~/Default.aspx");
         }
     }
 }

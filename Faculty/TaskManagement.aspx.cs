@@ -123,7 +123,7 @@ namespace Project_Board.Faculty
                     {
                         while (rdr.Read())
                         {
-                            bool isLeader = Convert.ToBoolean(rdr["IsLeader"]);
+                            bool isLeader = rdr["IsLeader"] != DBNull.Value && Convert.ToBoolean(rdr["IsLeader"]);
                             string roleLabel = isLeader ? " [Leader]" : " [Member]";
                             ddlAssignee.Items.Add(new ListItem(rdr["FullName"].ToString() + roleLabel, rdr["UserId"].ToString()));
                         }

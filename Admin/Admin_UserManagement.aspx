@@ -84,13 +84,13 @@
                                                     <%# GetInitials(Eval("FullName").ToString()) %>
                                                 </div>
                                                 <div class="user-cell-info">
-                                                    <h4><%# Eval("FullName") %></h4>
-                                                    <p><%# Eval("Email") %></p>
+                                                    <h4><%# HttpUtility.HtmlEncode(Eval("FullName").ToString()) %></h4>
+                                                    <p><%# HttpUtility.HtmlEncode(Eval("Email").ToString()) %></p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("EnrollmentNo"))) ? "N/A" : Eval("EnrollmentNo") %></td>
-                                        <td><span class='badge <%# Eval("Role").ToString().ToLower() %>'><%# Eval("Role") %></span></td>
+                                        <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("EnrollmentNo"))) ? "N/A" : HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) %></td>
+                                        <td><span class='badge <%# Eval("Role").ToString().ToLower() %>'><%# HttpUtility.HtmlEncode(Eval("Role").ToString()) %></span></td>
                                         <td>
                                             <%# Convert.ToBoolean(Eval("IsActive")) 
                                                 ? "<span class='badge' style='background:rgba(16,185,129,.12);color:#10b981;'>Active</span>" 

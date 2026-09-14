@@ -316,12 +316,6 @@ namespace Project_Board.Admin
                     verifyCmd.Parameters.AddWithValue("@TaskId", taskId);
                     conn.Open();
                     object result = verifyCmd.ExecuteScalar();
-                    if (result == null)
-                    {
-                        // Try Tasks table
-                        verifyCmd.CommandText = "SELECT TaskId FROM Tasks WHERE TaskId = @TaskId";
-                        result = verifyCmd.ExecuteScalar();
-                    }
 
                     if (result == null)
                     {
@@ -331,7 +325,6 @@ namespace Project_Board.Admin
                     }
                 }
 
-                // Now update the task - use the correct table name
                 string query = "UPDATE Task SET TaskTitle = @Title, TaskDescription = @Desc, Status = @Status WHERE TaskId = @TaskId";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -343,13 +336,6 @@ namespace Project_Board.Admin
                     try
                     {
                         int rowsAffected = cmd.ExecuteNonQuery();
-
-                        if (rowsAffected == 0)
-                        {
-                            // Try Tasks table as fallback
-                            cmd.CommandText = "UPDATE Tasks SET TaskTitle = @Title, TaskDescription = @Desc, Status = @Status WHERE TaskId = @TaskId";
-                            rowsAffected = cmd.ExecuteNonQuery();
-                        }
 
                         if (rowsAffected == 0)
                         {
@@ -389,7 +375,7 @@ namespace Project_Board.Admin
                         t.TaskLevel AS [Task Level],
                         t.Status AS [Status],
                         t.DueDate AS [Due Date]
-                    FROM Tasks t
+                    FROM Task t
                     LEFT JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     LEFT JOIN Users u_to ON t.AssignedTo = u_to.UserId
                     LEFT JOIN Users u_by ON t.AssignedBy = u_by.UserId";

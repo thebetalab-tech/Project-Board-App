@@ -8,10 +8,6 @@ namespace Project_Board.Admin
 {
     public partial class Admin_TaskManagement
     {
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-        protected global::System.Web.UI.WebControls.Label userintial;
-        protected global::System.Web.UI.WebControls.Label userNameLabel;
-        protected global::System.Web.UI.WebControls.Label userEmailLabel;
         protected global::System.Web.UI.WebControls.DropDownList ddlGroups;
 
         protected global::System.Web.UI.WebControls.TextBox txtTaskTitle;

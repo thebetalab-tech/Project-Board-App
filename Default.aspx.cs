@@ -122,9 +122,8 @@ namespace Project_Board
             }
             catch (Exception ex)
             {
-                // Temporarily display the actual error to debug why login broke
-                lblError.Text = "Error: " + ex.Message + (ex.InnerException != null ? " | Inner: " + ex.InnerException.Message : "");
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                System.Diagnostics.Trace.TraceError("[Login] " + ex);
+                lblError.Text = "Something went wrong while logging you in. Please try again.";
             }
         }
 
