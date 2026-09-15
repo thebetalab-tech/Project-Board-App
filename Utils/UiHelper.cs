@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Web;
 
 namespace Project_Board.Utils
@@ -35,6 +36,39 @@ namespace Project_Board.Utils
 
             return "<div class=\"text-preview\"><span class=\"text-preview-content\">" + encoded + "</span>"
                  + "<button type=\"button\" class=\"text-preview-toggle\" onclick=\"toggleTextPreview(this)\">View more</button></div>";
+        }
+
+        public static string Initial(object value, string fallback = "U")
+        {
+            string text = value == null || value == DBNull.Value ? null : value.ToString();
+            text = text?.Trim();
+            return string.IsNullOrEmpty(text) ? fallback : text.Substring(0, 1).ToUpperInvariant();
+        }
+
+        public static string CssToken(object value, string fallback = "unknown")
+        {
+            string text = value == null || value == DBNull.Value ? string.Empty : value.ToString();
+            StringBuilder token = new StringBuilder();
+            bool separatorPending = false;
+
+            foreach (char character in text.Trim().ToLowerInvariant())
+            {
+                if (char.IsLetterOrDigit(character))
+                {
+                    if (separatorPending && token.Length > 0)
+                    {
+                        token.Append('-');
+                    }
+                    token.Append(character);
+                    separatorPending = false;
+                }
+                else
+                {
+                    separatorPending = true;
+                }
+            }
+
+            return token.Length == 0 ? fallback : token.ToString();
         }
     }
 }

@@ -294,9 +294,9 @@
                                 <div class="faculty-avatar">
                                     <%# GetInitials(Eval("FullName").ToString()) %>
                                 </div>
-                                <h3 class="faculty-name"><%# Eval("FullName") %></h3>
+                                <h3 class="faculty-name"><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("FullName"))) %></h3>
                                 <p class="faculty-email">
-                                    <i class="fa-solid fa-envelope"></i> <%# Eval("Email") %>
+                                    <i class="fa-solid fa-envelope"></i> <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Email"))) %>
                                 </p>
                                 <span class="tech-badge">
                                     <i class="fa-solid fa-tag"></i> <asp:Label ID="lblCardTech" runat="server" Text='<%# SelectedTechName %>'></asp:Label>

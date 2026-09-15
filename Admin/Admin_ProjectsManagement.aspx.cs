@@ -111,7 +111,11 @@ namespace Project_Board.Admin
 
         protected void rptProjects_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            int projectId = Convert.ToInt32(e.CommandArgument);
+            int projectId;
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out projectId) || projectId <= 0)
+            {
+                return;
+            }
             string newStatus = "";
 
             if (e.CommandName == "Approve")

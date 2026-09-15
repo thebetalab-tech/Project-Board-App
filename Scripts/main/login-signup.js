@@ -258,6 +258,7 @@ function initRippleEffect() {
 
     loginBtn.addEventListener('click', (e) => {
         const ripple = loginBtn.querySelector('.btn-ripple');
+        if (!ripple) return;
         const rect = loginBtn.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);
 

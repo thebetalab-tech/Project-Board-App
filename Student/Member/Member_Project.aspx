@@ -87,7 +87,7 @@
                                         </span>
                                     </div>
                                     <div>
-                                        <span class='badge-status status-<%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status")).ToLower()) %>'>
+                                        <span class='badge-status status-<%# Project_Board.Utils.UiHelper.CssToken(Eval("Status")) %>'>
                                             <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %>
                                         </span>
                                     </div>

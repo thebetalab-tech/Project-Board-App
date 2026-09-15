@@ -20,21 +20,25 @@ namespace Project_Board.Student.Leader
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["UserId"] == null)
+            if (Session["UserId"] == null || Session["Role"]?.ToString() != "Student")
             {
                 Response.Redirect("~/Default.aspx");
                 return;
             }
 
-            string fullName = Session["FullName"]?.ToString() ?? "Student Leader";
-            if (!string.IsNullOrEmpty(fullName))
-            {
-                UserInitials = fullName.Substring(0, 1).ToUpper();
-            }
+            UserInitials = Project_Board.Utils.UiHelper.Initial(Session["FullName"], "TL");
 
             if (!IsPostBack)
             {
-                LoadMentorData();
+                try
+                {
+                    LoadMentorData();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Leader mentor load failed: {0}", ex);
+                    lblStatus.Text = "Unable to load mentors right now. Please try again later.";
+                }
             }
         }
 
@@ -200,6 +204,19 @@ namespace Project_Board.Student.Leader
 
         protected void btnRequest_Click(object sender, EventArgs e)
         {
+            try
+            {
+                RequestMentor();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Leader mentor request failed: {0}", ex);
+                lblStatus.Text = "Unable to submit the mentor request right now. Please try again later.";
+            }
+        }
+
+        private void RequestMentor()
+        {
             if (!int.TryParse(ddlMentors.SelectedValue, out int selectedMentorId) || selectedMentorId <= 0) return;
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connString))
@@ -208,18 +225,49 @@ namespace Project_Board.Student.Leader
                 int groupId = GetGroupId(conn);
                 if (groupId == 0) return;
 
-                string updateSql = "UPDATE Groups SET MentorId = @MentorId, Status = 'Pending Faculty Approval' WHERE GroupId = @GroupId";
+                string updateSql = @"
+                    UPDATE g
+                    SET MentorId = @MentorId, Status = 'Pending Faculty Approval'
+                    FROM Groups g
+                    WHERE g.GroupId = @GroupId
+                      AND g.LeaderId = @LeaderId
+                      AND EXISTS (
+                          SELECT 1 FROM Users u
+                          INNER JOIN Faculty f ON u.UserId = f.FacultyId
+                          WHERE u.UserId = @MentorId AND u.Role = 'Faculty'
+                            AND u.IsActive = 1 AND f.TechId = g.TechId)
+                      AND NOT EXISTS (
+                          SELECT 1 FROM GroupMentorRejections r
+                          WHERE r.GroupId = g.GroupId AND r.FacultyId = @MentorId)";
                 using (SqlCommand cmd = new SqlCommand(updateSql, conn))
                 {
                     cmd.Parameters.AddWithValue("@MentorId", selectedMentorId);
                     cmd.Parameters.AddWithValue("@GroupId", groupId);
-                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@LeaderId", Session["UserId"]);
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        lblStatus.Text = "That mentor is no longer available for this group. Please refresh and choose again.";
+                        return;
+                    }
                 }
             }
             LoadMentorData();
         }
 
         protected void btnWithdraw_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                WithdrawMentorRequest();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Leader mentor withdrawal failed: {0}", ex);
+                lblStatus.Text = "Unable to withdraw the mentor request right now. Please try again later.";
+            }
+        }
+
+        private void WithdrawMentorRequest()
         {
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connString))
@@ -229,10 +277,11 @@ namespace Project_Board.Student.Leader
                 if (groupId == 0) return;
 
                 // Only allow withdrawal if not yet finalized (e.g. still Pending)
-                string updateSql = "UPDATE Groups SET MentorId = NULL, Status = 'Forming' WHERE GroupId = @GroupId AND Status = 'Pending Faculty Approval'";
+                string updateSql = "UPDATE Groups SET MentorId = NULL, Status = 'Forming' WHERE GroupId = @GroupId AND LeaderId = @LeaderId AND Status = 'Pending Faculty Approval'";
                 using (SqlCommand cmd = new SqlCommand(updateSql, conn))
                 {
                     cmd.Parameters.AddWithValue("@GroupId", groupId);
+                    cmd.Parameters.AddWithValue("@LeaderId", Session["UserId"]);
                     cmd.ExecuteNonQuery();
                 }
             }

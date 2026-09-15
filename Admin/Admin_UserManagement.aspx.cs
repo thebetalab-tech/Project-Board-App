@@ -181,7 +181,7 @@ namespace Project_Board.Admin
             lblMessage.Text = message;
             lblMessage.ForeColor = isError ? System.Drawing.ColorTranslator.FromHtml("#ff4d4d") : System.Drawing.Color.Green;
 
-            string safeMessage = message.Replace("'", "\\'");
+            string safeMessage = System.Web.HttpUtility.JavaScriptStringEncode(message ?? string.Empty);
 
             if (isError)
             {
@@ -199,7 +199,12 @@ namespace Project_Board.Admin
         {
             if (e.CommandName == "DeleteUser")
             {
-                int userId = Convert.ToInt32(e.CommandArgument);
+                int userId;
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out userId) || userId <= 0)
+                {
+                    ShowModalWithMessage("The selected user is invalid. Please refresh and try again.", true);
+                    return;
+                }
                 int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
                 string adminName = Session["FullName"]?.ToString() ?? "Admin";
 
@@ -308,13 +313,13 @@ namespace Project_Board.Admin
 
                             LoadUsers();
                             
-                            string safeMsg = $"User {targetName} has been successfully deactivated and removed.".Replace("'", "\\'");
+                            string safeMsg = System.Web.HttpUtility.JavaScriptStringEncode($"User {targetName} has been successfully deactivated and removed.");
                             ScriptManager.RegisterStartupScript(this, GetType(), "DeleteSuccess", $"alert('{safeMsg}');", true);
                         }
                         catch (Exception ex)
                         {
                             System.Diagnostics.Debug.WriteLine("Error deleting user completely: " + ex.Message);
-                            string errorMsg = "Error deleting user: " + ex.Message.Replace("'", "\\'").Replace("\r", "").Replace("\n", " ");
+                            string errorMsg = System.Web.HttpUtility.JavaScriptStringEncode("Error deleting user: " + ex.Message);
                             ScriptManager.RegisterStartupScript(this, GetType(), "DeleteError", $"alert('{errorMsg}');", true);
                         }
                     }
@@ -325,7 +330,7 @@ namespace Project_Board.Admin
                     // conn.Open() and the audit/snapshot queries above ran unguarded; a
                     // connection or audit-table failure would surface as a yellow screen.
                     System.Diagnostics.Trace.TraceError("User delete error: " + ex);
-                    string errorMsg = "Error deleting user: " + ex.Message.Replace("'", "\\'").Replace("\r", "").Replace("\n", " ");
+                    string errorMsg = System.Web.HttpUtility.JavaScriptStringEncode("Error deleting user: " + ex.Message);
                     ScriptManager.RegisterStartupScript(this, GetType(), "DeleteError", $"alert('{errorMsg}');", true);
                 }
             }

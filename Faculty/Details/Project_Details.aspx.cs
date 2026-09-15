@@ -49,6 +49,8 @@ namespace Project_Board.Faculty.Details
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
+            try
+            {
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string queryDetails = @"
@@ -119,6 +121,12 @@ namespace Project_Board.Faculty.Details
                     }
                 }
             }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Faculty project details load failed for ProjectId " + projectId + ": " + ex);
+                ShowError("Unable to load this project right now. Please try again.");
+            }
         }
 
         protected void btnApprove_Click(object sender, EventArgs e)
@@ -137,6 +145,8 @@ namespace Project_Board.Faculty.Details
 
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+            try
+            {
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 conn.Open();
@@ -209,6 +219,14 @@ namespace Project_Board.Faculty.Details
             lblMessage.Visible = true;
 
             LoadProjectDetails(projectId.ToString());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Faculty project status update failed for ProjectId " + projectId + ": " + ex);
+                lblMessage.Text = "Unable to update this project right now. Please try again.";
+                lblMessage.CssClass = "form-message error";
+                lblMessage.Visible = true;
+            }
         }
 
         private void ShowError(string message)

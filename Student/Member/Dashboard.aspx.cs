@@ -46,7 +46,16 @@ namespace Project_Board.Student.Member
 
             if (!IsPostBack)
             {
-                LoadDashboardData();
+                try
+                {
+                    LoadDashboardData();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Member dashboard load failed: {0}", ex);
+                    Response.Redirect("~/Error.aspx", false);
+                    Context.ApplicationInstance.CompleteRequest();
+                }
             }
             // Don't redirect in Page_Load - let the page render and show "Not in a Team" message
             // The user can click "Join Group" from the dashboard if they want to join one

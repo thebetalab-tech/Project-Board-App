@@ -48,6 +48,8 @@ namespace Project_Board.Faculty.Details
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
+            try
+            {
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 // Verify the group belongs to this mentor and get details
@@ -100,6 +102,12 @@ namespace Project_Board.Faculty.Details
                         rptMembers.DataBind();
                     }
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Faculty group details load failed for GroupId " + groupId + ": " + ex);
+                ShowError("Unable to load this group right now. Please try again.");
             }
         }
 

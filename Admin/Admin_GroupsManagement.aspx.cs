@@ -109,7 +109,11 @@ namespace Project_Board.Admin
             if (e.CommandName == "ToggleGroupStatus")
             {
                 // This will work once the database migration adds the IsActive column
-                int groupId = Convert.ToInt32(e.CommandArgument);
+                int groupId;
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out groupId) || groupId <= 0)
+                {
+                    return;
+                }
                 if (string.IsNullOrEmpty(connString)) return;
 
                 try
@@ -168,7 +172,6 @@ namespace Project_Board.Admin
             else if (e.CommandName == "DeleteGroup")
             {
                 // Legacy - for backward compatibility
-                int groupId = Convert.ToInt32(e.CommandArgument);
                 Page.ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Please use the toggle button to deactivate groups instead of deleting.');", true);
             }
         }

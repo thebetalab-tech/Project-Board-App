@@ -115,7 +115,7 @@
     </style>
 </head>
 
-<body class='preload <%= Session["Role"] != null ? (Session["Role"].ToString() == "Student" ? (Session["IsLeader"] != null && (Session["IsLeader"].ToString().Equals("True", StringComparison.OrdinalIgnoreCase) || Session["IsLeader"].ToString() == "1") ? "role-leader" : "role-member") : "role-" + Session["Role"].ToString().ToLower()) : "" %>'>
+<body class='preload <%= Session["IsLeader"] != null && (Session["IsLeader"].ToString().Equals("True", StringComparison.OrdinalIgnoreCase) || Session["IsLeader"].ToString() == "1") ? "role-leader" : "role-member" %>'>
     <script>
         if (localStorage.getItem('sidebarCollapsed') === 'true') {
             document.body.classList.add('sidebar-collapsed');
@@ -161,10 +161,10 @@
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
-                    <div class="avatar"><%= UserInitials %></div>
+                    <div class="avatar"><%: UserInitials %></div>
                     <div class="user-info">
-                        <h4><%= Session["FullName"] ?? "Student Member" %></h4>
-                        <p><%= Session["Email"] ?? "member@example.com" %></p>
+                        <h4><%: Session["FullName"] ?? "Student Member" %></h4>
+                        <p><%: Session["Email"] ?? "member@example.com" %></p>
                     </div>
                 </div>
             </div>
@@ -183,9 +183,9 @@
                     </a>
                     <div class="profile-menu-container">
                         <div class="profile-trigger">
-                            <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
+                            <div class="avatar"><%: Project_Board.Utils.UiHelper.Initial(Session["FullName"]) %></div>
                             <div class="profile-greeting">
-                                <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
+                                <span>Hi,</span> <%: Session["FullName"] ?? "User" %>
                             </div>
                             <i class="fa-solid fa-chevron-down profile-arrow"></i>
                         </div>
@@ -236,10 +236,10 @@
                                             <i class="fa-solid fa-users"></i>
                                         </div>
                                         <div class="group-info">
-                                            <h3><%# Eval("GroupName") %></h3>
-                                            <p><i class="fa-solid fa-user-tie"></i> Leader: <%# Eval("LeaderName") %></p>
+                                            <h3><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("GroupName"))) %></h3>
+                                            <p><i class="fa-solid fa-user-tie"></i> Leader: <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("LeaderName"))) %></p>
                                         </div>
-                                        <span class="group-tech"><i class="fa-solid fa-microchip"></i> <%# Eval("TechName") %></span>
+                                        <span class="group-tech"><i class="fa-solid fa-microchip"></i> <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("TechName"))) %></span>
                                     </div>
                                     <div style="text-align: right;">
                                         <asp:Button ID="btnRequest" runat="server"

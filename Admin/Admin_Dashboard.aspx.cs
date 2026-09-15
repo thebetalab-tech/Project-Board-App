@@ -16,15 +16,14 @@ namespace Project_Board.Admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["Role"] == null || Session["Role"].ToString() != "Admin")
+            {
+                Response.Redirect("~/Default.aspx");
+                return;
+            }
+
             if (!IsPostBack)
             {
-                if (Session["Role"] == null || Session["Role"].ToString() != "Admin")
-                {
-                    Response.Redirect("~/Default.aspx");
-                    return;
-                }
-
-
                 LoadDashboardStats();
             }
         }

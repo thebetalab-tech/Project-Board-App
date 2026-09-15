@@ -250,10 +250,10 @@
 
         <div class="sidebar-footer">
             <div class="user-profile">
-                <div class="avatar"><%= (Session["FullName"] != null ? Session["FullName"].ToString() : "U").Substring(0, 1).ToUpper() %></div>
+                <div class="avatar"><%: Project_Board.Utils.UiHelper.Initial(Session["FullName"]) %></div>
                 <div class="user-info">
-                    <h4><%= Session["FullName"] != null ? Session["FullName"].ToString() : "User" %></h4>
-                    <p><%= Session["Email"] != null ? Session["Email"].ToString() : "user@example.com" %></p>
+                    <h4><%: Session["FullName"] != null ? Session["FullName"].ToString() : "User" %></h4>
+                    <p><%: Session["Email"] != null ? Session["Email"].ToString() : "user@example.com" %></p>
                 </div>
             </div>
         </div>
@@ -272,9 +272,9 @@
                         </a>
                         <div class="profile-menu-container">
                             <div class="profile-trigger">
-                                <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
+                                <div class="avatar"><%: Project_Board.Utils.UiHelper.Initial(Session["FullName"]) %></div>
                                 <div class="profile-greeting">
-                                    <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
+                                    <span>Hi,</span> <%: Session["FullName"] ?? "User" %>
                                 </div>
                                 <i class="fa-solid fa-chevron-down profile-arrow"></i>
                             </div>

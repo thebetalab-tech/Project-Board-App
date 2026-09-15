@@ -50,7 +50,7 @@
                                         <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("Members"))) ? "<span style='color:var(--c-text-muted)'>None</span>" : Project_Board.Utils.UiHelper.TextPreview(Eval("Members")) %></td>
                                         <td><%# Eval("MentorName") != DBNull.Value ? System.Web.HttpUtility.HtmlEncode(Eval("MentorName").ToString()) : "<span style='color:var(--c-text-muted)'>Not Assigned</span>" %></td>
                                         <td>
-                                            <span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# System.Web.HttpUtility.HtmlEncode(Eval("Status").ToString()) %></span>
+                                            <span class='badge status-<%# Project_Board.Utils.UiHelper.CssToken(Eval("Status")) %>'><%# System.Web.HttpUtility.HtmlEncode(Eval("Status").ToString()) %></span>
                                         </td>
                                         <td>
                                             <div class="table-actions">

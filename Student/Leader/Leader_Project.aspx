@@ -171,7 +171,7 @@
                                         </span>
                                     </div>
                                     <div style="display:flex; align-items:center; gap:0.75rem;">
-                                        <span class='badge-status status-<%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status")).ToLower()) %>'>
+                                        <span class='badge-status status-<%# Project_Board.Utils.UiHelper.CssToken(Eval("Status")) %>'>
                                             <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %>
                                         </span>
                                         <asp:LinkButton ID="btnDelete" runat="server" CommandName="DeleteProposal" CommandArgument='<%# Eval("ProjectId") %>' Visible='<%# Convert.ToString(Eval("Status")) == "Pending" %>' CssClass="icon-btn delete" title="Withdraw Proposal" OnClientClick="return confirm('Are you sure you want to withdraw this proposal?');">

@@ -132,7 +132,14 @@ namespace Project_Board.Admin
                 return;
             }
 
-            int groupId = Convert.ToInt32(ddlGroups.SelectedValue);
+            int groupId;
+            if (!int.TryParse(ddlGroups.SelectedValue, out groupId) || groupId <= 0)
+            {
+                lblMessage.Text = "The selected group is invalid. Please refresh and try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
             string title = txtTaskTitle.Text.Trim();
             string description = txtTaskDescription.Text.Trim();
             string points = txtPointsToCover.Text.Trim();
@@ -265,7 +272,11 @@ namespace Project_Board.Admin
         {
             if (e.CommandName == "DeleteTask")
             {
-                int taskId = Convert.ToInt32(e.CommandArgument);
+                int taskId;
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out taskId) || taskId <= 0)
+                {
+                    return;
+                }
                 int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
                 string adminName = Session["FullName"]?.ToString() ?? "Admin";
 

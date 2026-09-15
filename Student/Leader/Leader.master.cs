@@ -13,6 +13,11 @@ namespace Project_Board.Student.Leader
                 string isLeaderStr = Session["IsLeader"]?.ToString();
                 bool isLeader = !string.IsNullOrEmpty(isLeaderStr) && (isLeaderStr.Equals("True", StringComparison.OrdinalIgnoreCase) || isLeaderStr == "1");
 
+                if (role == "Admin")
+                {
+                    Response.Redirect("~/Admin/Admin_Dashboard.aspx");
+                    return;
+                }
                 if (role == "Student" && !isLeader)
                 {
                     Response.Redirect("~/Student/Member/Dashboard.aspx");
@@ -23,10 +28,17 @@ namespace Project_Board.Student.Leader
                     Response.Redirect("~/Faculty/Dashboard.aspx");
                     return;
                 }
+                else if (role != "Student")
+                {
+                    Response.Redirect("~/Default.aspx");
+                    return;
+                }
 
                 // Check for Lockdown
                 bool isLockedDown = false;
                 string connString = System.Configuration.ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"]?.ConnectionString;
+                try
+                {
                 if (!string.IsNullOrEmpty(connString))
                 {
                     using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connString))
@@ -46,6 +58,13 @@ namespace Project_Board.Student.Leader
                             }
                         }
                     }
+                }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Leader master lockdown check failed: " + ex);
+                    Response.Redirect("~/Error.aspx");
+                    return;
                 }
 
                 if (isLockedDown)

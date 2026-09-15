@@ -61,7 +61,12 @@ namespace Project_Board.Faculty
 
         protected void rptRequests_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            int groupId = Convert.ToInt32(e.CommandArgument);
+            int groupId;
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out groupId) || groupId <= 0)
+            {
+                ShowMessage("The selected request is invalid. Please refresh and try again.", false);
+                return;
+            }
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 

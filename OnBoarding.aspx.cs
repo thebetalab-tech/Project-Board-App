@@ -11,13 +11,10 @@ namespace Project_Board
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
+            if (Session["UserId"] == null || Session["Role"]?.ToString() != "Student")
             {
-                // Check if the user is already logged in
-                if (Session["Role"] == null || Session["Role"].ToString() != "Student")
-                {
-                    Response.Redirect("~/Default.aspx");
-                }
+                Response.Redirect("~/Default.aspx");
+                return;
             }
         }
         protected void btnStartGroup_Click(object sender, EventArgs e)

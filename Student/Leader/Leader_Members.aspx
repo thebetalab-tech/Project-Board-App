@@ -59,7 +59,7 @@
                                                 </td>
                                                 <td>
                                                     <span
-                                                        class='badge status-<%# HttpUtility.HtmlEncode(Convert.ToString(Eval("JoinStatus")).ToLower()) %>'>
+                                                        class='badge status-<%# Project_Board.Utils.UiHelper.CssToken(Eval("JoinStatus")) %>'>
                                                         <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("JoinStatus"))) %>
                                                     </span>
                                                 </td>

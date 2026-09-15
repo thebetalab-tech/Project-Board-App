@@ -166,7 +166,13 @@ namespace Project_Board.Admin
         {
             if (e.CommandName == "DeleteTech")
             {
-                int techId = Convert.ToInt32(e.CommandArgument);
+                int techId;
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out techId) || techId <= 0)
+                {
+                    lblMessage.ForeColor = System.Drawing.Color.Red;
+                    lblMessage.Text = "The selected technology is invalid. Please refresh and try again.";
+                    return;
+                }
                 int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
                 string adminName = Session["FullName"]?.ToString() ?? "Admin";
 
@@ -364,8 +370,15 @@ namespace Project_Board.Admin
                 return;
             }
 
-            int facultyId = Convert.ToInt32(ddlFaculty.SelectedValue);
-            int techId = Convert.ToInt32(ddlTech.SelectedValue);
+            int facultyId;
+            int techId;
+            if (!int.TryParse(ddlFaculty.SelectedValue, out facultyId) || facultyId <= 0
+                || !int.TryParse(ddlTech.SelectedValue, out techId) || techId <= 0)
+            {
+                lblAssignMessage.ForeColor = System.Drawing.Color.Red;
+                lblAssignMessage.Text = "The selected faculty member or technology is invalid. Please refresh and try again.";
+                return;
+            }
 
             using (SqlConnection conn = new SqlConnection(connString))
             {

@@ -70,10 +70,10 @@
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
-                    <div class="avatar"><%= UserInitials %></div>
+                    <div class="avatar"><%: UserInitials %></div>
                     <div class="user-info">
-                        <h4><%= Session["FullName"] ?? "Faculty Member" %></h4>
-                        <p><%= Session["Email"] ?? "faculty@example.com" %></p>
+                        <h4><%: Session["FullName"] ?? "Faculty Member" %></h4>
+                        <p><%: Session["Email"] ?? "faculty@example.com" %></p>
                     </div>
                 </div>
             </div>
@@ -93,9 +93,9 @@
                         </a>
                         <div class="profile-menu-container">
                             <div class="profile-trigger">
-                                <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
+                                <div class="avatar"><%: Project_Board.Utils.UiHelper.Initial(Session["FullName"]) %></div>
                                 <div class="profile-greeting">
-                                    <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
+                                    <span>Hi,</span> <%: Session["FullName"] ?? "User" %>
                                 </div>
                                 <i class="fa-solid fa-chevron-down profile-arrow"></i>
                             </div>
@@ -156,7 +156,7 @@
                                             <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("ProjectType"))) %></td>
                                             <td><%# Eval("SubmittedAt") != DBNull.Value ? Convert.ToDateTime(Eval("SubmittedAt")).ToString("MMM dd, yyyy") : "N/A" %></td>
                                             <td>
-                                                <span class='badge status-<%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status")).ToLower()) %>'><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %></span>
+                                                <span class='badge status-<%# Project_Board.Utils.UiHelper.CssToken(Eval("Status")) %>'><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %></span>
                                             </td>
                                             <td>
                                                 <div class="table-actions" style="display:flex; gap:0.5rem;">

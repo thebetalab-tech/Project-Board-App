@@ -44,7 +44,16 @@ namespace Project_Board.Student.Member
 
             if (!IsPostBack)
             {
-                LoadTeamDetails();
+                try
+                {
+                    LoadTeamDetails();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Member team load failed: {0}", ex);
+                    Response.Redirect("~/Error.aspx", false);
+                    Context.ApplicationInstance.CompleteRequest();
+                }
             }
         }
 

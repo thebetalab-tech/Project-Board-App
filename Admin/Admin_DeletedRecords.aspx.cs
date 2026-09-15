@@ -141,7 +141,11 @@ namespace Project_Board.Admin
         {
             if (e.CommandName == "ViewDetails")
             {
-                int deleteId = Convert.ToInt32(e.CommandArgument);
+                int deleteId;
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out deleteId) || deleteId <= 0)
+                {
+                    return;
+                }
                 PopulateDetailModal(deleteId);
             }
         }

@@ -171,7 +171,7 @@
                                         </td>
                                         <td>
                                             <div class="table-actions">
-                                                <button type="button" class="icon-btn edit" onclick="openEditTaskModal('<%# Eval("TaskId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("TaskTitle").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("TaskDescription").ToString()) %>', '<%# Eval("Status") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit Task">
+                                                <button type="button" class="icon-btn edit" onclick="openEditTaskModal('<%# Eval("TaskId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("TaskTitle").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("TaskDescription").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("Status"))) %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit Task">
                                                     <i class="fa-solid fa-edit"></i>
                                                 </button>
                                                 <a href='<%# ResolveUrl("~/Faculty/TaskDetails.aspx?TaskId=" + Eval("TaskId")) %>' class="icon-btn" title="View Details">

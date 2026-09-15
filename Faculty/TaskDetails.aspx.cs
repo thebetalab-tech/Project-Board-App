@@ -43,7 +43,18 @@ namespace Project_Board.Faculty
 
             if (!IsPostBack)
             {
-                LoadTaskDetails();
+                try
+                {
+                    LoadTaskDetails();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("TaskDetails.LoadTaskDetails failed for TaskId " + CurrentTaskId + ": " + ex);
+                    lblMessage.Text = "Unable to load this task right now. Please try again.";
+                    lblMessage.CssClass = "alert alert-danger";
+                    lblMessage.Visible = true;
+                    pnlAppealSection.Visible = false;
+                }
             }
         }
 
@@ -60,11 +71,14 @@ namespace Project_Board.Faculty
                     INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON t.GroupId = g.GroupId
                     INNER JOIN Users uTo ON t.AssignedTo = uTo.UserId
                     INNER JOIN Users uBy ON t.AssignedBy = uBy.UserId
-                    WHERE t.TaskId = @TaskId";
+                    WHERE t.TaskId = @TaskId
+                      AND (@IsAdmin = 1 OR g.MentorId = @UserId)";
 
                 using (SqlCommand cmd = new SqlCommand(taskSql, conn))
                 {
                     cmd.Parameters.AddWithValue("@TaskId", CurrentTaskId);
+                    cmd.Parameters.AddWithValue("@IsAdmin", Session["Role"]?.ToString() == "Admin");
+                    cmd.Parameters.AddWithValue("@UserId", Convert.ToInt32(Session["UserId"]));
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
                         if (rdr.Read())

@@ -145,7 +145,7 @@
             <td>
               <span class="badge <%# GetTypeBadgeClass(Convert.ToString(Eval("EntityType"))) %>">
                 <i class="<%# GetTypeIcon(Convert.ToString(Eval("EntityType"))) %>"></i>
-                <%# Eval("EntityType") %>
+                <%# System.Web.HttpUtility.HtmlEncode(Convert.ToString(Eval("EntityType"))) %>
               </span>
             </td>
             <td>

@@ -29,6 +29,8 @@ namespace Project_Board
                     UserInitials = fullName.Substring(0, 1).ToUpper();
                 }
 
+                try
+                {
                 // Ensure IsActive column exists
                 string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"]?.ConnectionString;
                 if (!string.IsNullOrEmpty(connString))
@@ -79,6 +81,12 @@ namespace Project_Board
 
                 LoadTechnologies();
                 LoadAvailableGroups();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("JoinGroup initial load failed: " + ex);
+                    ShowMessage("Unable to load available groups right now. Please try again.", false);
+                }
             }
             else
             {
@@ -96,10 +104,13 @@ namespace Project_Board
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     conn.Open();
-                    ddlTechnology.DataSource = cmd.ExecuteReader();
-                    ddlTechnology.DataTextField = "TechName";
-                    ddlTechnology.DataValueField = "TechId";
-                    ddlTechnology.DataBind();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        ddlTechnology.DataSource = reader;
+                        ddlTechnology.DataTextField = "TechName";
+                        ddlTechnology.DataValueField = "TechId";
+                        ddlTechnology.DataBind();
+                    }
                     ddlTechnology.Items.Insert(0, new ListItem("All Technologies", "0"));
                 }
             }
@@ -149,24 +160,55 @@ namespace Project_Board
 
         protected void ddlTechnology_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int techId = Convert.ToInt32(ddlTechnology.SelectedValue);
-            LoadAvailableGroups(techId);
+            int techId;
+            if (!int.TryParse(ddlTechnology.SelectedValue, out techId) || techId < 0)
+            {
+                techId = 0;
+            }
+            try
+            {
+                LoadAvailableGroups(techId);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("JoinGroup technology filter failed: " + ex);
+                ShowMessage("Unable to filter groups right now. Please try again.", false);
+            }
         }
 
         protected void btnClearFilter_Click(object sender, EventArgs e)
         {
             ddlTechnology.SelectedIndex = 0;
-            LoadAvailableGroups(0);
+            try
+            {
+                LoadAvailableGroups(0);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("JoinGroup clear filter failed: " + ex);
+                ShowMessage("Unable to load groups right now. Please try again.", false);
+            }
         }
 
         protected void rptAvailableGroups_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (e.CommandName == "RequestJoin")
+            if (e.CommandName != "RequestJoin")
             {
-                int groupId = Convert.ToInt32(e.CommandArgument);
-                int userId = Convert.ToInt32(Session["UserId"]);
-                string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+                return;
+            }
 
+            int groupId;
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out groupId) || groupId <= 0)
+            {
+                ShowMessage("The selected group is invalid. Please refresh and try again.", false);
+                return;
+            }
+
+            int userId = Convert.ToInt32(Session["UserId"]);
+            string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
+
+            try
+            {
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     conn.Open();
@@ -180,7 +222,8 @@ namespace Project_Board
                         if (count > 0)
                         {
                             ShowMessage("You already have a pending group join request. Please wait for the leader's response.", false);
-                            LoadAvailableGroups(ddlTechnology.SelectedValue != "0" ? Convert.ToInt32(ddlTechnology.SelectedValue) : 0);
+                            int selectedTechId;
+                            LoadAvailableGroups(int.TryParse(ddlTechnology.SelectedValue, out selectedTechId) ? selectedTechId : 0);
                             return;
                         }
                     }
@@ -204,6 +247,7 @@ namespace Project_Board
 
                             // Send notification to group leader
                             string leaderSql = "SELECT l.UserId, l.FullName, g.GroupName FROM Groups g JOIN Users l ON g.LeaderId = l.UserId WHERE g.GroupId = @GroupId";
+                            int? leaderId = null;
                             using (SqlCommand leaderCmd = new SqlCommand(leaderSql, conn))
                             {
                                 leaderCmd.Parameters.AddWithValue("@GroupId", groupId);
@@ -211,20 +255,20 @@ namespace Project_Board
                                 {
                                     if (rdr.Read())
                                     {
-                                        int leaderId = Convert.ToInt32(rdr["UserId"]);
-                                        string leaderName = rdr["FullName"].ToString();
-                                        string groupName = rdr["GroupName"].ToString();
-
-                                        // Insert notification for leader
-                                        string notifySql = "INSERT INTO Notifications (UserId, Message, Link) VALUES (@UserId, @Message, @Link)";
-                                        using (SqlCommand notifyCmd = new SqlCommand(notifySql, conn))
-                                        {
-                                            notifyCmd.Parameters.AddWithValue("@UserId", leaderId);
-                                            notifyCmd.Parameters.AddWithValue("@Message", "New group join request from " + Session["FullName"]);
-                                            notifyCmd.Parameters.AddWithValue("@Link", "~/Student/Leader/InvitationManager.aspx");
-                                            notifyCmd.ExecuteNonQuery();
-                                        }
+                                        leaderId = Convert.ToInt32(rdr["UserId"]);
                                     }
+                                }
+                            }
+
+                            if (leaderId.HasValue)
+                            {
+                                string notifySql = "INSERT INTO Notifications (UserId, Message, Link) VALUES (@UserId, @Message, @Link)";
+                                using (SqlCommand notifyCmd = new SqlCommand(notifySql, conn))
+                                {
+                                    notifyCmd.Parameters.AddWithValue("@UserId", leaderId.Value);
+                                    notifyCmd.Parameters.AddWithValue("@Message", "New group join request from " + Session["FullName"]);
+                                    notifyCmd.Parameters.AddWithValue("@Link", "~/Student/Leader/InvitationManager.aspx");
+                                    notifyCmd.ExecuteNonQuery();
                                 }
                             }
 
@@ -236,7 +280,13 @@ namespace Project_Board
                         }
                     }
                 }
-                LoadAvailableGroups(ddlTechnology.SelectedValue != "0" ? Convert.ToInt32(ddlTechnology.SelectedValue) : 0);
+                int filterTechId;
+                LoadAvailableGroups(int.TryParse(ddlTechnology.SelectedValue, out filterTechId) ? filterTechId : 0);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("JoinGroup request failed for GroupId " + groupId + ": " + ex);
+                ShowMessage("Unable to send the join request right now. Please try again.", false);
             }
         }
 

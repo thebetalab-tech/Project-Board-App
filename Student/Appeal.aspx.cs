@@ -200,7 +200,6 @@ namespace Project_Board.Student
                 return;
             }
 
-            // Redirect back to dashboard based on user role
             RedirectToDashboard();
         }
 
@@ -319,20 +318,23 @@ namespace Project_Board.Student
                 }
             }
 
-            // Redirect back to dashboard based on user role
-            string adminRole = Session["Role"]?.ToString() ?? "";
-            string studentRole = Session["UserRole"]?.ToString() ?? "";
+            return true;
+        }
+
+        private void RedirectToDashboard()
+        {
+            string role = (Session["Role"] ?? Session["UserRole"])?.ToString() ?? "";
             string isLeader = Session["IsLeader"]?.ToString() ?? "";
 
-            if (adminRole == "Admin")
+            if (role == "Admin")
             {
                 Response.Redirect("~/Admin/Admin_TaskManagement.aspx");
             }
-            else if (adminRole == "Faculty")
+            else if (role == "Faculty")
             {
                 Response.Redirect("~/Faculty/TaskManagement.aspx");
             }
-            else if (studentRole == "Student" && isLeader == "True")
+            else if (role == "Student" && isLeader == "True")
             {
                 Response.Redirect("~/Student/Leader/Leader_TaskManagement.aspx");
             }
@@ -344,27 +346,7 @@ namespace Project_Board.Student
 
         protected void btnBack_Click(object sender, EventArgs e)
         {
-            // Redirect back to dashboard based on user role
-            string adminRole = Session["Role"]?.ToString() ?? "";
-            string studentRole = Session["UserRole"]?.ToString() ?? "";
-            string isLeader = Session["IsLeader"]?.ToString() ?? "";
-
-            if (adminRole == "Admin")
-            {
-                Response.Redirect("~/Admin/Admin_TaskManagement.aspx");
-            }
-            else if (adminRole == "Faculty")
-            {
-                Response.Redirect("~/Faculty/TaskManagement.aspx");
-            }
-            else if (studentRole == "Student" && isLeader == "True")
-            {
-                Response.Redirect("~/Student/Leader/Leader_TaskManagement.aspx");
-            }
-            else
-            {
-                Response.Redirect("~/Student/Member/Member_TaskManagement.aspx");
-            }
+            RedirectToDashboard();
         }
     }
 }

@@ -57,10 +57,10 @@
                                         <td>
                                             <%# RenderKeywordTags(Eval("Keywords")) %>
                                         </td>
-                                        <td><span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# HttpUtility.HtmlEncode(Eval("Status").ToString()) %></span></td>
+                                        <td><span class='badge status-<%# Project_Board.Utils.UiHelper.CssToken(Eval("Status")) %>'><%# HttpUtility.HtmlEncode(Eval("Status").ToString()) %></span></td>
                                         <td>
                                             <div class="table-actions">
-                                                <button type="button" class="icon-btn edit" onclick="openEditProjectModal('<%# Eval("ProjectId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("ProjectTitle").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Functionality").ToString()) %>', '<%# Eval("Status") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit Project">
+                                                <button type="button" class="icon-btn edit" onclick="openEditProjectModal('<%# Eval("ProjectId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("ProjectTitle").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Functionality").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("Status"))) %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit Project">
                                                     <i class="fa-solid fa-edit"></i>
                                                 </button>
                                                 <asp:LinkButton ID="btnApprove" runat="server" CssClass="icon-btn" style="color:var(--c-green)" ToolTip="Approve" CommandName="Approve" CommandArgument='<%# Eval("ProjectId") %>' Visible='<%# Eval("Status").ToString() == "Pending" %>'>

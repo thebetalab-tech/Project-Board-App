@@ -52,7 +52,16 @@ namespace Project_Board.Student.Leader
 
             if (!IsPostBack)
             {
-                LoadDashboardData();
+                try
+                {
+                    LoadDashboardData();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Leader dashboard load failed: {0}", ex);
+                    Response.Redirect("~/Error.aspx", false);
+                    Context.ApplicationInstance.CompleteRequest();
+                }
             }
             // Don't redirect in Page_Load - let the page render
             // If user is not assigned a group, they'll see the dashboard with empty data

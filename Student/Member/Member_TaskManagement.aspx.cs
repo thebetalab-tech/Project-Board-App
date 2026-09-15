@@ -39,8 +39,17 @@ namespace Project_Board.Student.Member
 
             if (!IsPostBack)
             {
-                LoadMemberTasks();
-                LoadGroupMentorTasks();
+                try
+                {
+                    LoadMemberTasks();
+                    LoadGroupMentorTasks();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Member task load failed: {0}", ex);
+                    lblMessage.Text = "Unable to load tasks right now. Please try again later.";
+                    lblMessage.CssClass = "message error";
+                }
             }
         }
 

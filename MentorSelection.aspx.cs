@@ -13,7 +13,17 @@ namespace Project_Board
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["UserId"] == null)
+            bool isLeader = false;
+            if (Session["IsLeader"] is bool)
+            {
+                isLeader = (bool)Session["IsLeader"];
+            }
+            else
+            {
+                bool.TryParse(Session["IsLeader"]?.ToString(), out isLeader);
+            }
+
+            if (Session["UserId"] == null || Session["Role"]?.ToString() != "Student" || !isLeader)
             {
                 Response.Redirect("~/Default.aspx");
                 return;
@@ -21,7 +31,16 @@ namespace Project_Board
 
             if (!IsPostBack)
             {
-                LoadMentorData();
+                try
+                {
+                    LoadMentorData();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Mentor selection load failed: {0}", ex);
+                    lblMessage.Text = "Unable to load mentors right now. Please try again later.";
+                    lblMessage.ForeColor = System.Drawing.ColorTranslator.FromHtml("#ef4444");
+                }
             }
         }
 
@@ -175,9 +194,29 @@ namespace Project_Board
 
         protected void rptFaculty_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
+            try
+            {
+                HandleFacultyCommand(e);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Mentor selection request failed: {0}", ex);
+                lblMessage.Text = "Unable to submit the mentor request right now. Please try again later.";
+                lblMessage.ForeColor = System.Drawing.ColorTranslator.FromHtml("#ef4444");
+            }
+        }
+
+        private void HandleFacultyCommand(RepeaterCommandEventArgs e)
+        {
             if (e.CommandName == "SelectMentor")
             {
-                int selectedMentorId = Convert.ToInt32(e.CommandArgument);
+                int selectedMentorId;
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out selectedMentorId) || selectedMentorId <= 0)
+                {
+                    lblMessage.Text = "The selected mentor is invalid. Please refresh and try again.";
+                    lblMessage.ForeColor = System.Drawing.ColorTranslator.FromHtml("#ef4444");
+                    return;
+                }
                 string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
                 
                 using (SqlConnection conn = new SqlConnection(connString))
@@ -198,12 +237,31 @@ namespace Project_Board
                     if (groupId == 0) return;
 
                     // Update Group with Mentor request
-                    string updateSql = "UPDATE Groups SET MentorId = @MentorId, Status = 'Pending Faculty Approval' WHERE GroupId = @GroupId";
+                    string updateSql = @"
+                        UPDATE g
+                        SET MentorId = @MentorId, Status = 'Pending Faculty Approval'
+                        FROM Groups g
+                        WHERE g.GroupId = @GroupId
+                          AND g.LeaderId = @LeaderId
+                          AND EXISTS (
+                              SELECT 1 FROM Users u
+                              INNER JOIN Faculty f ON u.UserId = f.FacultyId
+                              WHERE u.UserId = @MentorId AND u.Role = 'Faculty'
+                                AND u.IsActive = 1 AND f.TechId = g.TechId)
+                          AND NOT EXISTS (
+                              SELECT 1 FROM GroupMentorRejections r
+                              WHERE r.GroupId = g.GroupId AND r.FacultyId = @MentorId)";
                     using (SqlCommand cmdUpdate = new SqlCommand(updateSql, conn))
                     {
                         cmdUpdate.Parameters.AddWithValue("@MentorId", selectedMentorId);
                         cmdUpdate.Parameters.AddWithValue("@GroupId", groupId);
-                        cmdUpdate.ExecuteNonQuery();
+                        cmdUpdate.Parameters.AddWithValue("@LeaderId", leaderId);
+                        if (cmdUpdate.ExecuteNonQuery() == 0)
+                        {
+                            lblMessage.Text = "That mentor is no longer available for this group. Please refresh and choose again.";
+                            lblMessage.ForeColor = System.Drawing.ColorTranslator.FromHtml("#ef4444");
+                            return;
+                        }
                     }
 
                     // Send email to chosen Faculty Mentor (Scenario 7)
@@ -252,6 +310,20 @@ namespace Project_Board
 
         protected void btnWithdraw_Click(object sender, EventArgs e)
         {
+            try
+            {
+                WithdrawRequest();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Mentor request withdrawal failed: {0}", ex);
+                lblMessage.Text = "Unable to withdraw the mentor request right now. Please try again later.";
+                lblMessage.ForeColor = System.Drawing.ColorTranslator.FromHtml("#ef4444");
+            }
+        }
+
+        private void WithdrawRequest()
+        {
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connString))
             {
@@ -271,10 +343,11 @@ namespace Project_Board
                 if (groupId == 0) return;
 
                 // Withdraw request (reset MentorId and Status to forming)
-                string updateSql = "UPDATE Groups SET MentorId = NULL, Status = 'Forming' WHERE GroupId = @GroupId AND Status = 'Pending Faculty Approval'";
+                string updateSql = "UPDATE Groups SET MentorId = NULL, Status = 'Forming' WHERE GroupId = @GroupId AND LeaderId = @LeaderId AND Status = 'Pending Faculty Approval'";
                 using (SqlCommand cmdUpdate = new SqlCommand(updateSql, conn))
                 {
                     cmdUpdate.Parameters.AddWithValue("@GroupId", groupId);
+                    cmdUpdate.Parameters.AddWithValue("@LeaderId", leaderId);
                     cmdUpdate.ExecuteNonQuery();
                 }
             }

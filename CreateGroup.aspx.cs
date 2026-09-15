@@ -14,6 +14,12 @@ namespace Project_Board
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["UserId"] == null || Session["Role"]?.ToString() != "Student")
+            {
+                Response.Redirect("~/Default.aspx");
+                return;
+            }
+
             // Check if the user is a leader or not
             bool isLeader = false;
             if (Session["IsLeader"] != null)
@@ -36,43 +42,51 @@ namespace Project_Board
 
             if (!IsPostBack)
             {
-                // Check for Lockdown
-                bool isLockedDown = false;
-                string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"]?.ConnectionString;
-                if (!string.IsNullOrEmpty(connString))
+                try
                 {
-                    using (SqlConnection conn = new SqlConnection(connString))
+                    // Check for Lockdown
+                    bool isLockedDown = false;
+                    string connectionString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"]?.ConnectionString;
+                    if (!string.IsNullOrEmpty(connectionString))
                     {
-                        conn.Open();
-                        string sqlLockdown = @"
+                        using (SqlConnection conn = new SqlConnection(connectionString))
+                        {
+                            conn.Open();
+                            string sqlLockdown = @"
                             SELECT 1 FROM Groups g WHERE g.LeaderId = @UserId AND g.IsActive = 0
                             UNION
                             SELECT 1 FROM Groups g INNER JOIN GroupMembers gm ON g.GroupId = gm.GroupId WHERE gm.UserId = @UserId AND gm.JoinStatus = 'Accepted' AND g.IsActive = 0";
-                        using (SqlCommand cmd = new SqlCommand(sqlLockdown, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@UserId", Session["UserId"]);
-                            object result = cmd.ExecuteScalar();
-                            if (result != null)
+                            using (SqlCommand cmd = new SqlCommand(sqlLockdown, conn))
                             {
-                                isLockedDown = true;
+                                cmd.Parameters.AddWithValue("@UserId", Session["UserId"]);
+                                object result = cmd.ExecuteScalar();
+                                isLockedDown = result != null;
                             }
                         }
                     }
-                }
 
-                if (isLockedDown)
+                    if (isLockedDown)
+                    {
+                        Response.Redirect("~/Student/Lockdown.aspx");
+                        return;
+                    }
+
+                    // Populate the dropdown list with technology domains from the database
+                    LoadTechnologies();
+                }
+                catch (Exception ex)
                 {
-                    Response.Redirect("~/Student/Lockdown.aspx");
-                    return;
+                    System.Diagnostics.Trace.TraceError("CreateGroup initialization failed: {0}", ex);
+                    lblMessage.Text = "Unable to load the group form right now. Please try again later.";
+                    lblMessage.CssClass = "error-message";
                 }
-
-                // Populate the dropdown list with technology domains from the database
-                LoadTechnologies();
             }
         }
 
         private void LoadTechnologies()
         {
+            try
+            {
             using (SqlConnection connection = new SqlConnection(connString))
             {
                 // Fetch all the tech to show in the dropdown list
@@ -96,6 +110,13 @@ namespace Project_Board
             // Insert a default placeholder item at the top of the dropdown
             ddlTechDomain.Items.Insert(0, new ListItem("Select primary technology", ""));
             ddlTechDomain.Items[0].Attributes["disabled"] = "disabled";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("CreateGroup.LoadTechnologies failed: " + ex);
+                lblMessage.Text = "Unable to load technologies right now. Please try again.";
+                lblMessage.CssClass = "form-message form-message--error";
+            }
         }
 
         // This event fires automatically when the user clicks off the text box (Requires AutoPostBack="true" in ASPX)
@@ -110,6 +131,8 @@ namespace Project_Board
                 return;
             }
 
+            try
+            {
             // Check if the group name exists
             using (SqlConnection connection = new SqlConnection(connString))
             {
@@ -134,6 +157,13 @@ namespace Project_Board
                     }
                 }
             }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("CreateGroup group-name check failed: " + ex);
+                lblNameStatus.Text = "Unable to check the group name right now.";
+                lblNameStatus.ForeColor = System.Drawing.ColorTranslator.FromHtml("#d93025");
+            }
         }
 
         // Event for when the user submits the form
@@ -150,6 +180,8 @@ namespace Project_Board
                 return;
             }
 
+            try
+            {
             // Insert the new group using your sp_crud_groups stored procedure
             using (SqlConnection connection = new SqlConnection(connString))
             {
@@ -170,6 +202,17 @@ namespace Project_Board
 
             // Redirect on success
             Response.Redirect("~/MentorSelection.aspx", true);
+            }
+            catch (System.Threading.ThreadAbortException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("CreateGroup.btnCreateGroup_Click failed: " + ex);
+                lblMessage.Text = "Unable to create the group right now. Please try again.";
+                lblMessage.CssClass = "form-message form-message--error";
+            }
         }
     }
 }

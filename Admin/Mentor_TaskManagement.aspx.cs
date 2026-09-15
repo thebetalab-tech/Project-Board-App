@@ -147,7 +147,14 @@ namespace Project_Board.Admin
                 return;
             }
 
-            int groupId = Convert.ToInt32(ddlGroups.SelectedValue);
+            int groupId;
+            if (!int.TryParse(ddlGroups.SelectedValue, out groupId) || groupId <= 0)
+            {
+                lblMessage.Text = "The selected group is invalid. Please refresh and try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
             string title = txtTaskTitle.Text.Trim();
             string description = txtTaskDescription.Text.Trim();
             string pointsToCover = txtPointsToCover.Text.Trim();
@@ -155,7 +162,15 @@ namespace Project_Board.Admin
 
             if (!string.IsNullOrEmpty(txtDueDate.Text))
             {
-                dueDate = DateTime.Parse(txtDueDate.Text);
+                DateTime parsedDueDate;
+                if (!DateTime.TryParse(txtDueDate.Text, out parsedDueDate))
+                {
+                    lblMessage.Text = "Please enter a valid due date.";
+                    lblMessage.CssClass = "alert alert-danger";
+                    lblMessage.Visible = true;
+                    return;
+                }
+                dueDate = parsedDueDate;
             }
 
             int mentorId = Convert.ToInt32(Session["UserId"]);
@@ -267,7 +282,14 @@ namespace Project_Board.Admin
 
         protected void rptMentorTasks_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            int taskId = Convert.ToInt32(e.CommandArgument);
+            int taskId;
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out taskId) || taskId <= 0)
+            {
+                lblMessage.Text = "The selected task is invalid. Please refresh and try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
 
             if (e.CommandName == "ViewReport")
             {

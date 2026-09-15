@@ -90,7 +90,7 @@
                                             </div>
                                         </td>
                                         <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("EnrollmentNo"))) ? "N/A" : HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) %></td>
-                                        <td><span class='badge <%# Eval("Role").ToString().ToLower() %>'><%# HttpUtility.HtmlEncode(Eval("Role").ToString()) %></span></td>
+                                        <td><span class='badge <%# Project_Board.Utils.UiHelper.CssToken(Eval("Role")) %>'><%# HttpUtility.HtmlEncode(Eval("Role").ToString()) %></span></td>
                                         <td>
                                             <%# ToBool(Eval("IsActive")) 
                                                 ? "<span class='badge' style='background:rgba(16,185,129,.12);color:#10b981;'>Active</span>" 
@@ -101,7 +101,7 @@
                                         </td>
                                         <td>
                                             <div class="table-actions">
-                                                <button type="button" class="icon-btn edit" onclick="openEditUserModal('<%# Eval("UserId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("FullName").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Email").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("EnrollmentNo"))) %>', '<%# Eval("Role") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit User">
+                                                <button type="button" class="icon-btn edit" onclick="openEditUserModal('<%# Eval("UserId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("FullName").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Email").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("EnrollmentNo"))) %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("Role"))) %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit User">
                                                     <i class="fa-solid fa-edit"></i>
                                                 </button>
                                                 <asp:LinkButton ID="btnActivate" runat="server" CssClass="icon-btn edit" CommandName="ActivateUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to activate this user?');" CausesValidation="false" Visible='<%# !ToBool(Eval("IsActive")) %>' style="color:#10b981;" title="Activate User">
