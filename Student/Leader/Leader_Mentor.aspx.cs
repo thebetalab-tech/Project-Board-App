@@ -45,7 +45,7 @@ namespace Project_Board.Student.Leader
             {
                 cmd.Parameters.AddWithValue("@LeaderId", Session["UserId"]);
                 object result = cmd.ExecuteScalar();
-                return result != null ? Convert.ToInt32(result) : 0;
+                return (result != null && result != DBNull.Value) ? Convert.ToInt32(result) : 0;
             }
         }
 
@@ -81,6 +81,7 @@ namespace Project_Board.Student.Leader
                 if (mentorId.HasValue)
                 {
                     // Fetch mentor name and email
+                    string rawMentorName = "Faculty Mentor";
                     string mentorName = "Faculty Mentor";
                     string mentorEmail = "";
                     string qMentor = "SELECT FullName, Email FROM Users WHERE UserId = @UserId";
@@ -91,13 +92,18 @@ namespace Project_Board.Student.Leader
                         {
                             if (mRdr.Read())
                             {
-                                mentorName = HttpUtility.HtmlEncode(mRdr["FullName"].ToString());
+                                rawMentorName = mRdr["FullName"].ToString();
+                                mentorName = HttpUtility.HtmlEncode(rawMentorName);
                                 mentorEmail = HttpUtility.HtmlEncode(mRdr["Email"].ToString());
                             }
                         }
                     }
 
-                    string initials = !string.IsNullOrEmpty(mentorName) ? mentorName.Substring(0, 1).ToUpper() : "F";
+                    // Take the initial from the RAW name: the encoded form can start with an
+                    // entity (e.g. "&amp;…"), which would put a bare "&" into the markup below.
+                    string initials = !string.IsNullOrEmpty(rawMentorName)
+                        ? HttpUtility.HtmlEncode(rawMentorName.Substring(0, 1).ToUpper())
+                        : "F";
 
                     if (status.Equals("Assigned Mentor", StringComparison.OrdinalIgnoreCase) ||
                         status.Equals("Accepted", StringComparison.OrdinalIgnoreCase) ||
@@ -194,9 +200,7 @@ namespace Project_Board.Student.Leader
 
         protected void btnRequest_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(ddlMentors.SelectedValue)) return;
-            
-            int selectedMentorId = Convert.ToInt32(ddlMentors.SelectedValue);
+            if (!int.TryParse(ddlMentors.SelectedValue, out int selectedMentorId) || selectedMentorId <= 0) return;
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connString))
             {

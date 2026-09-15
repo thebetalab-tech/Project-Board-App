@@ -92,22 +92,22 @@
                                         <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("EnrollmentNo"))) ? "N/A" : HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) %></td>
                                         <td><span class='badge <%# Eval("Role").ToString().ToLower() %>'><%# HttpUtility.HtmlEncode(Eval("Role").ToString()) %></span></td>
                                         <td>
-                                            <%# Convert.ToBoolean(Eval("IsActive")) 
+                                            <%# ToBool(Eval("IsActive")) 
                                                 ? "<span class='badge' style='background:rgba(16,185,129,.12);color:#10b981;'>Active</span>" 
                                                 : "<span class='badge' style='background:rgba(239,68,68,.12);color:#ef4444;'>Inactive</span>" %>
                                         </td>
                                         <td>
-                                            <%# Convert.ToBoolean(Eval("IsLeader")) ? "<i class='fa-solid fa-crown' style='color: var(--c-yellow);' title='Group Leader'></i> Yes" : "-" %>
+                                            <%# ToBool(Eval("IsLeader")) ? "<i class='fa-solid fa-crown' style='color: var(--c-yellow);' title='Group Leader'></i> Yes" : "-" %>
                                         </td>
                                         <td>
                                             <div class="table-actions">
                                                 <button type="button" class="icon-btn edit" onclick="openEditUserModal('<%# Eval("UserId") %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("FullName").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Eval("Email").ToString()) %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("EnrollmentNo"))) %>', '<%# Eval("Role") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit User">
                                                     <i class="fa-solid fa-edit"></i>
                                                 </button>
-                                                <asp:LinkButton ID="btnActivate" runat="server" CssClass="icon-btn edit" CommandName="ActivateUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to activate this user?');" CausesValidation="false" Visible='<%# !Convert.ToBoolean(Eval("IsActive")) %>' style="color:#10b981;" title="Activate User">
+                                                <asp:LinkButton ID="btnActivate" runat="server" CssClass="icon-btn edit" CommandName="ActivateUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to activate this user?');" CausesValidation="false" Visible='<%# !ToBool(Eval("IsActive")) %>' style="color:#10b981;" title="Activate User">
                                                     <i class="fa-solid fa-user-check"></i>
                                                 </asp:LinkButton>
-                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to deactivate this user?');" CausesValidation="false" Visible='<%# Convert.ToBoolean(Eval("IsActive")) %>' title="Deactivate User">
+                                                <asp:LinkButton ID="btnDelete" runat="server" CssClass="icon-btn delete" CommandName="DeleteUser" CommandArgument='<%# Eval("UserId") %>' OnClientClick="return confirm('Are you sure you want to deactivate this user?');" CausesValidation="false" Visible='<%# ToBool(Eval("IsActive")) %>' title="Deactivate User">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </asp:LinkButton>
                                             </div>

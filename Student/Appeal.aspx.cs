@@ -11,6 +11,28 @@ namespace Project_Board.Student
         private string ConnString => ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
         private int TaskId => int.TryParse(Request.QueryString["TaskId"], out int taskId) ? taskId : 0;
 
+        // Session-backed display values. Kept as properties so the markup never calls
+        // Substring on a possibly-empty session value (which throws ArgumentOutOfRangeException).
+        protected string CurrentUserName
+        {
+            get
+            {
+                string name = Session["FullName"]?.ToString();
+                return string.IsNullOrWhiteSpace(name) ? "User" : name;
+            }
+        }
+
+        protected string CurrentUserEmail
+        {
+            get
+            {
+                string email = Session["Email"]?.ToString();
+                return string.IsNullOrWhiteSpace(email) ? "user@example.com" : email;
+            }
+        }
+
+        protected string CurrentUserInitial => CurrentUserName.Substring(0, 1).ToUpper();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["UserId"] == null)
@@ -74,13 +96,16 @@ namespace Project_Board.Student
                                 chkIsCompleted.Enabled = false;
                             }
 
-                            lblTaskTitle.Text = reader["TaskTitle"].ToString();
-                            lblAssignorName.Text = reader["AssignedByName"].ToString();
+                            lblTaskTitle.Text = System.Web.HttpUtility.HtmlEncode(reader["TaskTitle"].ToString());
+                            lblAssignorName.Text = System.Web.HttpUtility.HtmlEncode(reader["AssignedByName"].ToString());
 
                             string feedback = reader["FeedbackText"] != DBNull.Value ? reader["FeedbackText"].ToString() : "";
                             string description = reader["TaskDescription"] != DBNull.Value ? reader["TaskDescription"].ToString() : "";
 
-                            lblFeedback.Text = string.IsNullOrEmpty(feedback) ? (string.IsNullOrEmpty(description) ? "No details provided." : description) : feedback;
+                            // FeedbackText/TaskDescription are NVARCHAR(MAX) free text: encode and clamp
+                            // so a long block cannot blow out the task card layout.
+                            string details = string.IsNullOrEmpty(feedback) ? description : feedback;
+                            lblFeedback.Text = Project_Board.Utils.UiHelper.TextPreview(details, "No details provided.");
                         }
                     }
                 }
@@ -159,6 +184,30 @@ namespace Project_Board.Student
                 return;
             }
 
+            try
+            {
+                if (!SaveAppeal(studentId, reason, changesMade, explanation, isCompleted))
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Appeal.btnSubmit_Click failed for TaskId " + TaskId + ": " + ex);
+                lblMessage.Text = "Your appeal could not be submitted right now. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
+
+            // Redirect back to dashboard based on user role
+            RedirectToDashboard();
+        }
+
+        // Returns false when the submission was rejected and a message has already been
+        // shown to the user; true when the appeal was persisted.
+        private bool SaveAppeal(int studentId, string reason, string changesMade, string explanation, bool isCompleted)
+        {
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 conn.Open();
@@ -176,7 +225,7 @@ namespace Project_Board.Student
                         lblMessage.CssClass = "alert alert-danger";
                         lblMessage.Visible = true;
                         btnSubmit.Enabled = false;
-                        return;
+                        return false;
                     }
                 }
 

@@ -192,10 +192,10 @@
 
         <div class="sidebar-footer">
             <div class="user-profile">
-                <div class="avatar"><%= UserInitials %></div>
+                <div class="avatar"><%= Server.HtmlEncode(UserInitials) %></div>
                 <div class="user-info">
-                    <h4><%= UserName %></h4>
-                    <p><%= UserEmail %></p>
+                    <h4><%= Server.HtmlEncode(UserName) %></h4>
+                    <p><%= Server.HtmlEncode(UserEmail) %></p>
                 </div>
             </div>
         </div>
@@ -215,9 +215,9 @@
                         </a>
                         <div class="profile-menu-container">
                             <div class="profile-trigger">
-                                <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
+                                <div class="avatar"><%= Server.HtmlEncode(string.IsNullOrEmpty(Convert.ToString(Session["FullName"])) ? "U" : Convert.ToString(Session["FullName"]).Substring(0,1).ToUpper()) %></div>
                                 <div class="profile-greeting">
-                                    <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
+                                    <span>Hi,</span> <%= Server.HtmlEncode(string.IsNullOrEmpty(Convert.ToString(Session["FullName"])) ? "User" : Convert.ToString(Session["FullName"])) %>
                                 </div>
                                 <i class="fa-solid fa-chevron-down profile-arrow"></i>
                             </div>
@@ -398,6 +398,10 @@
 
     </form>
 
+    <!-- admin.js supplies toggleTextPreview(), used by the "View more" buttons that
+         UiHelper.TextPreview renders in the task description column. Without it those
+         buttons throw "toggleTextPreview is not defined" and never expand. -->
+    <script src='<%= ResolveUrl("~/Admin/admin.js?v=latest_v7") %>'></script>
     <script>
         function openModal(id) {
             document.getElementById(id).classList.add('active');

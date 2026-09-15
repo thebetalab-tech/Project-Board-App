@@ -99,23 +99,23 @@
     <div class="dashboard-container">
         <div class="page-header">
             <div class="page-title">
-                <h1><%= GroupName %></h1>
-                <p>Technology Domain: <%= TechName %></p>
+                <h1><%= HttpUtility.HtmlEncode(GroupName) %></h1>
+                <p>Technology Domain: <%= HttpUtility.HtmlEncode(TechName) %></p>
             </div>
         </div>
 
         <!-- MENTOR STATUS PROFILE CARD -->
         <div class="mentor-card">
             <div class="mentor-avatar">
-                <%= IsMentorAssigned ? MentorInitials : "<i class='fa-solid fa-user-tie'></i>" %>
+                <%= IsMentorAssigned ? HttpUtility.HtmlEncode(MentorInitials) : "<i class='fa-solid fa-user-tie'></i>" %>
             </div>
             <div class="mentor-details" style="flex:1;">
                 <% if (IsMentorAssigned) { %>
-                    <h4><i class="fa-solid fa-award" style="color:#6366f1; margin-right:0.4rem;"></i> Assigned Faculty Mentor: <%= MentorName %></h4>
-                    <p><i class="fa-solid fa-envelope" style="margin-right:0.3rem;"></i> <%= MentorEmail %></p>
+                    <h4><i class="fa-solid fa-award" style="color:#6366f1; margin-right:0.4rem;"></i> Assigned Faculty Mentor: <%= HttpUtility.HtmlEncode(MentorName) %></h4>
+                    <p><i class="fa-solid fa-envelope" style="margin-right:0.3rem;"></i> <%= HttpUtility.HtmlEncode(MentorEmail) %></p>
                 <% } else if (GroupStatus.Equals("Pending Faculty Approval", StringComparison.OrdinalIgnoreCase)) { %>
                     <h4><i class="fa-solid fa-clock" style="color:#eab308; margin-right:0.4rem;"></i> Mentor Request Pending Approval</h4>
-                    <p>Requested: <%= MentorName %> — Waiting for faculty acceptance.</p>
+                    <p>Requested: <%= HttpUtility.HtmlEncode(MentorName) %> — Waiting for faculty acceptance.</p>
                 <% } else { %>
                     <h4><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right:0.4rem;"></i> No Faculty Mentor Assigned</h4>
                     <p>Go to <a href='<%= ResolveUrl("~/Student/Leader/Leader_Mentor.aspx") %>' style="color:var(--c-accent); text-decoration:underline;">Mentor Request</a> to select a mentor.</p>
@@ -190,12 +190,12 @@
                     <asp:Repeater ID="rptMembers" runat="server">
                         <ItemTemplate>
                             <tr>
-                                <td><strong><%# Eval("FullName") %></strong></td>
-                                <td><%# Eval("EnrollmentNo") != DBNull.Value ? Eval("EnrollmentNo") : "N/A" %></td>
-                                <td><%# Eval("Email") %></td>
+                                <td><strong><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("FullName"))) %></strong></td>
+                                <td><%# Eval("EnrollmentNo") != DBNull.Value ? HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) : "N/A" %></td>
+                                <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Email"))) %></td>
                                 <td>
-                                    <span class='badge-status <%# Eval("JoinStatus").ToString() == "Accepted" ? "badge-success" : "badge-warning" %>'>
-                                        <%# Eval("JoinStatus") %>
+                                    <span class='badge-status <%# Convert.ToString(Eval("JoinStatus")) == "Accepted" ? "badge-success" : "badge-warning" %>'>
+                                        <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("JoinStatus"))) %>
                                     </span>
                                 </td>
                             </tr>   

@@ -40,25 +40,32 @@ namespace Project_Board.Admin
             ddlGroups.Items.Clear();
             ddlGroups.Items.Add(new ListItem("-- Select Group & Leader --", ""));
 
-            using (SqlConnection conn = new SqlConnection(ConnString))
+            try
             {
-                string query = @"
-                    SELECT g.GroupId, g.GroupName, u.FullName AS LeaderName 
-                    FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
-                    INNER JOIN Users u ON g.LeaderId = u.UserId
-                    ORDER BY g.GroupName";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlConnection conn = new SqlConnection(ConnString))
                 {
-                    conn.Open();
-                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    string query = @"
+                        SELECT g.GroupId, g.GroupName, u.FullName AS LeaderName
+                        FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
+                        INNER JOIN Users u ON g.LeaderId = u.UserId
+                        ORDER BY g.GroupName";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        while (rdr.Read())
+                        conn.Open();
+                        using (SqlDataReader rdr = cmd.ExecuteReader())
                         {
-                            string itemText = $"{rdr["GroupName"]} (Leader: {rdr["LeaderName"]})";
-                            ddlGroups.Items.Add(new ListItem(itemText, rdr["GroupId"].ToString()));
+                            while (rdr.Read())
+                            {
+                                string itemText = $"{rdr["GroupName"]} (Leader: {rdr["LeaderName"]})";
+                                ddlGroups.Items.Add(new ListItem(itemText, rdr["GroupId"].ToString()));
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Admin task groups load error: " + ex);
             }
         }
 
@@ -88,10 +95,17 @@ namespace Project_Board.Admin
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    conn.Open();
-                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    try
                     {
-                        da.Fill(dt);
+                        conn.Open();
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            da.Fill(dt);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Trace.TraceError("Global tasks load error: " + ex);
                     }
                 }
             }
@@ -122,9 +136,25 @@ namespace Project_Board.Admin
             string title = txtTaskTitle.Text.Trim();
             string description = txtTaskDescription.Text.Trim();
             string points = txtPointsToCover.Text.Trim();
-            DateTime? dueDate = string.IsNullOrEmpty(txtDueDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtDueDate.Text);
+            // The date input's value is client-supplied; TryParse so a forged/garbled
+            // postback value is rejected with a message instead of throwing FormatException.
+            DateTime? dueDate = null;
+            if (!string.IsNullOrEmpty(txtDueDate.Text))
+            {
+                DateTime parsedDue;
+                if (!DateTime.TryParse(txtDueDate.Text, out parsedDue))
+                {
+                    lblMessage.Text = "Please enter a valid due date.";
+                    lblMessage.CssClass = "alert alert-danger";
+                    lblMessage.Visible = true;
+                    return;
+                }
+                dueDate = parsedDue;
+            }
 
             int leaderId = 0;
+            try
+            {
             // Fetch LeaderId for selected group
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
@@ -134,7 +164,7 @@ namespace Project_Board.Admin
                     cmd.Parameters.AddWithValue("@GroupId", groupId);
                     conn.Open();
                     object result = cmd.ExecuteScalar();
-                    if (result != null)
+                    if (result != null && result != DBNull.Value)
                     {
                         leaderId = Convert.ToInt32(result);
                     }
@@ -208,6 +238,15 @@ namespace Project_Board.Admin
                 {
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Admin task create error: " + ex);
+                lblMessage.Text = "Could not create the task. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
             }
 
             lblMessage.Text = "Admin Global Task created and assigned successfully!";

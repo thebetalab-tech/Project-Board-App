@@ -29,7 +29,9 @@ namespace Project_Board.Faculty
                     Response.Redirect("Dashboard.aspx");
                     return;
                 }
-                litType.Text = type;
+                // The type comes straight from the URL, so it must be encoded before it is
+                // written into the page.
+                litType.Text = System.Web.HttpUtility.HtmlEncode(type);
             }
         }
 
@@ -83,7 +85,15 @@ namespace Project_Board.Faculty
             }
 
             string type = Request.QueryString["type"];
-            int id = Convert.ToInt32(Request.QueryString["id"]);
+            // A hand-edited URL can put anything in "id"; parsing it defensively avoids a
+            // FormatException before the authorization check below can run.
+            if (!int.TryParse(Request.QueryString["id"], out int id))
+            {
+                lblError.Text = "Invalid request.";
+                lblError.Visible = true;
+                return;
+            }
+
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
@@ -152,14 +162,23 @@ namespace Project_Board.Faculty
                                 string memberEmail = rdr["Email"].ToString();
                                 string memberName = rdr["FullName"].ToString();
 
-                                Project_Board.Services.EmailService.SendProjectStatusNotificationToGroupMember(
-                                    memberEmail,
-                                    memberName,
-                                    facultyName,
-                                    groupName,
-                                    projectTitle,
-                                    "Rejected"
-                                );
+                                // A failing mail send must not abort the rejection that has
+                                // already been logged and applied.
+                                try
+                                {
+                                    Project_Board.Services.EmailService.SendProjectStatusNotificationToGroupMember(
+                                        memberEmail,
+                                        memberName,
+                                        facultyName,
+                                        groupName,
+                                        projectTitle,
+                                        "Rejected"
+                                    );
+                                }
+                                catch (Exception ex)
+                                {
+                                    System.Diagnostics.Trace.TraceError("RejectionForm: rejection email to " + memberEmail + " failed: " + ex);
+                                }
                             }
                         }
                     }
@@ -188,7 +207,7 @@ namespace Project_Board.Faculty
                         object result = cmd.ExecuteScalar();
                         if (result != null && result != DBNull.Value) studentUserId = Convert.ToInt32(result);
                     }
-                    redirectUrl = "TaskDetails.aspx?id=" + id;
+                    redirectUrl = "TaskDetails.aspx?TaskId=" + id;
                 }
                 else if (type == "Appeal")
                 {
@@ -204,7 +223,7 @@ namespace Project_Board.Faculty
                         object result = cmd.ExecuteScalar();
                         if (result != null && result != DBNull.Value) studentUserId = Convert.ToInt32(result);
                     }
-                    redirectUrl = "TaskDetails.aspx?id=" + id;
+                    redirectUrl = "TaskDetails.aspx?TaskId=" + id;
                 }
                 else if (type == "Group")
                 {

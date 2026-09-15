@@ -95,10 +95,10 @@
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
-                    <div class="avatar"><%= UserInitials %></div>
+                    <div class="avatar"><%= Server.HtmlEncode(UserInitials) %></div>
                     <div class="user-info">
-                        <h4><%= Session["FullName"] ?? "Administrator" %></h4>
-                        <p><%= Session["Email"] ?? "admin@example.com" %></p>
+                        <h4><%= Server.HtmlEncode(string.IsNullOrEmpty(Convert.ToString(Session["FullName"])) ? "Administrator" : Convert.ToString(Session["FullName"])) %></h4>
+                        <p><%= Server.HtmlEncode(string.IsNullOrEmpty(Convert.ToString(Session["Email"])) ? "admin@example.com" : Convert.ToString(Session["Email"])) %></p>
                     </div>
                 </div>
             </div>
@@ -118,9 +118,9 @@
                         </a>
                         <div class="profile-menu-container">
                             <div class="profile-trigger">
-                                <div class="avatar"><%= Session["FullName"] != null ? Session["FullName"].ToString().Substring(0,1).ToUpper() : "U" %></div>
+                                <div class="avatar"><%= Server.HtmlEncode(string.IsNullOrEmpty(Convert.ToString(Session["FullName"])) ? "U" : Convert.ToString(Session["FullName"]).Substring(0,1).ToUpper()) %></div>
                                 <div class="profile-greeting">
-                                    <span>Hi,</span> <%= Session["FullName"] ?? "User" %>
+                                    <span>Hi,</span> <%= Server.HtmlEncode(string.IsNullOrEmpty(Convert.ToString(Session["FullName"])) ? "User" : Convert.ToString(Session["FullName"])) %>
                                 </div>
                                 <i class="fa-solid fa-chevron-down profile-arrow"></i>
                             </div>
@@ -192,7 +192,7 @@
                                             <td><%# HttpUtility.HtmlEncode(Eval("Email").ToString()) %></td>
                                             <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) %></td>
                                             <td>
-                                                <%# Convert.ToBoolean(Eval("IsLeader")) ? "<span class='badge status-approved'>Leader</span>" : "Member" %>
+                                                <%# ToBool(Eval("IsLeader")) ? "<span class='badge status-approved'>Leader</span>" : "Member" %>
                                             </td>
                                         </tr>
                                     </ItemTemplate>

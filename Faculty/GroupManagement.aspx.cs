@@ -35,13 +35,15 @@ namespace Project_Board.Faculty
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
-            using (SqlConnection conn = new SqlConnection(connString))
+            try
             {
-                string query = @"
-                    SELECT 
-                        g.GroupId, 
-                        g.GroupName, 
-                        u.FullName AS LeaderName, 
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    string query = @"
+                    SELECT
+                        g.GroupId,
+                        g.GroupName,
+                        u.FullName AS LeaderName,
                         t.TechName,
                         (SELECT COUNT(*) FROM GroupMembers gm WHERE gm.GroupId = g.GroupId AND gm.JoinStatus = 'Accepted') AS MemberCount
                     FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
@@ -49,17 +51,24 @@ namespace Project_Board.Faculty
                     INNER JOIN Technologies t ON g.TechId = t.TechId
                     WHERE g.MentorId = @FacultyId AND g.Status != 'Pending Faculty Approval' AND g.Status != 'Forming'";
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
-                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-                        rptGroups.DataSource = dt;
-                        rptGroups.DataBind();
+                        cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+                            rptGroups.DataSource = dt;
+                            rptGroups.DataBind();
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("GroupManagement.LoadActiveGroups failed: " + ex);
+                rptGroups.DataSource = new DataTable();
+                rptGroups.DataBind();
             }
         }
 

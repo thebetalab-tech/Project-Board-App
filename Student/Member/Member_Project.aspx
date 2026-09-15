@@ -81,14 +81,14 @@
                             <div class="proposal-card">
                                 <div class="proposal-header">
                                     <div>
-                                        <span class="proposal-title"><%# Eval("ProjectTitle") %></span>
+                                        <span class="proposal-title"><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("ProjectTitle"))) %></span>
                                         <span class="badge-status badge-info" style="margin-left:0.5rem; background:rgba(99,102,241,0.15); color:#6366f1;">
-                                            <%# Eval("ProjectType") %>
+                                            <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("ProjectType"))) %>
                                         </span>
                                     </div>
                                     <div>
-                                        <span class='badge-status status-<%# Eval("Status").ToString().ToLower() %>'>
-                                            <%# Eval("Status") %>
+                                        <span class='badge-status status-<%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status")).ToLower()) %>'>
+                                            <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %>
                                         </span>
                                     </div>
                                 </div>
@@ -100,7 +100,7 @@
                                 </div>
 
                                 <div style="font-size:0.78rem; color:var(--c-text-dim); margin-top:0.75rem;">
-                                    Submitted on: <%# Convert.ToDateTime(Eval("SubmittedAt")).ToString("MMM dd, yyyy hh:mm tt") %>
+                                    Submitted on: <%# Eval("SubmittedAt") != DBNull.Value && Eval("SubmittedAt") != null ? Convert.ToDateTime(Eval("SubmittedAt")).ToString("MMM dd, yyyy hh:mm tt") : "Not recorded" %>
                                 </div>
                             </div>
                         </ItemTemplate>

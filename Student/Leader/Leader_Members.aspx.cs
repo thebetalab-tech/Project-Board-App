@@ -54,7 +54,7 @@ namespace Project_Board.Student.Leader
             {
                 cmd.Parameters.AddWithValue("@LeaderId", Session["UserId"]);
                 object result = cmd.ExecuteScalar();
-                return result != null ? Convert.ToInt32(result) : 0;
+                return (result != null && result != DBNull.Value) ? Convert.ToInt32(result) : 0;
             }
         }
 
@@ -159,7 +159,10 @@ namespace Project_Board.Student.Leader
         {
             if (e.CommandName == "Invite")
             {
-                int targetUserId = Convert.ToInt32(e.CommandArgument);
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out int targetUserId) || targetUserId <= 0)
+                {
+                    return;
+                }
                 string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
@@ -183,27 +186,35 @@ namespace Project_Board.Student.Leader
                                 insCmd.ExecuteNonQuery();
                             }
 
-                            // Fetch target user & group details for email notification
-                            string detailsSql = @"
-                                SELECT u.FullName AS MemberName, u.Email AS MemberEmail, g.GroupName
-                                FROM Users u, (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
-                                WHERE u.UserId = @UserId AND g.GroupId = @GroupId";
-                            using (SqlCommand detCmd = new SqlCommand(detailsSql, conn))
+                            // Fetch target user & group details for email notification.
+                            // A mail failure must not lose the invitation that was just inserted.
+                            try
                             {
-                                detCmd.Parameters.AddWithValue("@UserId", targetUserId);
-                                detCmd.Parameters.AddWithValue("@GroupId", groupId);
-                                using (SqlDataReader rdr = detCmd.ExecuteReader())
+                                string detailsSql = @"
+                                    SELECT u.FullName AS MemberName, u.Email AS MemberEmail, g.GroupName
+                                    FROM Users u, (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
+                                    WHERE u.UserId = @UserId AND g.GroupId = @GroupId";
+                                using (SqlCommand detCmd = new SqlCommand(detailsSql, conn))
                                 {
-                                    if (rdr.Read())
+                                    detCmd.Parameters.AddWithValue("@UserId", targetUserId);
+                                    detCmd.Parameters.AddWithValue("@GroupId", groupId);
+                                    using (SqlDataReader rdr = detCmd.ExecuteReader())
                                     {
-                                        string memberName = rdr["MemberName"].ToString();
-                                        string memberEmail = rdr["MemberEmail"].ToString();
-                                        string groupName = rdr["GroupName"].ToString();
-                                        string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
+                                        if (rdr.Read())
+                                        {
+                                            string memberName = rdr["MemberName"].ToString();
+                                            string memberEmail = rdr["MemberEmail"].ToString();
+                                            string groupName = rdr["GroupName"].ToString();
+                                            string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
 
-                                        Project_Board.Services.EmailService.SendLeaderRequestToMember(memberEmail, memberName, leaderName, groupName);
+                                            Project_Board.Services.EmailService.SendLeaderRequestToMember(memberEmail, memberName, leaderName, groupName);
+                                        }
                                     }
                                 }
+                            }
+                            catch (Exception mailEx)
+                            {
+                                System.Diagnostics.Trace.TraceError("Leader_Members: member invitation email failed. " + mailEx);
                             }
                         }
                     }
@@ -216,7 +227,10 @@ namespace Project_Board.Student.Leader
         {
             if (e.CommandName == "DropMember")
             {
-                int targetUserId = Convert.ToInt32(e.CommandArgument);
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out int targetUserId) || targetUserId <= 0)
+                {
+                    return;
+                }
                 int leaderId = Convert.ToInt32(Session["UserId"]);
 
                 if (targetUserId == leaderId)
@@ -324,10 +338,20 @@ namespace Project_Board.Student.Leader
 
                             trans.Commit();
 
-                            if (!string.IsNullOrEmpty(memberEmail))
+                            // The transaction is already committed, so a mail failure here must NOT
+                            // reach the catch below — calling Rollback() on a committed transaction
+                            // throws InvalidOperationException and masks the real error.
+                            try
                             {
-                                string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
-                                Project_Board.Services.EmailService.SendMemberDroppedNotification(memberEmail, memberName, leaderName, groupName);
+                                if (!string.IsNullOrEmpty(memberEmail))
+                                {
+                                    string leaderName = Session["FullName"]?.ToString() ?? "Student Leader";
+                                    Project_Board.Services.EmailService.SendMemberDroppedNotification(memberEmail, memberName, leaderName, groupName);
+                                }
+                            }
+                            catch (Exception mailEx)
+                            {
+                                System.Diagnostics.Trace.TraceError("Leader_Members: member dropped email failed. " + mailEx);
                             }
 
                             lblMessage.Text = $"Member <strong>{System.Web.HttpUtility.HtmlEncode(memberName)}</strong> has been successfully removed from your group.";
@@ -391,8 +415,23 @@ namespace Project_Board.Student.Leader
                         string userName = Session["FullName"]?.ToString() ?? "Student Leader";
                         string userEmail = Session["Email"]?.ToString() ?? "leader@example.com";
                         
-                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("My Team Members Report", dt, userName, userEmail, selectedCols);
-                        
+                        byte[] pdfBytes;
+                        try
+                        {
+                            pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("My Team Members Report", dt, userName, userEmail, selectedCols);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Trace.TraceError("Leader_Members: team members PDF generation failed. " + ex);
+                            lblMessage.Text = "An error occurred while generating the report. Please try again.";
+                            lblMessage.CssClass = "error-message";
+                            lblMessage.Style["display"] = "block";
+                            lblMessage.Style["background-color"] = "#fee2e2";
+                            lblMessage.Style["color"] = "#991b1b";
+                            lblMessage.Style["border"] = "1px solid #fecaca";
+                            return;
+                        }
+
                         Response.Clear();
                         Response.ContentType = "application/pdf";
                         Response.AddHeader("content-disposition", "attachment;filename=Leader_TeamMembersReport.pdf");

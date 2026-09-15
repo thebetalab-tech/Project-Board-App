@@ -36,60 +36,75 @@ namespace Project_Board.Faculty
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
-            using (SqlConnection conn = new SqlConnection(connString))
+            try
             {
-                conn.Open();
-                string query = @"
-                    SELECT p.ProjectId, p.ProjectTitle, p.ProjectType, p.Status, p.SubmittedAt, g.GroupName 
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    conn.Open();
+                    string query = @"
+                    SELECT p.ProjectId, p.ProjectTitle, p.ProjectType, p.Status, p.SubmittedAt, g.GroupName
                     FROM Projects p
                     INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON p.GroupId = g.GroupId
                     WHERE g.MentorId = @FacultyId
                     ORDER BY p.SubmittedAt DESC";
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
-                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-
-                        dt.Columns.Add("Keywords", typeof(string));
-
-                        foreach (DataRow row in dt.Rows)
+                        cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                         {
-                            int projId = Convert.ToInt32(row["ProjectId"]);
-                            string kwQuery = "SELECT Keyword FROM ProjectKeywords WHERE ProjectId = @ProjectId";
-                            using (SqlCommand kwCmd = new SqlCommand(kwQuery, conn))
-                            {
-                                kwCmd.Parameters.AddWithValue("@ProjectId", projId);
-                                List<string> kwList = new List<string>();
-                                using (SqlDataReader rdr = kwCmd.ExecuteReader())
-                                {
-                                    while (rdr.Read())
-                                    {
-                                        kwList.Add(rdr["Keyword"].ToString());
-                                    }
-                                }
-                                row["Keywords"] = string.Join(", ", kwList);
-                            }
-                        }
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
 
-                        rptProjects.DataSource = dt;
-                        rptProjects.DataBind();
+                            dt.Columns.Add("Keywords", typeof(string));
+
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                int projId = Convert.ToInt32(row["ProjectId"]);
+                                string kwQuery = "SELECT Keyword FROM ProjectKeywords WHERE ProjectId = @ProjectId";
+                                using (SqlCommand kwCmd = new SqlCommand(kwQuery, conn))
+                                {
+                                    kwCmd.Parameters.AddWithValue("@ProjectId", projId);
+                                    List<string> kwList = new List<string>();
+                                    using (SqlDataReader rdr = kwCmd.ExecuteReader())
+                                    {
+                                        while (rdr.Read())
+                                        {
+                                            kwList.Add(rdr["Keyword"].ToString());
+                                        }
+                                    }
+                                    row["Keywords"] = string.Join(", ", kwList);
+                                }
+                            }
+
+                            rptProjects.DataSource = dt;
+                            rptProjects.DataBind();
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("ProjectManagement.LoadProjects failed: " + ex);
+                ShowMessage("Unable to load project proposals right now. Please try again.", false);
             }
         }
 
         protected void rptProjects_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            int projectId = Convert.ToInt32(e.CommandArgument);
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out int projectId))
+            {
+                ShowMessage("Invalid project reference.", false);
+                return;
+            }
+
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
-            using (SqlConnection conn = new SqlConnection(connString))
+            try
             {
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
                 conn.Open();
                 if (e.CommandName == "Reject")
                 {
@@ -150,20 +165,40 @@ namespace Project_Board.Faculty
                             string memberEmail = rdr["Email"].ToString();
                             string memberName = rdr["FullName"].ToString();
 
-                            EmailService.SendProjectStatusNotificationToGroupMember(
-                                memberEmail,
-                                memberName,
-                                facultyName,
-                                groupName,
-                                projectTitle,
-                                newStatus
-                            );
+                            // A failing mail send must not abort the (already committed) status change.
+                            try
+                            {
+                                EmailService.SendProjectStatusNotificationToGroupMember(
+                                    memberEmail,
+                                    memberName,
+                                    facultyName,
+                                    groupName,
+                                    projectTitle,
+                                    newStatus
+                                );
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Trace.TraceError("ProjectManagement: project status email to " + memberEmail + " failed: " + ex);
+                            }
                         }
                     }
                 }
                 
                 ShowMessage($"Project '{newStatus.ToLower()}' successfully.", e.CommandName == "Approve");
+                }
             }
+            catch (System.Threading.ThreadAbortException)
+            {
+                // Raised by the Response.Redirect above — not an error.
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("ProjectManagement.rptProjects_ItemCommand failed: " + ex);
+                ShowMessage("Unable to update this project right now. Please try again.", false);
+            }
+
             LoadProjects();
         }
 
@@ -179,14 +214,16 @@ namespace Project_Board.Faculty
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
-            using (SqlConnection conn = new SqlConnection(connString))
+            try
             {
-                string query = @"
-                    SELECT 
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    string query = @"
+                    SELECT
                         p.ProjectTitle AS [Project Title],
                         STUFF((
                             SELECT ', ' + pk.Keyword
-                            FROM ProjectKeywords pk 
+                            FROM ProjectKeywords pk
                             WHERE pk.ProjectId = p.ProjectId
                             FOR XML PATH('')
                         ), 1, 2, '') AS [Keywords],
@@ -199,35 +236,46 @@ namespace Project_Board.Faculty
                     WHERE g.MentorId = @FacultyId
                     ORDER BY p.SubmittedAt DESC";
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
-                    
-                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-                        
-                        List<string> selectedCols = new List<string>();
-                        if (chkColProjectTitle.Checked) selectedCols.Add("Project Title");
-                        if (chkColKeywords.Checked) selectedCols.Add("Keywords");
-                        if (chkColGroupName.Checked) selectedCols.Add("Group Name");
-                        if (chkColProjectType.Checked) selectedCols.Add("Project Type");
-                        if (chkColSubmittedOn.Checked) selectedCols.Add("Submitted On");
-                        if (chkColStatus.Checked) selectedCols.Add("Status");
+                        cmd.Parameters.AddWithValue("@FacultyId", facultyId);
 
-                        string userName = Session["FullName"]?.ToString() ?? "Faculty";
-                        string userEmail = Session["Email"]?.ToString() ?? "faculty@example.com";
-                        
-                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Mentored Projects Report", dt, userName, userEmail, selectedCols);
-                        
-                        Response.Clear();
-                        Response.ContentType = "application/pdf";
-                        Response.AddHeader("content-disposition", "attachment;filename=Faculty_ProjectsReport.pdf");
-                        Response.BinaryWrite(pdfBytes);
-                        Response.End();
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+
+                            List<string> selectedCols = new List<string>();
+                            if (chkColProjectTitle.Checked) selectedCols.Add("Project Title");
+                            if (chkColKeywords.Checked) selectedCols.Add("Keywords");
+                            if (chkColGroupName.Checked) selectedCols.Add("Group Name");
+                            if (chkColProjectType.Checked) selectedCols.Add("Project Type");
+                            if (chkColSubmittedOn.Checked) selectedCols.Add("Submitted On");
+                            if (chkColStatus.Checked) selectedCols.Add("Status");
+
+                            string userName = Session["FullName"]?.ToString() ?? "Faculty";
+                            string userEmail = Session["Email"]?.ToString() ?? "faculty@example.com";
+
+                            byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Mentored Projects Report", dt, userName, userEmail, selectedCols);
+
+                            Response.Clear();
+                            Response.ContentType = "application/pdf";
+                            Response.AddHeader("content-disposition", "attachment;filename=Faculty_ProjectsReport.pdf");
+                            Response.BinaryWrite(pdfBytes);
+                            Response.End();
+                        }
                     }
                 }
+            }
+            catch (System.Threading.ThreadAbortException)
+            {
+                // Raised by Response.End() on a successful download — not an error.
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("ProjectManagement.btnGeneratePdf_Click failed: " + ex);
+                ShowMessage("Unable to generate the report right now. Please try again.", false);
             }
         }
     }

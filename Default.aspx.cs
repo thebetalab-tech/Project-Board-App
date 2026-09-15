@@ -12,10 +12,12 @@ namespace Project_Board
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Optional: If a user is already logged in, redirect them away from the login page
+            // Optional: If a user is already logged in, redirect them away from the login page.
+            // Session["Role"] is read defensively: a half-populated session (e.g. abandoned
+            // mid-login, or an app restart) must not throw a NullReferenceException here.
             if (Session["UserId"] != null)
             {
-                RedirectUserBasedOnRole(Session["Role"].ToString());
+                RedirectUserBasedOnRole(Session["Role"]?.ToString() ?? string.Empty);
             }
         }
 
@@ -104,7 +106,7 @@ namespace Project_Board
                                     Session["IsLeader"] = reader["IsLeader"].ToString();
 
                                     // Redirect to the appropriate dashboard
-                                    RedirectUserBasedOnRole(Session["Role"].ToString());
+                                    RedirectUserBasedOnRole(Session["Role"]?.ToString() ?? string.Empty);
                                 }
                                 else
                                 {
@@ -162,9 +164,23 @@ namespace Project_Board
                 string[] parts = storedHash.Split('$');
                 if (parts.Length != 4) return false;
 
-                int iterations = int.Parse(parts[1]);
-                byte[] salt = Convert.FromBase64String(parts[2]);
-                byte[] hash = Convert.FromBase64String(parts[3]);
+                // A malformed stored hash must fail verification, never throw: the iteration
+                // count, the Base64 segments and the hash length are all validated first.
+                if (!int.TryParse(parts[1], out int iterations) || iterations <= 0) return false;
+
+                byte[] salt;
+                byte[] hash;
+                try
+                {
+                    salt = Convert.FromBase64String(parts[2]);
+                    hash = Convert.FromBase64String(parts[3]);
+                }
+                catch (FormatException)
+                {
+                    return false;
+                }
+
+                if (salt.Length == 0 || hash.Length != 32) return false;
 
                 using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, iterations))
                 {

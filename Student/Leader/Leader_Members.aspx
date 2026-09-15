@@ -49,18 +49,18 @@
                                                         <%# Eval("UserId") %>
                                                     </strong></td>
                                                 <td>
-                                                    <%# Eval("FullName") %>
+                                                    <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("FullName"))) %>
                                                 </td>
                                                 <td>
-                                                    <%# Eval("EnrollmentNo") %>
+                                                    <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) %>
                                                 </td>
                                                 <td>
-                                                    <%# Eval("Email") %>
+                                                    <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Email"))) %>
                                                 </td>
                                                 <td>
                                                     <span
-                                                        class='badge status-<%# Eval("JoinStatus").ToString().ToLower() %>'>
-                                                        <%# Eval("JoinStatus") %>
+                                                        class='badge status-<%# HttpUtility.HtmlEncode(Convert.ToString(Eval("JoinStatus")).ToLower()) %>'>
+                                                        <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("JoinStatus"))) %>
                                                     </span>
                                                 </td>
                                                 <td style="text-align: right;">
@@ -114,10 +114,10 @@
                                                                 style="color: var(--c-text-muted);"></i></div>
                                                         <div class="user-cell-info">
                                                             <h4>
-                                                                <%# Eval("FullName") %>
+                                                                <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("FullName"))) %>
                                                             </h4>
                                                             <p>
-                                                                <%# Eval("Email") %> | <%# Eval("EnrollmentNo") %>
+                                                                <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Email"))) %> | <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) %>
                                                             </p>
                                                         </div>
                                                     </div>

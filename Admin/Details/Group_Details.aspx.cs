@@ -47,6 +47,8 @@ namespace Project_Board.Admin.Details
 
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
+            try
+            {
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string queryDetails = @"
@@ -97,6 +99,20 @@ namespace Project_Board.Admin.Details
                     }
                 }
             }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Group details load error: " + ex);
+                ShowError("Unable to load this group right now. Please try again.");
+            }
+        }
+
+        // Users.IsLeader is BIT with a DEFAULT but no NOT NULL, so it can come back as
+        // DBNull; Convert.ToBoolean(DBNull.Value) throws InvalidCastException and would
+        // break the whole members bind.
+        protected static bool ToBool(object value)
+        {
+            return value != null && value != DBNull.Value && Convert.ToBoolean(value);
         }
 
         private void ShowError(string message)

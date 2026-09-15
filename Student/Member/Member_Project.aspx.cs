@@ -69,7 +69,7 @@ namespace Project_Board.Student.Member
 
                 if (groupId > 0)
                 {
-                    lblGroupName.Text = groupName;
+                    lblGroupName.Text = System.Web.HttpUtility.HtmlEncode(groupName);
 
                     string projSql = "SELECT * FROM Projects WHERE GroupId = @GroupId ORDER BY SubmittedAt DESC";
                     using (SqlCommand pCmd = new SqlCommand(projSql, conn))

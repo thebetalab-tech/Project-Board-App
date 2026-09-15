@@ -77,8 +77,8 @@
             <div class="dashboard-container">
                 <div class="page-header">
                     <div class="page-title">
-                        <h1><%= IsAssigned ? GroupName : "Not in a Team" %></h1>
-                        <p>Technology Domain: <%= TechName %></p>
+                        <h1><%= HttpUtility.HtmlEncode(IsAssigned ? GroupName : "Not in a Team") %></h1>
+                        <p>Technology Domain: <%= HttpUtility.HtmlEncode(TechName) %></p>
                     </div>
                 </div>
 
@@ -97,15 +97,15 @@
                     <!-- ASSIGNED FACULTY MENTOR PROFILE CARD -->
                     <div class="mentor-card">
                         <div class="mentor-avatar">
-                            <%= IsMentorAssigned ? MentorInitials : (IsMentorPending ? "<i class='fa-solid fa-clock'></i>" : "<i class='fa-solid fa-user-tie'></i>") %>
+                            <%= IsMentorAssigned ? HttpUtility.HtmlEncode(MentorInitials) : (IsMentorPending ? "<i class='fa-solid fa-clock'></i>" : "<i class='fa-solid fa-user-tie'></i>") %>
                         </div>
                         <div class="mentor-details" style="flex:1;">
                             <% if (IsMentorAssigned) { %>
-                                <h4><i class="fa-solid fa-award" style="color:#6366f1; margin-right:0.4rem;"></i> Assigned Faculty Mentor: <%= MentorName %></h4>
-                                <p><i class="fa-solid fa-envelope" style="margin-right:0.3rem;"></i> <%= MentorEmail %></p>
+                                <h4><i class="fa-solid fa-award" style="color:#6366f1; margin-right:0.4rem;"></i> Assigned Faculty Mentor: <%= HttpUtility.HtmlEncode(MentorName) %></h4>
+                                <p><i class="fa-solid fa-envelope" style="margin-right:0.3rem;"></i> <%= HttpUtility.HtmlEncode(MentorEmail) %></p>
                             <% } else if (IsMentorPending) { %>
                                 <h4><i class="fa-solid fa-clock" style="color:#eab308; margin-right:0.4rem;"></i> Mentor Request Pending Approval</h4>
-                                <p>Requested: <strong><%= MentorName %></strong> — Waiting for faculty acceptance.</p>
+                                <p>Requested: <strong><%= HttpUtility.HtmlEncode(MentorName) %></strong> — Waiting for faculty acceptance.</p>
                             <% } else { %>
                                 <h4><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right:0.4rem;"></i> Faculty Mentor Not Assigned</h4>
                                 <p>Your team leader hasn't requested a faculty mentor yet.</p>
@@ -138,12 +138,12 @@
                                 <asp:Repeater ID="rptAssignedTasks" runat="server">
                                     <ItemTemplate>
                                         <tr>
-                                            <td><strong><%# Eval("TaskTitle") %></strong></td>
-                                            <td><%# Eval("AssignedByName") %></td>
+                                            <td><strong><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("TaskTitle"))) %></strong></td>
+                                            <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("AssignedByName"))) %></td>
                                             <td><%# Eval("DueDate") != DBNull.Value ? Convert.ToDateTime(Eval("DueDate")).ToString("MMM dd, yyyy") : "No Due Date" %></td>
                                             <td>
-                                                <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-success" : (Eval("Status").ToString() == "Appealed" ? "badge-purple" : "badge-info") %>'>
-                                                    <%# Eval("Status") %>
+                                                <span class='badge-status <%# Convert.ToString(Eval("Status")) == "Completed" ? "badge-success" : (Convert.ToString(Eval("Status")) == "Appealed" ? "badge-purple" : "badge-info") %>'>
+                                                    <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %>
                                                 </span>
                                             </td>
                                         </tr>
@@ -169,10 +169,10 @@
                                 <asp:Repeater ID="rptMembers" runat="server">
                                     <ItemTemplate>
                                         <tr>
-                                            <td><strong><%# Eval("FullName") %></strong></td>
-                                            <td><%# Eval("Role").ToString() == "Leader" ? "<span class='badge-status badge-purple'>Leader</span>" : "<span class='badge-status badge-info'>Member</span>" %></td>
-                                            <td><%# Eval("EnrollmentNo") != DBNull.Value ? Eval("EnrollmentNo") : "N/A" %></td>
-                                            <td><%# Eval("Email") %></td>
+                                            <td><strong><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("FullName"))) %></strong></td>
+                                            <td><%# Convert.ToString(Eval("Role")) == "Leader" ? "<span class='badge-status badge-purple'>Leader</span>" : "<span class='badge-status badge-info'>Member</span>" %></td>
+                                            <td><%# Eval("EnrollmentNo") != DBNull.Value ? HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) : "N/A" %></td>
+                                            <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Email"))) %></td>
                                         </tr>
                                     </ItemTemplate>
                                 </asp:Repeater>

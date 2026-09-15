@@ -147,7 +147,11 @@ namespace Project_Board.Student.Member
         {
             if (e.CommandName == "ReportToLeader")
             {
-                int taskId = Convert.ToInt32(e.CommandArgument);
+                int taskId;
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out taskId) || taskId <= 0)
+                {
+                    return;
+                }
                 Response.Redirect($"~/Student/Appeal.aspx?TaskId={taskId}");
             }
         }

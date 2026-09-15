@@ -151,7 +151,7 @@
             <div class="view-section active">
                 <div class="page-header">
                     <div class="page-title">
-                        <h1>Leader Task Hub (<%= GroupName %>)</h1>
+                        <h1>Leader Task Hub (<%= HttpUtility.HtmlEncode(GroupName) %>)</h1>
                         <p>Manage mentor tasks, report status to mentor, and assign subtasks to team members.</p>
                     </div>
                 </div>
@@ -247,7 +247,7 @@
                                         <td>
                                             <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "Appealed" ? "badge-appealed" : (Eval("Status").ToString() == "Revision Needed" || Eval("Status").ToString() == "Failed" ? "badge-danger" : "badge-progress")) %>'>
                                                 <i class='fa-solid <%# Eval("Status").ToString() == "Completed" ? "fa-check" : (Eval("Status").ToString() == "Appealed" ? "fa-bell" : (Eval("Status").ToString() == "Revision Needed" ? "fa-triangle-exclamation" : "fa-clock")) %>'></i>
-                                                <%# Eval("Status") %>
+                                                <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %>
                                             </span>
                                         </td>
                                         <td>
@@ -376,7 +376,7 @@
                                         <td>
                                             <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "Appealed" ? "badge-appealed" : (Eval("Status").ToString() == "Revision Needed" || Eval("Status").ToString() == "Failed" ? "badge-danger" : "badge-progress")) %>'>
                                                 <i class='fa-solid <%# Eval("Status").ToString() == "Completed" ? "fa-check" : (Eval("Status").ToString() == "Appealed" ? "fa-bell" : (Eval("Status").ToString() == "Revision Needed" ? "fa-triangle-exclamation" : "fa-clock")) %>'></i>
-                                                <%# Eval("Status") %>
+                                                <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %>
                                             </span>
                                         </td>
                                         <td>

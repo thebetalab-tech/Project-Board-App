@@ -66,6 +66,19 @@
             border-radius: 8px;
             font-family: inherit;
         }
+
+        /* lblMessage is rendered with "alert alert-*" classes from the code-behind, which the
+           shared admin.css does not define; without these the status messages render unstyled. */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .alert-success { background-color: #ecfdf5; color: #059669; border: 1px solid rgba(5,150,105,0.2); }
+        .alert-warning { background-color: #fffbeb; color: #b45309; border: 1px solid rgba(180,83,9,0.2); }
+        .alert-danger { background-color: var(--c-red-bg); color: var(--c-red); border: 1px solid rgba(220,38,38,0.2); }
     </style>
 </head>
 
@@ -233,13 +246,13 @@
                             <asp:Repeater ID="rptTasks" runat="server">
                                 <ItemTemplate>
                                     <tr>
-                                        <td><strong><%# Eval("TaskTitle") %></strong></td>
-                                        <td><%# Eval("GroupName") %></td>
-                                        <td><%# Eval("AssignedToName") %></td>
+                                        <td><strong><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("TaskTitle"))) %></strong></td>
+                                        <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("GroupName"))) %></td>
+                                        <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("AssignedToName"))) %></td>
                                         <td><%# Eval("DueDate") != DBNull.Value ? Convert.ToDateTime(Eval("DueDate")).ToString("MMM dd, yyyy") : "No Due Date" %></td>
                                         <td>
-                                            <span class='badge-status <%# Eval("Status").ToString() == "Completed" ? "badge-completed" : (Eval("Status").ToString() == "Appealed" ? "badge-appealed" : "badge-progress") %>'>
-                                                <%# Eval("Status") %>
+                                            <span class='badge-status <%# Convert.ToString(Eval("Status")) == "Completed" ? "badge-completed" : (Convert.ToString(Eval("Status")) == "Appealed" ? "badge-appealed" : "badge-progress") %>'>
+                                                <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %>
                                             </span>
                                         </td>
                                         <td>

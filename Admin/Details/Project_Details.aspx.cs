@@ -47,6 +47,8 @@ namespace Project_Board.Admin.Details
 
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
+            try
+            {
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string queryDetails = @"
@@ -100,6 +102,12 @@ namespace Project_Board.Admin.Details
                         rptKeywords.DataBind();
                     }
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Project details load error: " + ex);
+                ShowError("Unable to load this project right now. Please try again.");
             }
         }
 

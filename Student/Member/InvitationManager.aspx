@@ -75,8 +75,8 @@
                         <ItemTemplate>
                             <div class="invitation-card">
                                 <div class="invitation-info">
-                                    <h4><i class="fa-solid fa-users" style="color:var(--c-accent); margin-right:0.4rem;"></i> <%# Eval("GroupName") %></h4>
-                                    <p>Invited by Leader: <strong><%# Eval("LeaderName") %></strong> | Technology: <%# Eval("TechName") != DBNull.Value ? Eval("TechName") : "General" %></p>
+                                    <h4><i class="fa-solid fa-users" style="color:var(--c-accent); margin-right:0.4rem;"></i> <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("GroupName"))) %></h4>
+                                    <p>Invited by Leader: <strong><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("LeaderName"))) %></strong> | Technology: <%# Eval("TechName") != DBNull.Value ? HttpUtility.HtmlEncode(Convert.ToString(Eval("TechName"))) : "General" %></p>
                                 </div>
                                 <div>
                                     <asp:Button ID="btnAccept" runat="server" CommandName="Accept" CommandArgument='<%# Eval("GroupId") %>' Text="Accept Invitation" CssClass="btn-accept" />

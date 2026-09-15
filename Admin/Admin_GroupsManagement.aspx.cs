@@ -26,18 +26,28 @@ namespace Project_Board.Admin
             {
                 if (!string.IsNullOrEmpty(connString))
                 {
-                    using (SqlConnection conn = new SqlConnection(connString))
+                    // Best-effort schema top-up. It must not take the page down when the
+                    // app's SQL login has no ALTER rights or the DB is unreachable — the
+                    // query below already tolerates a missing IsActive via ISNULL.
+                    try
                     {
-                        conn.Open();
-                        string sql = @"
-                            IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Groups]') AND name = 'IsActive')
-                            BEGIN
-                                ALTER TABLE [dbo].[Groups] ADD IsActive BIT NOT NULL DEFAULT 1;
-                            END";
-                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        using (SqlConnection conn = new SqlConnection(connString))
                         {
-                            cmd.ExecuteNonQuery();
+                            conn.Open();
+                            string sql = @"
+                                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Groups]') AND name = 'IsActive')
+                                BEGIN
+                                    ALTER TABLE [dbo].[Groups] ADD IsActive BIT NOT NULL DEFAULT 1;
+                                END";
+                            using (SqlCommand cmd = new SqlCommand(sql, conn))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Trace.TraceError("Groups IsActive migration check failed: " + ex);
                     }
                 }
                 LoadGroups();
@@ -72,11 +82,18 @@ namespace Project_Board.Admin
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    conn.Open();
-                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    try
                     {
-                        rptGroups.DataSource = rdr;
-                        rptGroups.DataBind();
+                        conn.Open();
+                        using (SqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            rptGroups.DataSource = rdr;
+                            rptGroups.DataBind();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Trace.TraceError("Groups load error: " + ex);
                     }
                 }
             }
@@ -95,6 +112,8 @@ namespace Project_Board.Admin
                 int groupId = Convert.ToInt32(e.CommandArgument);
                 if (string.IsNullOrEmpty(connString)) return;
 
+                try
+                {
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     conn.Open();
@@ -139,6 +158,11 @@ namespace Project_Board.Admin
                     }
 
                     LoadGroups();
+                }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Group status toggle error: " + ex);
                 }
             }
             else if (e.CommandName == "DeleteGroup")
@@ -208,25 +232,41 @@ namespace Project_Board.Admin
 
         protected void btnUpdateGroup_Click(object sender, EventArgs e)
         {
-            int groupId = Convert.ToInt32(hdnEditGroupId.Value);
+            // hdnEditGroupId is client-populated, so it can arrive empty or non-numeric;
+            // Convert.ToInt32 would throw FormatException on the postback.
+            int groupId;
+            if (!int.TryParse(hdnEditGroupId.Value, out groupId))
+            {
+                lblEditMessage.Text = "Invalid group selected.";
+                return;
+            }
+
             string newStatus = ddlEditGroupStatus.SelectedValue;
 
             if (string.IsNullOrEmpty(connString)) return;
 
-            using (SqlConnection conn = new SqlConnection(connString))
+            try
             {
-                conn.Open();
-
-                string updateSql = "UPDATE Groups SET Status = @Status WHERE GroupId = @GroupId";
-                using (SqlCommand cmd = new SqlCommand(updateSql, conn))
+                using (SqlConnection conn = new SqlConnection(connString))
                 {
-                    cmd.Parameters.AddWithValue("@Status", newStatus);
-                    cmd.Parameters.AddWithValue("@GroupId", groupId);
-                    cmd.ExecuteNonQuery();
-                }
+                    conn.Open();
 
-                LoadGroups();
-                ClientScript.RegisterStartupScript(this.GetType(), "closeModal", "closeModal('editGroupModal');", true);
+                    string updateSql = "UPDATE Groups SET Status = @Status WHERE GroupId = @GroupId";
+                    using (SqlCommand cmd = new SqlCommand(updateSql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Status", newStatus);
+                        cmd.Parameters.AddWithValue("@GroupId", groupId);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    LoadGroups();
+                    ClientScript.RegisterStartupScript(this.GetType(), "closeModal", "closeModal('editGroupModal');", true);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Group status update error: " + ex);
+                lblEditMessage.Text = "Error updating group: " + ex.Message;
             }
         }
     }

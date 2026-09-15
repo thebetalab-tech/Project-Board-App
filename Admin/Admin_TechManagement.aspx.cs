@@ -170,6 +170,8 @@ namespace Project_Board.Admin
                 int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
                 string adminName = Session["FullName"]?.ToString() ?? "Admin";
 
+                try
+                {
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     conn.Open();
@@ -229,27 +231,50 @@ namespace Project_Board.Admin
                         }
                     }
                 }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Technology delete error: " + ex);
+                    lblMessage.ForeColor = System.Drawing.Color.Red;
+                    lblMessage.Text = "Error: " + ex.Message;
+                }
             }
             else if (e.CommandName == "DeleteAssignment")
             {
-                string[] args = e.CommandArgument.ToString().Split('|');
-                int facultyId = Convert.ToInt32(args[0]);
-                int techId = Convert.ToInt32(args[1]);
-
-                using (SqlConnection conn = new SqlConnection(connString))
+                // CommandArgument is "facultyId|techId". Check the shape before indexing —
+                // a malformed argument would otherwise throw IndexOutOfRange/FormatException.
+                string[] args = Convert.ToString(e.CommandArgument).Split('|');
+                int facultyId, techId;
+                if (args.Length != 2 || !int.TryParse(args[0], out facultyId) || !int.TryParse(args[1], out techId))
                 {
-                    string query = "DELETE FROM Faculty WHERE FacultyId = @FacultyId AND TechId = @TechId";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    lblAssignMessage.ForeColor = System.Drawing.Color.Red;
+                    lblAssignMessage.Text = "Invalid assignment selected.";
+                    return;
+                }
+
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connString))
                     {
-                        cmd.Parameters.AddWithValue("@FacultyId", facultyId);
-                        cmd.Parameters.AddWithValue("@TechId", techId);
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                        
-                        lblAssignMessage.ForeColor = System.Drawing.Color.Green;
-                        lblAssignMessage.Text = "Assignment removed successfully.";
-                        LoadFacultyTech();
+                        string query = "DELETE FROM Faculty WHERE FacultyId = @FacultyId AND TechId = @TechId";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                            cmd.Parameters.AddWithValue("@TechId", techId);
+                            conn.Open();
+                            cmd.ExecuteNonQuery();
+
+                            lblAssignMessage.ForeColor = System.Drawing.Color.Green;
+                            lblAssignMessage.Text = "Assignment removed successfully.";
+                            LoadFacultyTech();
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Faculty/tech assignment delete error: " + ex);
+                    lblAssignMessage.ForeColor = System.Drawing.Color.Red;
+                    lblAssignMessage.Text = "Error: " + ex.Message;
                 }
             }
         }
@@ -258,36 +283,43 @@ namespace Project_Board.Admin
         {
             if (string.IsNullOrEmpty(connString)) return;
 
-            using (SqlConnection conn = new SqlConnection(connString))
+            try
             {
-                // Load Faculty
-                string qFaculty = "SELECT UserId, FullName FROM Users WHERE Role = 'Faculty' AND IsActive = 1 ORDER BY FullName";
-                using (SqlCommand cmd = new SqlCommand(qFaculty, conn))
+                using (SqlConnection conn = new SqlConnection(connString))
                 {
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    // Load Faculty
+                    string qFaculty = "SELECT UserId, FullName FROM Users WHERE Role = 'Faculty' AND IsActive = 1 ORDER BY FullName";
+                    using (SqlCommand cmd = new SqlCommand(qFaculty, conn))
                     {
-                        ddlFaculty.DataSource = reader;
-                        ddlFaculty.DataTextField = "FullName";
-                        ddlFaculty.DataValueField = "UserId";
-                        ddlFaculty.DataBind();
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            ddlFaculty.DataSource = reader;
+                            ddlFaculty.DataTextField = "FullName";
+                            ddlFaculty.DataValueField = "UserId";
+                            ddlFaculty.DataBind();
+                        }
+                        ddlFaculty.Items.Insert(0, new ListItem("Select Faculty", ""));
                     }
-                    ddlFaculty.Items.Insert(0, new ListItem("Select Faculty", ""));
-                }
 
-                // Load Technologies
-                string qTech = "SELECT TechId, TechName FROM Technologies ORDER BY TechName";
-                using (SqlCommand cmd = new SqlCommand(qTech, conn))
-                {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    // Load Technologies
+                    string qTech = "SELECT TechId, TechName FROM Technologies ORDER BY TechName";
+                    using (SqlCommand cmd = new SqlCommand(qTech, conn))
                     {
-                        ddlTech.DataSource = reader;
-                        ddlTech.DataTextField = "TechName";
-                        ddlTech.DataValueField = "TechId";
-                        ddlTech.DataBind();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            ddlTech.DataSource = reader;
+                            ddlTech.DataTextField = "TechName";
+                            ddlTech.DataValueField = "TechId";
+                            ddlTech.DataBind();
+                        }
+                        ddlTech.Items.Insert(0, new ListItem("Select Technology", ""));
                     }
-                    ddlTech.Items.Insert(0, new ListItem("Select Technology", ""));
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Tech dropdowns load error: " + ex);
             }
         }
 
@@ -306,11 +338,18 @@ namespace Project_Board.Admin
                 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    try
                     {
-                        rptFacultyTech.DataSource = reader;
-                        rptFacultyTech.DataBind();
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            rptFacultyTech.DataSource = reader;
+                            rptFacultyTech.DataBind();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Trace.TraceError("Faculty/tech assignments load error: " + ex);
                     }
                 }
             }

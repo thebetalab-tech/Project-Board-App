@@ -10,7 +10,10 @@ namespace Project_Board.Faculty
     public partial class ReviewAppeal : Page
     {
         private string ConnString => ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
-        private int TaskId => Request.QueryString["TaskId"] != null ? Convert.ToInt32(Request.QueryString["TaskId"]) : 0;
+        // Parsed defensively: a hand-edited URL can carry a non-numeric TaskId, which would
+        // throw out of a property that is read on every request. 0 means "no valid task",
+        // which Page_Load already treats as a redirect.
+        private int TaskId => int.TryParse(Request.QueryString["TaskId"], out int taskId) ? taskId : 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -34,7 +37,9 @@ namespace Project_Board.Faculty
 
         private void LoadTaskAndAppealDetails()
         {
-            using (SqlConnection conn = new SqlConnection(ConnString))
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 string query = @"
                     SELECT t.TaskTitle, t.FeedbackText, t.TaskDescription, t.Status, t.AssignedBy, 
@@ -114,6 +119,15 @@ namespace Project_Board.Faculty
                     }
                 }
             }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("ReviewAppeal.LoadTaskAndAppealDetails failed: " + ex);
+                lblMessage.Text = "Unable to load this appeal right now. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                btnSubmitDecision.Enabled = false;
+            }
         }
 
         // Re-verifies that the current user is allowed to decide this task's appeal.
@@ -143,7 +157,9 @@ namespace Project_Board.Faculty
             string feedback = txtFeedback.Text.Trim();
             int reviewerId = Convert.ToInt32(Session["UserId"]);
 
-            using (SqlConnection conn = new SqlConnection(ConnString))
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 conn.Open();
 
@@ -224,6 +240,15 @@ namespace Project_Board.Faculty
                 {
                     System.Diagnostics.Debug.WriteLine($"[Email Error] {ex.Message}");
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("ReviewAppeal.btnSubmitDecision_Click failed: " + ex);
+                lblMessage.Text = "Unable to save your decision right now. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
             }
 
             // Redirect back to dashboard

@@ -149,14 +149,14 @@
                                     <ItemTemplate>
                                         <tr>
                                             <td>
-                                                <strong style="font-size: 1rem;"><%# Eval("ProjectTitle") %></strong>
-                                                <%# !string.IsNullOrWhiteSpace(Convert.ToString(Eval("Keywords"))) ? "<div style='margin-top:0.25rem;'>" + string.Join("", Eval("Keywords").ToString().Split(',').Select(k => "<span class=\"tag-pill\">" + k.Trim() + "</span>")) + "</div>" : "" %>
+                                                <strong style="font-size: 1rem;"><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("ProjectTitle"))) %></strong>
+                                                <%# !string.IsNullOrWhiteSpace(Convert.ToString(Eval("Keywords"))) ? "<div style='margin-top:0.25rem;'>" + string.Join("", Convert.ToString(Eval("Keywords")).Split(',').Select(k => "<span class=\"tag-pill\">" + HttpUtility.HtmlEncode(k.Trim()) + "</span>")) + "</div>" : "" %>
                                             </td>
-                                            <td><%# Eval("GroupName") %></td>
-                                            <td><%# Eval("ProjectType") %></td>
-                                            <td><%# Convert.ToDateTime(Eval("SubmittedAt")).ToString("MMM dd, yyyy") %></td>
+                                            <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("GroupName"))) %></td>
+                                            <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("ProjectType"))) %></td>
+                                            <td><%# Eval("SubmittedAt") != DBNull.Value ? Convert.ToDateTime(Eval("SubmittedAt")).ToString("MMM dd, yyyy") : "N/A" %></td>
                                             <td>
-                                                <span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# Eval("Status") %></span>
+                                                <span class='badge status-<%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status")).ToLower()) %>'><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Status"))) %></span>
                                             </td>
                                             <td>
                                                 <div class="table-actions" style="display:flex; gap:0.5rem;">

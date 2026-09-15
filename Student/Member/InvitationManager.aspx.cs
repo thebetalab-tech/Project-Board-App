@@ -66,7 +66,18 @@ namespace Project_Board.Student.Member
 
         protected void rptInvitations_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            int groupId = Convert.ToInt32(e.CommandArgument);
+            if (Session["UserId"] == null)
+            {
+                Response.Redirect("~/Default.aspx");
+                return;
+            }
+
+            int groupId;
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out groupId))
+            {
+                return;
+            }
+
             int userId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 

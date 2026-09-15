@@ -130,14 +130,14 @@
                                 <asp:Repeater ID="rptGroups" runat="server">
                                     <ItemTemplate>
                                         <tr>
-                                            <td><strong><%# Eval("GroupName") %></strong></td>
-                                            <td><%# Eval("LeaderName") %></td>
-                                            <td><span class="badge status-forming"><%# Eval("TechName") %></span></td>
-                                            <td><%# Eval("MemberCount") %></td>
+                                            <td><strong><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("GroupName"))) %></strong></td>
+                                            <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("LeaderName"))) %></td>
+                                            <td><span class="badge status-forming"><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("TechName"))) %></span></td>
+                                            <td><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("MemberCount"))) %></td>
                                         </tr>
                                     </ItemTemplate>
                                     <FooterTemplate>
-                                        <%# rptGroups.Items.Count == 0 ? "<tr><td colspan='5' style='text-align:center; padding: 2rem; color: var(--c-text-muted);'>No active groups assigned to you at this time.</td></tr>" : "" %>
+                                        <%# rptGroups.Items.Count == 0 ? "<tr><td colspan='4' style='text-align:center; padding: 2rem; color: var(--c-text-muted);'>No active groups assigned to you at this time.</td></tr>" : "" %>
                                     </FooterTemplate>
                                 </asp:Repeater>
                             </tbody>

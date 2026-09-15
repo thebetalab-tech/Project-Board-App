@@ -60,18 +60,21 @@ namespace Project_Board.User
                                 string email = reader["Email"].ToString();
                                 string enrollmentNo = reader["EnrollmentNo"]?.ToString();
 
-                                litName.Text = fullName;
-                                litAvatar.Text = fullName.Length > 0 ? fullName.Substring(0, 1).ToUpper() : "U";
-                                litEmail.Text = email;
-                                
+                                // These are asp:Literal controls, which emit their Text verbatim —
+                                // every DB value below is user-editable (see User/Profile.aspx),
+                                // so it must be HTML-encoded before it reaches the page.
+                                litName.Text = Server.HtmlEncode(fullName);
+                                litAvatar.Text = fullName.Length > 0 ? Server.HtmlEncode(fullName.Substring(0, 1).ToUpper()) : "U";
+                                litEmail.Text = Server.HtmlEncode(email);
+
                                 string displayRole = isLeader ? "Student Leader" : role;
                                 string roleClass = "role-" + role.ToLower();
-                                litRoleBadge.Text = $"<span class=\"role-badge {roleClass}\">{displayRole}</span>";
+                                litRoleBadge.Text = $"<span class=\"role-badge {Server.HtmlEncode(roleClass)}\">{Server.HtmlEncode(displayRole)}</span>";
 
                                 if (!string.IsNullOrEmpty(enrollmentNo) && role.Equals("Student", StringComparison.OrdinalIgnoreCase))
                                 {
                                     pnlEnrollment.Visible = true;
-                                    litEnrollment.Text = enrollmentNo;
+                                    litEnrollment.Text = Server.HtmlEncode(enrollmentNo);
                                 }
                             }
                             else

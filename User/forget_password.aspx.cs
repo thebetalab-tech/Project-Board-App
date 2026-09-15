@@ -45,6 +45,11 @@ namespace Project_Board.User
             lblMessage.Visible = false;
             lblMessage.Text = string.Empty;
 
+            // Start every code request from a clean slate. Without this, a code (and the
+            // "already verified" flag) from a previous attempt would stay in Session and
+            // could be replayed against a different email entered afterwards.
+            ClearResetSession();
+
             string email = txtEmail.Text.Trim();
 
             if (string.IsNullOrEmpty(email))
@@ -220,7 +225,12 @@ namespace Project_Board.User
                 return;
             }
 
-            int userId = Convert.ToInt32(userIdStr);
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                ShowError("Session expired. Please restart the forgot password process.");
+                ShowEmailStep();
+                return;
+            }
 
             // Update Password in the Database
             try
@@ -270,6 +280,8 @@ namespace Project_Board.User
         protected void btnBackToEmail_Click(object sender, EventArgs e)
         {
             lblMessage.Visible = false;
+            // Starting over must also drop any code/verified flag from the abandoned attempt.
+            ClearResetSession();
             ShowEmailStep();
         }
 
@@ -417,6 +429,14 @@ namespace Project_Board.User
         /// </summary>
         private static void SendVerificationEmail(string recipientEmail, string recipientName, string code)
         {
+            // Fail closed (and with a clear reason) when SMTP credentials are not configured
+            // in Web.config, instead of throwing a NullReferenceException at Authenticate().
+            if (string.IsNullOrWhiteSpace(SMTP_EMAIL) || string.IsNullOrWhiteSpace(SMTP_APP_PASSWORD))
+            {
+                throw new InvalidOperationException(
+                    "SmtpEmail/SmtpPassword are not configured in Web.config — cannot send the verification email.");
+            }
+
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(SMTP_DISPLAY_NAME, SMTP_EMAIL));
             message.To.Add(new MailboxAddress(recipientName, recipientEmail));

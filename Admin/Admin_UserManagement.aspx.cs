@@ -38,7 +38,7 @@ namespace Project_Board.Admin
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                string query = "SELECT UserId, FullName, Email, EnrollmentNo, Role, IsLeader FROM Users WHERE IsActive = 1";
+                string query = "SELECT UserId, FullName, Email, EnrollmentNo, Role, IsLeader, IsActive FROM Users WHERE IsActive = 1";
                 if (filter != "All")
                 {
                     query += " AND Role = @Role";
@@ -203,6 +203,8 @@ namespace Project_Board.Admin
                 int adminId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
                 string adminName = Session["FullName"]?.ToString() ?? "Admin";
 
+                try
+                {
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     conn.Open();
@@ -317,14 +319,33 @@ namespace Project_Board.Admin
                         }
                     }
                 }
+                }
+                catch (Exception ex)
+                {
+                    // conn.Open() and the audit/snapshot queries above ran unguarded; a
+                    // connection or audit-table failure would surface as a yellow screen.
+                    System.Diagnostics.Trace.TraceError("User delete error: " + ex);
+                    string errorMsg = "Error deleting user: " + ex.Message.Replace("'", "\\'").Replace("\r", "").Replace("\n", " ");
+                    ScriptManager.RegisterStartupScript(this, GetType(), "DeleteError", $"alert('{errorMsg}');", true);
+                }
             }
+        }
+
+        // Users.IsActive and Users.IsLeader are declared BIT with a DEFAULT but no NOT NULL,
+        // so either can come back as DBNull. Convert.ToBoolean(DBNull.Value) throws
+        // InvalidCastException, which would break the whole repeater bind — bind through this.
+        protected static bool ToBool(object value)
+        {
+            return value != null && value != DBNull.Value && Convert.ToBoolean(value);
         }
 
         // Helper method to get initials for the avatar
         protected string GetInitials(string name)
         {
-            if (string.IsNullOrEmpty(name)) return "U";
+            if (string.IsNullOrWhiteSpace(name)) return "U";
             string[] parts = name.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            // A whitespace-only name yields zero parts — indexing parts[0] would throw.
+            if (parts.Length == 0) return "U";
             if (parts.Length == 1) return parts[0].Substring(0, 1).ToUpper();
             return (parts[0].Substring(0, 1) + parts[parts.Length - 1].Substring(0, 1)).ToUpper();
         }

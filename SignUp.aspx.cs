@@ -346,6 +346,14 @@ namespace Project_Board
         /// </summary>
         private static void SendVerificationEmail(string recipientEmail, string recipientName, string code)
         {
+            // Fail closed (and with a clear reason) when SMTP credentials are not configured
+            // in Web.config, instead of throwing a NullReferenceException at Authenticate().
+            if (string.IsNullOrWhiteSpace(SMTP_EMAIL) || string.IsNullOrWhiteSpace(SMTP_APP_PASSWORD))
+            {
+                throw new InvalidOperationException(
+                    "SmtpEmail/SmtpPassword are not configured in Web.config — cannot send the verification email.");
+            }
+
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(SMTP_DISPLAY_NAME, SMTP_EMAIL));
             message.To.Add(new MailboxAddress(recipientName, recipientEmail));

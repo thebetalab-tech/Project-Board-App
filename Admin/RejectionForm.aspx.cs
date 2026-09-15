@@ -53,10 +53,24 @@ namespace Project_Board.Admin
             }
 
             string type = Request.QueryString["type"];
-            int id = Convert.ToInt32(Request.QueryString["id"]);
+
+            // The id arrives from the URL; TryParse so a hand-edited/non-numeric value
+            // shows the form error instead of throwing FormatException.
+            int id;
+            if (!int.TryParse(Request.QueryString["id"], out id) || id <= 0)
+            {
+                lblError.Text = "Invalid request. Please try again from the list page.";
+                lblError.Visible = true;
+                return;
+            }
+
             int facultyId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
+            string redirectTarget;
+
+            try
+            {
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 conn.Open();
@@ -166,8 +180,21 @@ namespace Project_Board.Admin
                     }
                 }
 
-                Response.Redirect(redirectUrl);
+                redirectTarget = redirectUrl;
             }
+            }
+            catch (Exception ex)
+            {
+                // Keep the user on the form with the existing inline error style rather
+                // than redirecting as if the rejection had been recorded.
+                System.Diagnostics.Trace.TraceError("RejectionForm submit error: " + ex);
+                lblError.Text = "Could not record the rejection. Please try again.";
+                lblError.Visible = true;
+                return;
+            }
+
+            // Redirect outside the try so its ThreadAbortException is not swallowed.
+            Response.Redirect(redirectTarget);
         }
     }
 }

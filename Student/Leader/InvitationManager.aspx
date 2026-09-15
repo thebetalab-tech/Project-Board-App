@@ -35,10 +35,10 @@
                                                                 style="color: var(--c-text-muted);"></i></div>
                                                         <div class="user-cell-info">
                                                             <h4>
-                                                                <%# Eval("FullName") %>
+                                                                <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("FullName"))) %>
                                                             </h4>
                                                             <p>
-                                                                <%# Eval("Email") %> | <%# Eval("EnrollmentNo") %>
+                                                                <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Email"))) %> | <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) %>
                                                             </p>
                                                         </div>
                                                     </div>
@@ -84,10 +84,10 @@
                                                                 style="color: var(--c-text-muted);"></i></div>
                                                         <div class="user-cell-info">
                                                             <h4>
-                                                                <%# Eval("FullName") %>
+                                                                <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("FullName"))) %>
                                                             </h4>
                                                             <p>
-                                                                <%# Eval("Email") %> | <%# Eval("EnrollmentNo") %>
+                                                                <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Email"))) %> | <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo"))) %>
                                                             </p>
                                                         </div>
                                                     </div>

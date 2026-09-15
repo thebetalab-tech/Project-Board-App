@@ -54,33 +54,44 @@ namespace Project_Board.Faculty
                 ddlFilterGroup.Items.Add(new ListItem("All Mentored Groups", "0"));
             }
 
-            using (SqlConnection conn = new SqlConnection(ConnString))
+            try
             {
-                string query = @"
-                    SELECT g.GroupId, g.GroupName, u.FullName AS LeaderName 
+                using (SqlConnection conn = new SqlConnection(ConnString))
+                {
+                    string query = @"
+                    SELECT g.GroupId, g.GroupName, u.FullName AS LeaderName
                     FROM (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g
                     INNER JOIN Users u ON g.LeaderId = u.UserId
                     WHERE g.MentorId = @FacultyId
                     ORDER BY g.GroupName";
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@FacultyId", facultyId);
-                    conn.Open();
-                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        while (rdr.Read())
+                        cmd.Parameters.AddWithValue("@FacultyId", facultyId);
+                        conn.Open();
+                        using (SqlDataReader rdr = cmd.ExecuteReader())
                         {
-                            string text = $"{rdr["GroupName"]} (Leader: {rdr["LeaderName"]})";
-                            string gId = rdr["GroupId"].ToString();
-                            ddlGroups.Items.Add(new ListItem(text, gId));
-                            if (ddlFilterGroup != null)
+                            while (rdr.Read())
                             {
-                                ddlFilterGroup.Items.Add(new ListItem(rdr["GroupName"].ToString(), gId));
+                                string text = $"{rdr["GroupName"]} (Leader: {rdr["LeaderName"]})";
+                                string gId = rdr["GroupId"].ToString();
+                                ddlGroups.Items.Add(new ListItem(text, gId));
+                                if (ddlFilterGroup != null)
+                                {
+                                    ddlFilterGroup.Items.Add(new ListItem(rdr["GroupName"].ToString(), gId));
+                                }
                             }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("TaskManagement.LoadMentoredGroups failed: " + ex);
+                lblMessage.Text = "Unable to load your mentored groups right now. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
             }
 
             if (ddlGroups.Items.Count <= 1)
@@ -101,13 +112,13 @@ namespace Project_Board.Faculty
             ddlAssignee.Items.Clear();
             ddlAssignee.Items.Add(new ListItem("-- Select Student / Leader --", ""));
 
-            if (string.IsNullOrEmpty(ddlGroups.SelectedValue)) return;
+            if (!int.TryParse(ddlGroups.SelectedValue, out int groupId)) return;
 
-            int groupId = Convert.ToInt32(ddlGroups.SelectedValue);
-
-            using (SqlConnection conn = new SqlConnection(ConnString))
+            try
             {
-                string query = @"
+                using (SqlConnection conn = new SqlConnection(ConnString))
+                {
+                    string query = @"
                     SELECT DISTINCT u.UserId, u.FullName, u.IsLeader
                     FROM Users u
                     LEFT JOIN GroupMembers gm ON u.UserId = gm.UserId AND gm.GroupId = @GroupId AND (gm.JoinStatus = 'Accepted' OR gm.JoinStatus = 'accepted')
@@ -115,20 +126,28 @@ namespace Project_Board.Faculty
                     WHERE (gm.GroupId IS NOT NULL OR g.LeaderId IS NOT NULL)
                     ORDER BY u.IsLeader DESC, u.FullName ASC";
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@GroupId", groupId);
-                    conn.Open();
-                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        while (rdr.Read())
+                        cmd.Parameters.AddWithValue("@GroupId", groupId);
+                        conn.Open();
+                        using (SqlDataReader rdr = cmd.ExecuteReader())
                         {
-                            bool isLeader = rdr["IsLeader"] != DBNull.Value && Convert.ToBoolean(rdr["IsLeader"]);
-                            string roleLabel = isLeader ? " [Leader]" : " [Member]";
-                            ddlAssignee.Items.Add(new ListItem(rdr["FullName"].ToString() + roleLabel, rdr["UserId"].ToString()));
+                            while (rdr.Read())
+                            {
+                                bool isLeader = rdr["IsLeader"] != DBNull.Value && Convert.ToBoolean(rdr["IsLeader"]);
+                                string roleLabel = isLeader ? " [Leader]" : " [Member]";
+                                ddlAssignee.Items.Add(new ListItem(rdr["FullName"].ToString() + roleLabel, rdr["UserId"].ToString()));
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("TaskManagement.ddlGroups_SelectedIndexChanged failed: " + ex);
+                lblMessage.Text = "Unable to load the members of that group right now. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
             }
         }
 
@@ -169,11 +188,21 @@ namespace Project_Board.Faculty
                 {
                     cmd.Parameters.AddWithValue("@FacultyId", facultyId);
                     cmd.Parameters.AddWithValue("@GroupId", selectedGroupId);
-                    
-                    conn.Open();
-                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+
+                    try
                     {
-                        da.Fill(dt);
+                        conn.Open();
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            da.Fill(dt);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Trace.TraceError("TaskManagement.LoadTasks failed: " + ex);
+                        lblMessage.Text = "Unable to load tasks right now. Please try again.";
+                        lblMessage.CssClass = "alert alert-danger";
+                        lblMessage.Visible = true;
                     }
                 }
             }
@@ -208,13 +237,34 @@ namespace Project_Board.Faculty
             }
 
             int facultyId = Convert.ToInt32(Session["UserId"]);
-            int groupId = Convert.ToInt32(ddlGroups.SelectedValue);
-            int assignedTo = Convert.ToInt32(ddlAssignee.SelectedValue);
+            if (!int.TryParse(ddlGroups.SelectedValue, out int groupId) || !int.TryParse(ddlAssignee.SelectedValue, out int assignedTo))
+            {
+                lblMessage.Text = "Please select both a Mentored Group and an Assignee Student.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
+
             string description = txtTaskDescription.Text.Trim();
             string points = txtPointsToCover.Text.Trim();
-            DateTime? dueDate = string.IsNullOrEmpty(txtDueDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtDueDate.Text);
+            // txtDueDate is a native date input, but a browser without date support (or a forged
+            // post) can submit arbitrary text, which Convert.ToDateTime would throw on.
+            DateTime? dueDate = null;
+            if (!string.IsNullOrEmpty(txtDueDate.Text))
+            {
+                if (!DateTime.TryParse(txtDueDate.Text, out DateTime parsedDueDate))
+                {
+                    lblMessage.Text = "Please enter a valid Due Date.";
+                    lblMessage.CssClass = "alert alert-danger";
+                    lblMessage.Visible = true;
+                    return;
+                }
+                dueDate = parsedDueDate;
+            }
 
-            using (SqlConnection conn = new SqlConnection(ConnString))
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 // Verify faculty mentors this group
                 conn.Open();
@@ -294,6 +344,15 @@ namespace Project_Board.Faculty
                     System.Diagnostics.Debug.WriteLine($"[Email Error] {ex.Message}");
                 }
             }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("TaskManagement.btnCreateTask_Click failed: " + ex);
+                lblMessage.Text = "Unable to create the task right now. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
 
             lblMessage.Text = "Task created and assigned successfully!";
             lblMessage.CssClass = "alert alert-success";
@@ -318,10 +377,12 @@ namespace Project_Board.Faculty
                 selectedGroupId = gid;
             }
 
-            using (SqlConnection conn = new SqlConnection(ConnString))
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 string query = @"
-                    SELECT 
+                    SELECT
                         t.TaskTitle AS [Task Title],
                         t.TaskDescription AS [Description],
                         g.GroupName AS [Group Name],
@@ -374,6 +435,19 @@ namespace Project_Board.Faculty
                         Response.End();
                     }
                 }
+            }
+            }
+            catch (System.Threading.ThreadAbortException)
+            {
+                // Raised by Response.End() on a successful download — not an error.
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("TaskManagement.btnGeneratePdf_Click failed: " + ex);
+                lblMessage.Text = "Unable to generate the report right now. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
             }
         }
     }

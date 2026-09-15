@@ -10,7 +10,17 @@ namespace Project_Board.Admin
     public partial class ReviewAppeal : Page
     {
         private string ConnString => ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
-        private int TaskId => Request.QueryString["TaskId"] != null ? Convert.ToInt32(Request.QueryString["TaskId"]) : 0;
+        // TryParse, not Convert.ToInt32: the value comes straight from the URL, so a
+        // hand-edited/non-numeric TaskId must fall back to 0 (which Page_Load redirects on)
+        // instead of throwing FormatException before the page can run.
+        private int TaskId
+        {
+            get
+            {
+                int parsed;
+                return int.TryParse(Request.QueryString["TaskId"], out parsed) ? parsed : 0;
+            }
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -33,6 +43,22 @@ namespace Project_Board.Admin
         }
 
         private void LoadTaskAndAppealDetails()
+        {
+            try
+            {
+                LoadTaskAndAppealDetailsCore();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("ReviewAppeal load error: " + ex);
+                lblMessage.Text = "Unable to load this task right now. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                btnSubmitDecision.Enabled = false;
+            }
+        }
+
+        private void LoadTaskAndAppealDetailsCore()
         {
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
@@ -143,6 +169,8 @@ namespace Project_Board.Admin
             string feedback = txtFeedback.Text.Trim();
             int reviewerId = Convert.ToInt32(Session["UserId"]);
 
+            try
+            {
             using (SqlConnection conn = new SqlConnection(ConnString))
             {
                 conn.Open();
@@ -224,6 +252,17 @@ namespace Project_Board.Admin
                 {
                     System.Diagnostics.Debug.WriteLine($"[Email Error] {ex.Message}");
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                // Never fall through to the redirect on a DB failure — that would look
+                // like the decision was saved when nothing was written.
+                System.Diagnostics.Trace.TraceError("ReviewAppeal submit error: " + ex);
+                lblMessage.Text = "Could not save your decision. Please try again.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
             }
 
             // Redirect back to dashboard

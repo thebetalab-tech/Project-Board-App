@@ -136,17 +136,17 @@
                                     <i class="fa-solid fa-users"></i>
                                 </div>
                                 <div class="request-info">
-                                    <h3><%# Eval("GroupName") %></h3>
-                                    <p><i class="fa-solid fa-user-tie"></i> Leader: <%# Eval("LeaderName") %> | <i class="fa-solid fa-microchip"></i> <%# Eval("TechName") %></p>
+                                    <h3><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("GroupName"))) %></h3>
+                                    <p><i class="fa-solid fa-user-tie"></i> Leader: <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("LeaderName"))) %> | <i class="fa-solid fa-microchip"></i> <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("TechName"))) %></p>
                                 </div>
                                 <span class="request-tech">
-                                    <i class="fa-solid fa-microchip"></i> <%# Eval("TechName") %>
+                                    <i class="fa-solid fa-microchip"></i> <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("TechName"))) %>
                                 </span>
                             </div>
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <div>
-                                    <span class='badge-status <%# GetStatusClass(Eval("JoinStatus").ToString()) %>'>
-                                        <%# Eval("JoinStatus") %>
+                                    <span class='badge-status <%# GetStatusClass(Convert.ToString(Eval("JoinStatus"))) %>'>
+                                        <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("JoinStatus"))) %>
                                     </span>
                                     <div class="status-description">
                                         <i class="fa-solid fa-calendar"></i> Requested: <%# Eval("RequestedAt") != DBNull.Value ? Convert.ToDateTime(Eval("RequestedAt")).ToString("MMM dd, yyyy") : "N/A" %>
@@ -154,13 +154,13 @@
                                 </div>
                                 <div class="request-actions">
                                     <asp:LinkButton ID="btnCancel" runat="server" CommandName="CancelRequest" CommandArgument='<%# Eval("GroupId") %>' 
-                                        Visible='<%# Eval("JoinStatus").ToString() == "Requested" || Eval("JoinStatus").ToString() == "Pending" %>'
+                                        Visible='<%# Convert.ToString(Eval("JoinStatus")) == "Requested" || Convert.ToString(Eval("JoinStatus")) == "Pending" %>'
                                         CssClass="btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:6px; color:#ef4444; border:1px solid rgba(239, 68, 68, 0.2); text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem;"
                                         OnClientClick="return confirm('Are you sure you want to cancel this request?');">
                                         <i class="fa-solid fa-times"></i> Cancel Request
                                     </asp:LinkButton>
                                     <span class="request-date" style="font-size:0.85rem; color:var(--c-text-muted);">
-                                        <i class="fa-solid fa-user-tie"></i> Leader: <%# Eval("LeaderName") %>
+                                        <i class="fa-solid fa-user-tie"></i> Leader: <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("LeaderName"))) %>
                                     </span>
                                 </div>
                             </div>

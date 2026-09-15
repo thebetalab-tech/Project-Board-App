@@ -25,14 +25,14 @@
                         <asp:Panel ID="pnlMentorAssigned" runat="server" Visible="false">
                             <div style="background: var(--c-bg-elevated); border: 1px solid var(--c-border); padding: 1.5rem; border-radius: 8px; display:flex; align-items:center; gap:1.25rem;">
                                 <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.2rem;">
-                                    <%= MentorInitials %>
+                                    <%= HttpUtility.HtmlEncode(MentorInitials) %>
                                 </div>
                                 <div style="flex:1;">
                                     <h4 style="color: var(--c-text); margin-bottom: 0.25rem;">
-                                        <i class="fa-solid fa-award" style="color:#6366f1;"></i> <%= MentorName %>
+                                        <i class="fa-solid fa-award" style="color:#6366f1;"></i> <%= HttpUtility.HtmlEncode(MentorName) %>
                                     </h4>
                                     <p style="font-size: 0.85rem; color: var(--c-text-muted); margin:0;">
-                                        <i class="fa-solid fa-envelope"></i> <%= MentorEmail %> | Domain: <%= TechName %>
+                                        <i class="fa-solid fa-envelope"></i> <%= HttpUtility.HtmlEncode(MentorEmail) %> | Domain: <%= HttpUtility.HtmlEncode(TechName) %>
                                     </p>
                                 </div>
                                 <span class="badge" style="background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); padding:0.35rem 0.75rem; border-radius:20px; font-weight:600;">
@@ -52,7 +52,7 @@
                                         Mentor Request Pending Approval
                                     </h4>
                                     <p style="font-size: 0.85rem; color: var(--c-text-muted); margin:0;">
-                                        Requested: <strong><%= MentorName %></strong> — Awaiting faculty review and acceptance.
+                                        Requested: <strong><%= HttpUtility.HtmlEncode(MentorName) %></strong> — Awaiting faculty review and acceptance.
                                     </p>
                                 </div>
                                 <span class="badge" style="background:rgba(234,179,8,0.15); color:#eab308; border:1px solid rgba(234,179,8,0.3); padding:0.35rem 0.75rem; border-radius:20px; font-weight:600;">
@@ -111,17 +111,17 @@
                                                 <td>
                                                     <div class="user-cell">
                                                         <div class="user-cell-avatar">
-                                                            <%# GetInitials(Eval("FullName").ToString()) %>
+                                                            <%# HttpUtility.HtmlEncode(GetInitials(Convert.ToString(Eval("FullName")))) %>
                                                         </div>
                                                         <div class="user-cell-info">
-                                                            <h4><%# Eval("FullName") %></h4>
-                                                            <p><%# Eval("EnrollmentNo") != DBNull.Value ? Eval("EnrollmentNo") : Eval("Email") %></p>
+                                                            <h4><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("FullName"))) %></h4>
+                                                            <p><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("EnrollmentNo") != DBNull.Value ? Eval("EnrollmentNo") : Eval("Email"))) %></p>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td style="text-align: right;">
-                                                    <span class='<%# Eval("Role").ToString() == "Leader" ? "badge admin" : "badge student" %>'>
-                                                        <%# Eval("Role") %>
+                                                    <span class='<%# Convert.ToString(Eval("Role")) == "Leader" ? "badge admin" : "badge student" %>'>
+                                                        <%# HttpUtility.HtmlEncode(Convert.ToString(Eval("Role"))) %>
                                                     </span>
                                                 </td>
                                             </tr>

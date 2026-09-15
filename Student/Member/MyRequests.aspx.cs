@@ -39,31 +39,41 @@ namespace Project_Board.Student.Member
             int userId = Convert.ToInt32(Session["UserId"]);
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
-            using (SqlConnection conn = new SqlConnection(connString))
+            try
             {
-                string query = @"
-                    SELECT
-                        gm.GroupId, gm.UserId, gm.JoinStatus, gm.RequestedAt,
-                        g.GroupName, t.TechName, g.Status AS GroupStatus,
-                        l.FullName AS LeaderName, l.Email AS LeaderEmail
-                    FROM GroupMembers gm
-                    INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON gm.GroupId = g.GroupId
-                    LEFT JOIN Technologies t ON g.TechId = t.TechId
-                    INNER JOIN Users l ON g.LeaderId = l.UserId
-                    WHERE gm.UserId = @UserId
-                    ORDER BY gm.RequestedAt DESC";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlConnection conn = new SqlConnection(connString))
                 {
-                    cmd.Parameters.AddWithValue("@UserId", userId);
-                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    string query = @"
+                        SELECT
+                            gm.GroupId, gm.UserId, gm.JoinStatus, gm.RequestedAt,
+                            g.GroupName, t.TechName, g.Status AS GroupStatus,
+                            l.FullName AS LeaderName, l.Email AS LeaderEmail
+                        FROM GroupMembers gm
+                        INNER JOIN (SELECT * FROM Groups WHERE IsActive = 1 OR IsActive IS NULL) g ON gm.GroupId = g.GroupId
+                        LEFT JOIN Technologies t ON g.TechId = t.TechId
+                        INNER JOIN Users l ON g.LeaderId = l.UserId
+                        WHERE gm.UserId = @UserId
+                        ORDER BY gm.RequestedAt DESC";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-                        rptRequests.DataSource = dt;
-                        rptRequests.DataBind();
+                        cmd.Parameters.AddWithValue("@UserId", userId);
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+                            rptRequests.DataSource = dt;
+                            rptRequests.DataBind();
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("MyRequests.LoadMyRequests failed: " + ex);
+                rptRequests.DataSource = new DataTable();
+                rptRequests.DataBind();
+                ShowMessage("Could not load your requests right now. Please try again later.", false);
             }
         }
 
@@ -88,30 +98,51 @@ namespace Project_Board.Student.Member
         {
             if (e.CommandName == "CancelRequest")
             {
-                int groupId = Convert.ToInt32(e.CommandArgument);
+                int groupId;
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out groupId))
+                {
+                    ShowMessage("Could not cancel request. It may have already been processed.", false);
+                    return;
+                }
+
+                if (Session["UserId"] == null)
+                {
+                    Response.Redirect("~/Default.aspx");
+                    return;
+                }
+
                 int userId = Convert.ToInt32(Session["UserId"]);
                 string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
 
-                using (SqlConnection conn = new SqlConnection(connString))
+                try
                 {
-                    string sql = "DELETE FROM GroupMembers WHERE GroupId = @GroupId AND UserId = @UserId AND JoinStatus IN ('Requested', 'Pending')";
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    using (SqlConnection conn = new SqlConnection(connString))
                     {
-                        cmd.Parameters.AddWithValue("@GroupId", groupId);
-                        cmd.Parameters.AddWithValue("@UserId", userId);
-                        conn.Open();
-                        int rows = cmd.ExecuteNonQuery();
+                        string sql = "DELETE FROM GroupMembers WHERE GroupId = @GroupId AND UserId = @UserId AND JoinStatus IN ('Requested', 'Pending')";
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@GroupId", groupId);
+                            cmd.Parameters.AddWithValue("@UserId", userId);
+                            conn.Open();
+                            int rows = cmd.ExecuteNonQuery();
 
-                        if (rows > 0)
-                        {
-                            ShowMessage("Request cancelled successfully.", true);
-                        }
-                        else
-                        {
-                            ShowMessage("Could not cancel request. It may have already been processed.", false);
+                            if (rows > 0)
+                            {
+                                ShowMessage("Request cancelled successfully.", true);
+                            }
+                            else
+                            {
+                                ShowMessage("Could not cancel request. It may have already been processed.", false);
+                            }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("MyRequests.CancelRequest failed: " + ex);
+                    ShowMessage("Could not cancel request. It may have already been processed.", false);
+                }
+
                 LoadMyRequests();
             }
         }

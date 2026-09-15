@@ -286,29 +286,37 @@ namespace Project_Board.Student.Leader
                     INNER JOIN Users u ON g.MentorId = u.UserId
                     WHERE g.GroupId = @GroupId";
 
-                using (SqlCommand fCmd = new SqlCommand(facultyQuery, conn))
+                // A mail failure must not lose the proposal that was already inserted above.
+                try
                 {
-                    fCmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
-                    using (SqlDataReader fRdr = fCmd.ExecuteReader())
+                    using (SqlCommand fCmd = new SqlCommand(facultyQuery, conn))
                     {
-                        if (fRdr.Read())
+                        fCmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
+                        using (SqlDataReader fRdr = fCmd.ExecuteReader())
                         {
-                            string facultyEmail = fRdr["Email"].ToString();
-                            string facultyName = fRdr["FullName"].ToString();
-                            string groupName = fRdr["GroupName"].ToString();
+                            if (fRdr.Read())
+                            {
+                                string facultyEmail = fRdr["Email"].ToString();
+                                string facultyName = fRdr["FullName"].ToString();
+                                string groupName = fRdr["GroupName"].ToString();
 
-                            EmailService.SendProjectProposalToFaculty(
-                                facultyEmail,
-                                facultyName,
-                                UserName,
-                                groupName,
-                                title,
-                                type,
-                                keywordsInput,
-                                functionality
-                            );
+                                EmailService.SendProjectProposalToFaculty(
+                                    facultyEmail,
+                                    facultyName,
+                                    UserName,
+                                    groupName,
+                                    title,
+                                    type,
+                                    keywordsInput,
+                                    functionality
+                                );
+                            }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Leader_Project: faculty proposal notification failed. " + ex);
                 }
             }
 
@@ -329,7 +337,10 @@ namespace Project_Board.Student.Leader
         {
             if (e.CommandName == "DeleteProposal")
             {
-                int projectId = Convert.ToInt32(e.CommandArgument);
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out int projectId) || projectId <= 0)
+                {
+                    return;
+                }
                 int leaderId = Convert.ToInt32(Session["UserId"]);
                 string leaderName = Session["FullName"]?.ToString() ?? "Leader";
 
@@ -339,7 +350,7 @@ namespace Project_Board.Student.Leader
 
                     // ── AUDIT: Snapshot project details before deletion ────────────
                     string snapshotSql = @"
-                        SELECT p.ProjectTitle, p.ProjectType, p.Functionality, p.Status, p.SubmittedAt,
+                        SELECT p.ProjectTitle, p.ProjectType, p.Functionality, p.Status, p.SubmittedAt, p.GroupId,
                                STUFF((
                                    SELECT ', ' + pk.Keyword
                                    FROM ProjectKeywords pk WHERE pk.ProjectId = p.ProjectId
@@ -350,6 +361,8 @@ namespace Project_Board.Student.Leader
 
                     string projectTitle = $"Project #{projectId}";
                     string projectDetails = "";
+                    bool projectFound = false;
+                    int projectGroupId = 0;
 
                     using (SqlCommand snapCmd = new SqlCommand(snapshotSql, conn))
                     {
@@ -358,6 +371,8 @@ namespace Project_Board.Student.Leader
                         {
                             if (rdr.Read())
                             {
+                                projectFound = true;
+                                projectGroupId = rdr["GroupId"] != DBNull.Value ? Convert.ToInt32(rdr["GroupId"]) : 0;
                                 projectTitle = rdr["ProjectTitle"]?.ToString() ?? projectTitle;
                                 string submittedAt = rdr["SubmittedAt"] != DBNull.Value
                                     ? Convert.ToDateTime(rdr["SubmittedAt"]).ToString("dd MMM yyyy")
@@ -367,14 +382,31 @@ namespace Project_Board.Student.Leader
                         }
                     }
 
+                    // A leader may only withdraw proposals that belong to their own group.
+                    // The Projects DELETE below is already scoped by GroupId, but the
+                    // ProjectKeywords DELETE is not, so the ownership check has to happen
+                    // before either statement runs (and before anything is audit-logged).
+                    if (!projectFound || projectGroupId == 0 || projectGroupId != CurrentGroupId)
+                    {
+                        LoadProposals();
+                        return;
+                    }
+
                     Admin_DeletedRecords.LogDeletion(conn, "Project", projectId, projectTitle, projectDetails,
                         leaderId > 0 ? (int?)leaderId : null, leaderName, reason: "Project proposal withdrawn by leader");
 
                     // ── HARD DELETE ───────────────────────────────────────────────
-                    string delKw = "DELETE FROM ProjectKeywords WHERE ProjectId = @ProjectId";
+                    // Scoped with exactly the same conditions as the Projects DELETE below, so the
+                    // keywords can never be orphaned from a project that is not actually deleted.
+                    string delKw = @"
+                        DELETE FROM ProjectKeywords
+                        WHERE ProjectId = @ProjectId
+                          AND EXISTS (SELECT 1 FROM Projects p
+                                      WHERE p.ProjectId = @ProjectId AND p.GroupId = @GroupId AND p.Status = 'Pending')";
                     using (SqlCommand kwCmd = new SqlCommand(delKw, conn))
                     {
                         kwCmd.Parameters.AddWithValue("@ProjectId", projectId);
+                        kwCmd.Parameters.AddWithValue("@GroupId", CurrentGroupId);
                         kwCmd.ExecuteNonQuery();
                     }
 

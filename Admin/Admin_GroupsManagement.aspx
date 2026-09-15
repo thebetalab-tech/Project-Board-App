@@ -16,7 +16,7 @@
                     <div class="section-header">
                         <h2>Group Details (Aggregated)</h2>
                         <div style="display:flex; gap: 10px; align-items:center;">
-                            <asp:DropDownList ID="ddlReportFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-select" style="padding: 0.5rem; border: 1px solid var(--c-border); border-radius: 4px; background: var(--c-surface); color: var(--c-text);">
+                            <asp:DropDownList ID="ddlReportFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlReportFilter_SelectedIndexChanged" CssClass="form-control" style="width:auto; padding: 0.5rem; background: var(--c-surface); color: var(--c-text);">
                                 <asp:ListItem Text="All Groups" Value="All"></asp:ListItem>
                                 <asp:ListItem Text="Active Only" Value="Active"></asp:ListItem>
                                 <asp:ListItem Text="Inactive Only" Value="Inactive"></asp:ListItem>
@@ -47,14 +47,14 @@
                                     <tr>
                                         <td><strong><%# System.Web.HttpUtility.HtmlEncode(Eval("GroupName").ToString()) %></strong></td>
                                         <td><%# System.Web.HttpUtility.HtmlEncode(Eval("LeaderName").ToString()) %></td>
-                                        <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("Members"))) ? "<span style='color:var(--c-text-muted)'>None</span>" : System.Web.HttpUtility.HtmlEncode(Convert.ToString(Eval("Members"))) %></td>
+                                        <td><%# string.IsNullOrEmpty(Convert.ToString(Eval("Members"))) ? "<span style='color:var(--c-text-muted)'>None</span>" : Project_Board.Utils.UiHelper.TextPreview(Eval("Members")) %></td>
                                         <td><%# Eval("MentorName") != DBNull.Value ? System.Web.HttpUtility.HtmlEncode(Eval("MentorName").ToString()) : "<span style='color:var(--c-text-muted)'>Not Assigned</span>" %></td>
                                         <td>
                                             <span class='badge status-<%# Eval("Status").ToString().ToLower() %>'><%# System.Web.HttpUtility.HtmlEncode(Eval("Status").ToString()) %></span>
                                         </td>
                                         <td>
                                             <div class="table-actions">
-                                                <button type="button" class="icon-btn edit" onclick="openEditGroupModal('<%# Eval("GroupId") %>', '<%# Eval("Status") %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit Group">
+                                                <button type="button" class="icon-btn edit" onclick="openEditGroupModal('<%# Eval("GroupId") %>', '<%# HttpUtility.JavaScriptStringEncode(Convert.ToString(Eval("Status"))) %>')" style="color:var(--c-primary); background:none; border:none; cursor:pointer;" title="Edit Group">
                                                     <i class="fa-solid fa-edit"></i>
                                                 </button>
                                                 <a href='<%# ResolveUrl("~/Admin/Details/Group_Details.aspx?GroupId=" + Eval("GroupId")) %>' class="icon-btn" title="View Details">

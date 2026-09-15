@@ -54,11 +54,13 @@ namespace Project_Board.User
                                 
                                 // Set Initials
                                 string initials = "U";
-                                if (!string.IsNullOrEmpty(fullName))
+                                if (!string.IsNullOrWhiteSpace(fullName))
                                 {
+                                    // A name of only spaces splits into zero parts — indexing
+                                    // parts[0] then would throw IndexOutOfRangeException.
                                     string[] parts = fullName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                                     if (parts.Length == 1) initials = parts[0].Substring(0, 1).ToUpper();
-                                    else initials = (parts[0].Substring(0, 1) + parts[parts.Length - 1].Substring(0, 1)).ToUpper();
+                                    else if (parts.Length > 1) initials = (parts[0].Substring(0, 1) + parts[parts.Length - 1].Substring(0, 1)).ToUpper();
                                 }
                                 avatarInitials.InnerText = initials;
                             }
@@ -66,7 +68,7 @@ namespace Project_Board.User
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.TraceError("[Profile] Failed to load user details: " + ex);
                     }
                 }
                 
@@ -113,7 +115,7 @@ namespace Project_Board.User
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.TraceError("[Profile] Failed to load profile stats: " + ex);
                     }
                 }
             }
@@ -188,7 +190,7 @@ namespace Project_Board.User
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.TraceError("[Profile] Failed to update profile: " + ex);
                         ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Error updating profile.');", true);
                     }
                 }

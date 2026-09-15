@@ -37,7 +37,7 @@ namespace Project_Board.Student.Leader
             {
                 cmd.Parameters.AddWithValue("@LeaderId", userId);
                 object result = cmd.ExecuteScalar();
-                if (result != null) return Convert.ToInt32(result);
+                if (result != null && result != DBNull.Value) return Convert.ToInt32(result);
             }
             return 0;
         }
@@ -85,7 +85,10 @@ namespace Project_Board.Student.Leader
 
         protected void rptRequests_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            int targetUserId = Convert.ToInt32(e.CommandArgument);
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out int targetUserId) || targetUserId <= 0)
+            {
+                return;
+            }
             string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connString))
             {
@@ -150,18 +153,25 @@ namespace Project_Board.Student.Leader
                             notifyCmd.ExecuteNonQuery();
                         }
                         
-                        // Send Email
-                        string groupNameSql = "SELECT GroupName FROM Groups WHERE GroupId = @GroupId";
-                        using (SqlCommand grpCmd = new SqlCommand(groupNameSql, conn))
+                        // Send Email — a mail failure must not roll back the rejection above.
+                        try
                         {
-                            grpCmd.Parameters.AddWithValue("@GroupId", groupId);
-                            string groupName = grpCmd.ExecuteScalar()?.ToString() ?? "Group";
-                            Project_Board.Services.EmailService.SendMemberJoinRequestRejectedNotification(
-                                memberEmail,
-                                memberName,
-                                Session["FullName"]?.ToString() ?? "Leader",
-                                groupName
-                            );
+                            string groupNameSql = "SELECT GroupName FROM Groups WHERE GroupId = @GroupId";
+                            using (SqlCommand grpCmd = new SqlCommand(groupNameSql, conn))
+                            {
+                                grpCmd.Parameters.AddWithValue("@GroupId", groupId);
+                                string groupName = grpCmd.ExecuteScalar()?.ToString() ?? "Group";
+                                Project_Board.Services.EmailService.SendMemberJoinRequestRejectedNotification(
+                                    memberEmail,
+                                    memberName,
+                                    Session["FullName"]?.ToString() ?? "Leader",
+                                    groupName
+                                );
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Trace.TraceError("InvitationManager: join-request rejection email failed. " + ex);
                         }
                     }
                 }
@@ -211,7 +221,10 @@ namespace Project_Board.Student.Leader
         {
             if (e.CommandName == "Revoke")
             {
-                int targetUserId = Convert.ToInt32(e.CommandArgument);
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out int targetUserId) || targetUserId <= 0)
+                {
+                    return;
+                }
                 string connString = ConfigurationManager.ConnectionStrings["Project_BoardConnectionString"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connString))
                 {

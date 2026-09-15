@@ -235,7 +235,10 @@ namespace Project_Board.Student.Leader
         {
             if (e.CommandName == "ReportToMentor")
             {
-                int taskId = Convert.ToInt32(e.CommandArgument);
+                if (!int.TryParse(Convert.ToString(e.CommandArgument), out int taskId) || taskId <= 0)
+                {
+                    return;
+                }
                 Response.Redirect($"~/Student/Appeal.aspx?TaskId={taskId}");
             }
         }
@@ -260,21 +263,36 @@ namespace Project_Board.Student.Leader
                 return;
             }
 
-            int memberId = Convert.ToInt32(ddlMembers.SelectedValue);
+            if (!int.TryParse(ddlMembers.SelectedValue, out int memberId) || memberId <= 0)
+            {
+                lblMessage.Text = "Please select a team member to assign the task.";
+                lblMessage.CssClass = "alert alert-danger";
+                lblMessage.Visible = true;
+                return;
+            }
+
             string title = txtMemberTaskTitle.Text.Trim();
             string description = txtMemberTaskDescription.Text.Trim();
             DateTime? dueDate = null;
 
             if (!string.IsNullOrEmpty(txtMemberTaskDueDate.Text))
             {
-                dueDate = DateTime.Parse(txtMemberTaskDueDate.Text);
+                if (!DateTime.TryParse(txtMemberTaskDueDate.Text, out DateTime parsedDueDate))
+                {
+                    lblMessage.Text = "Please enter a valid due date.";
+                    lblMessage.CssClass = "alert alert-danger";
+                    lblMessage.Visible = true;
+                    return;
+                }
+                dueDate = parsedDueDate;
             }
 
             int leaderId = Convert.ToInt32(Session["UserId"]);
             int? parentTaskId = null;
-            if (!string.IsNullOrEmpty(ddlParentTask.SelectedValue))
+            if (!string.IsNullOrEmpty(ddlParentTask.SelectedValue)
+                && int.TryParse(ddlParentTask.SelectedValue, out int parsedParentTaskId))
             {
-                parentTaskId = Convert.ToInt32(ddlParentTask.SelectedValue);
+                parentTaskId = parsedParentTaskId;
             }
 
             string taskCategory = ddlTaskCategory.SelectedValue;
@@ -369,7 +387,10 @@ namespace Project_Board.Student.Leader
 
         protected void rptMemberTasks_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            int taskId = Convert.ToInt32(e.CommandArgument);
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out int taskId) || taskId <= 0)
+            {
+                return;
+            }
 
             if (e.CommandName == "ViewMemberReport")
             {
@@ -484,8 +505,20 @@ namespace Project_Board.Student.Leader
                         string userName = Session["FullName"]?.ToString() ?? "Student Leader";
                         string userEmail = Session["Email"]?.ToString() ?? "leader@example.com";
                         
-                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Tasks Received From Mentor", dt, userName, userEmail, selectedCols);
-                        
+                        byte[] pdfBytes;
+                        try
+                        {
+                            pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Tasks Received From Mentor", dt, userName, userEmail, selectedCols);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Trace.TraceError("Leader_TaskManagement: mentor tasks PDF generation failed. " + ex);
+                            lblMessage.Text = "An error occurred while generating the report. Please try again.";
+                            lblMessage.CssClass = "alert alert-danger";
+                            lblMessage.Visible = true;
+                            return;
+                        }
+
                         Response.Clear();
                         Response.ContentType = "application/pdf";
                         Response.AddHeader("content-disposition", "attachment;filename=Leader_MentorTasksReport.pdf");
@@ -534,8 +567,20 @@ namespace Project_Board.Student.Leader
                         string userName = Session["FullName"]?.ToString() ?? "Student Leader";
                         string userEmail = Session["Email"]?.ToString() ?? "leader@example.com";
                         
-                        byte[] pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Tasks Assigned To Members", dt, userName, userEmail, selectedCols);
-                        
+                        byte[] pdfBytes;
+                        try
+                        {
+                            pdfBytes = Project_Board.Utils.ReportService.GeneratePdfReport("Tasks Assigned To Members", dt, userName, userEmail, selectedCols);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Trace.TraceError("Leader_TaskManagement: member tasks PDF generation failed. " + ex);
+                            lblMessage.Text = "An error occurred while generating the report. Please try again.";
+                            lblMessage.CssClass = "alert alert-danger";
+                            lblMessage.Visible = true;
+                            return;
+                        }
+
                         Response.Clear();
                         Response.ContentType = "application/pdf";
                         Response.AddHeader("content-disposition", "attachment;filename=Leader_MemberTasksReport.pdf");
